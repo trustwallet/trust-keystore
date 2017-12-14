@@ -22,4 +22,9 @@ class DataHexTests: XCTestCase {
         let data = Data(hexString: "0xdeadbeef")!
         XCTAssertEqual(data, Data(bytes: [0xDE, 0xAD, 0xBE, 0xEF]))
     }
+
+    func testInvalidHexToData() {
+        let data = Data(hexString: "invalid")
+        XCTAssertNil(data)
+    }
 }
