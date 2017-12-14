@@ -9,8 +9,11 @@
 /* Begin PBXBuildFile section */
 		61FC582B1FE2490E00FFC765 /* TrustKeystore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61FC58211FE2490E00FFC765 /* TrustKeystore.framework */; };
 		61FC58471FE2496700FFC765 /* TrustKeystore.h in Headers */ = {isa = PBXBuildFile; fileRef = 61FC58411FE2495E00FFC765 /* TrustKeystore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		61FC58481FE2496C00FFC765 /* TrustKeystoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58451FE2495E00FFC765 /* TrustKeystoreTests.swift */; };
+		61FC58481FE2496C00FFC765 /* KeystoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58451FE2495E00FFC765 /* KeystoreTests.swift */; };
 		61FC584C1FE24A8C00FFC765 /* Keystore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC584B1FE24A8C00FFC765 /* Keystore.swift */; };
+		61FC584E1FE2B43000FFC765 /* DataHex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC584D1FE2B43000FFC765 /* DataHex.swift */; };
+		61FC58511FE2BD0100FFC765 /* wallet.json in Resources */ = {isa = PBXBuildFile; fileRef = 61FC584F1FE2BC3100FFC765 /* wallet.json */; };
+		61FC58531FE2BFF100FFC765 /* DataHexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58521FE2BFF100FFC765 /* DataHexTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,9 +32,12 @@
 		61FC583F1FE2495E00FFC765 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		61FC58411FE2495E00FFC765 /* TrustKeystore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrustKeystore.h; sourceTree = "<group>"; };
 		61FC58431FE2495E00FFC765 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		61FC58451FE2495E00FFC765 /* TrustKeystoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustKeystoreTests.swift; sourceTree = "<group>"; };
+		61FC58451FE2495E00FFC765 /* KeystoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeystoreTests.swift; sourceTree = "<group>"; };
 		61FC58461FE2495E00FFC765 /* TestsInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TestsInfo.plist; sourceTree = "<group>"; };
 		61FC584B1FE24A8C00FFC765 /* Keystore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keystore.swift; sourceTree = "<group>"; };
+		61FC584D1FE2B43000FFC765 /* DataHex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHex.swift; sourceTree = "<group>"; };
+		61FC584F1FE2BC3100FFC765 /* wallet.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wallet.json; sourceTree = "<group>"; };
+		61FC58521FE2BFF100FFC765 /* DataHexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHexTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +84,7 @@
 			children = (
 				61FC58411FE2495E00FFC765 /* TrustKeystore.h */,
 				61FC584B1FE24A8C00FFC765 /* Keystore.swift */,
+				61FC584D1FE2B43000FFC765 /* DataHex.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -94,7 +101,9 @@
 		61FC58441FE2495E00FFC765 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				61FC58451FE2495E00FFC765 /* TrustKeystoreTests.swift */,
+				61FC584F1FE2BC3100FFC765 /* wallet.json */,
+				61FC58451FE2495E00FFC765 /* KeystoreTests.swift */,
+				61FC58521FE2BFF100FFC765 /* DataHexTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -200,6 +209,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61FC58511FE2BD0100FFC765 /* wallet.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,6 +221,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				61FC584C1FE24A8C00FFC765 /* Keystore.swift in Sources */,
+				61FC584E1FE2B43000FFC765 /* DataHex.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,7 +229,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				61FC58481FE2496C00FFC765 /* TrustKeystoreTests.swift in Sources */,
+				61FC58481FE2496C00FFC765 /* KeystoreTests.swift in Sources */,
+				61FC58531FE2BFF100FFC765 /* DataHexTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
