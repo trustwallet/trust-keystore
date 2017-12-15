@@ -38,7 +38,7 @@ public struct KeyHeader: Codable {
     public var cipherText: String
 
     /// Cipher algorithm.
-    public var cipher: String = "aes-128-ctr"
+    public var cipher: String = "aes-128-cbc"
 
     /// Cipher parameters.
     public var cipherParams: CipherParams
@@ -53,10 +53,10 @@ public struct KeyHeader: Codable {
     public var mac: String
 
     /// Initializes a `KeyHeader` with standard values.
-    public init(cipherText: String, mac: String) {
+    public init(cipherText: String, cipherParams: CipherParams, kdfParams: ScryptParams, mac: String) {
         self.cipherText = cipherText
-        self.cipherParams = CipherParams()
-        self.kdfParams = ScryptParams()
+        self.cipherParams = cipherParams
+        self.kdfParams = kdfParams
         self.mac = mac
     }
 
@@ -83,34 +83,5 @@ public struct CipherParams: Codable {
         }
         precondition(result == errSecSuccess, "Failed to generate random number")
         iv = data.hexString
-    }
-}
-
-/// Scrypt function parameters.
-public struct ScryptParams: Codable {
-    /// Random salt.
-    public var salt: String
-
-    /// Desired key length in bytes.
-    public var dklen = 32
-
-    /// CPU/Memory cost factor.
-    public var n = 1 << 18
-
-    /// Parallelization factor (1..232-1 * hLen/MFlen).
-    public var p = 1
-
-    /// Block size factor.
-    public var r = 8
-
-    /// Initializes with default scrypt parameters and a random salt.
-    public init() {
-        let length = 32
-        var data = Data(repeating: 0, count: length)
-        let result = data.withUnsafeMutableBytes { p in
-            SecRandomCopyBytes(kSecRandomDefault, length, p)
-        }
-        precondition(result == errSecSuccess, "Failed to generate random number")
-        salt = data.hexString
     }
 }
