@@ -4,6 +4,7 @@
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
+import CryptoSwift
 import Foundation
 
 /// Keystore wallet definition.
@@ -20,68 +21,82 @@ public struct Keystore: Codable {
     /// Keystore version, must be 3.
     public var version = 3
 
+    /// Initializes a `Keystore` with a crypto header.
+    public init(header: KeyHeader) {
+        self.crypto = header
+    }
+
     /// Initializes a `Keystore` from a JSON wallet.
     public init(contentsOf url: URL) throws {
         let data = try Data(contentsOf: url)
         self = try JSONDecoder().decode(Keystore.self, from: data)
     }
 
-    /// Initializes a `Keystore` with a crypto header.
-    public init(header: KeyHeader) {
-        self.crypto = header
-    }
-}
+    /// Initializes a `Keystore` by encrypting a private key with a password.
+    public init(password: String, key: Data) throws {
+        id = UUID().uuidString.lowercased()
 
-/// Encrypted private key and crypto parameters.
-public struct KeyHeader: Codable {
-    /// Encrypted data.
-    public var cipherText: String
+        let cipherParams = CipherParams()
+        let kdfParams = ScryptParams()
 
-    /// Cipher algorithm.
-    public var cipher: String = "aes-128-cbc"
+        let scrypt = Scrypt(params: kdfParams)
+        let derivedKey = try scrypt.calculate(password: password)
 
-    /// Cipher parameters.
-    public var cipherParams: CipherParams
+        let encryptionKey = derivedKey[0...15]
+        let aecCipher = try AES(key: encryptionKey.bytes, blockMode: .CBC(iv: cipherParams.iv.bytes), padding: .noPadding)
 
-    /// Key derivation function, must be scrypt.
-    public var kdf: String = "scrypt"
+        let encryptedKey = try aecCipher.encrypt(key.bytes)
+        let prefix = derivedKey[(derivedKey.count - 16) ..< derivedKey.count]
+        let mac = Keystore.computeMAC(prefix: prefix, key: Data(bytes: encryptedKey))
 
-    /// Key derivation function parameters.
-    public var kdfParams: ScryptParams
+        crypto = KeyHeader(cipherText: Data(bytes: encryptedKey), cipherParams: cipherParams, kdfParams: kdfParams, mac: mac)
 
-    /// Message authentication code.
-    public var mac: String
-
-    /// Initializes a `KeyHeader` with standard values.
-    public init(cipherText: String, cipherParams: CipherParams, kdfParams: ScryptParams, mac: String) {
-        self.cipherText = cipherText
-        self.cipherParams = cipherParams
-        self.kdfParams = kdfParams
-        self.mac = mac
+        // TODO: use SECP256K1 to extract ethereum address form `key`
     }
 
-    enum CodingKeys: String, CodingKey {
-        case cipherText = "ciphertext"
-        case cipher
-        case cipherParams = "cipherparams"
-        case kdf
-        case kdfParams = "kdfparams"
-        case mac
-    }
-}
-
-// AES128 CBC parameters.
-public struct CipherParams: Codable {
-    public static let blockSize = 16
-    public var iv: String
-
-    /// Initializes `CipherParams` with a random `iv` for AES 128.
-    public init() {
-        var data = Data(repeating: 0, count: CipherParams.blockSize)
-        let result = data.withUnsafeMutableBytes { p in
-            SecRandomCopyBytes(kSecRandomDefault, CipherParams.blockSize, p)
+    /// Decrypts the keystore and returns the private key.
+    public func decrypt(password: String) throws -> Data {
+        let derivedKey: Data
+        switch crypto.kdf {
+        case "scrypt":
+            let scrypt = Scrypt(params: crypto.kdfParams)
+            derivedKey = try scrypt.calculate(password: password)
+        default:
+            throw DecryptError.unsupportedKDF
         }
-        precondition(result == errSecSuccess, "Failed to generate random number")
-        iv = data.hexString
+
+        let mac = Keystore.computeMAC(prefix: derivedKey[derivedKey.count - 16 ..< derivedKey.count], key: crypto.cipherText)
+        if mac != crypto.mac {
+            throw DecryptError.invalidPassword
+        }
+
+        let decryptionKey = derivedKey[0...15]
+        let decryptedPK: [UInt8]
+        switch crypto.cipher {
+        case "aes-128-ctr":
+            let aesCipher = try AES(key: decryptionKey.bytes, blockMode: .CTR(iv: crypto.cipherParams.iv.bytes), padding: .noPadding)
+            decryptedPK = try aesCipher.decrypt(crypto.cipherText.bytes)
+        case "aes-128-cbc":
+            let aesCipher = try AES(key: decryptionKey.bytes, blockMode: .CBC(iv: crypto.cipherParams.iv.bytes), padding: .noPadding)
+            decryptedPK = try aesCipher.decrypt(crypto.cipherText.bytes)
+        default:
+            throw DecryptError.unsupportedCipher
+        }
+
+        return Data(bytes: decryptedPK)
     }
+
+    private static func computeMAC(prefix: Data, key: Data) -> Data {
+        var data = Data(capacity: prefix.count + key.count)
+        data.append(prefix)
+        data.append(key)
+        return data.sha3(.keccak256)
+    }
+}
+
+public enum DecryptError: Error {
+    case unsupportedKDF
+    case unsupportedCipher
+    case invalidCipher
+    case invalidPassword
 }

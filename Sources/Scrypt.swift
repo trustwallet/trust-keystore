@@ -32,20 +32,17 @@ public final class Scrypt {
         guard let passwordData = password.data(using: .utf8) else {
             throw Error.invalidPassword
         }
-        guard let salt = params.salt.data(using: .utf8) else {
-            throw Error.invalidSalt
-        }
 
         if let error = params.validate() {
             throw error
         }
 
-        let result = try scrypt(password: [UInt8](passwordData), salt: [UInt8](salt))
+        let result = try scrypt(password: passwordData.bytes, salt: params.salt.bytes)
         return Data(bytes: result)
     }
 
     /// Computes scrypt.
-    func scrypt(password: [UInt8], salt: [UInt8]) throws -> [UInt8] {
+    private func scrypt(password: [UInt8], salt: [UInt8]) throws -> [UInt8] {
         // Allocate memory.
         let B = UnsafeMutableRawPointer.allocate(bytes: 128 * params.r * params.p, alignedTo: 64)
         let XY = UnsafeMutableRawPointer.allocate(bytes: 256 * params.r + 64, alignedTo: 64)
@@ -74,7 +71,7 @@ public final class Scrypt {
         let pointer = B.assumingMemoryBound(to: UInt8.self)
         let bufferPointer = UnsafeBufferPointer(start: pointer, count: params.p * 128 * params.r)
         let block = [UInt8](bufferPointer)
-        return try PKCS5.PBKDF2(password: password, salt: block, iterations: 1, keyLength: params.dklen, variant: .sha256).calculate()
+        return try PKCS5.PBKDF2(password: password, salt: block, iterations: 1, keyLength: params.derivedKeyLength, variant: .sha256).calculate()
     }
 
     /// Computes `B = SMix_r(B, N)`.

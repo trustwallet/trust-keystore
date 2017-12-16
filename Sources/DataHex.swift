@@ -37,3 +37,13 @@ extension Data {
         return string
     }
 }
+
+extension KeyedDecodingContainerProtocol {
+    func decodeHexString(forKey key: Self.Key) throws -> Data {
+        let hexString = try decode(String.self, forKey: key)
+        guard let data = Data(hexString: hexString) else {
+            throw DecodingError.dataCorruptedError(forKey: key, in: self, debugDescription: "Expected hexadecimal string")
+        }
+        return data
+    }
+}
