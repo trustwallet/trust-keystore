@@ -4,5 +4,6 @@ target 'TrustKeystore' do
   use_frameworks!
   pod 'CryptoSwift'
 
+  target 'KeystoreBenchmark'
   target 'TrustKeystoreTests'
 end
