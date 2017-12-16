@@ -8,20 +8,35 @@
 
 /* Begin PBXBuildFile section */
 		6148DA601FE3950300D4C17D /* ScryptParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6148DA5F1FE3950300D4C17D /* ScryptParams.swift */; };
+		61C568EB1FE599CF00FC2F75 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C568EA1FE599CF00FC2F75 /* AppDelegate.swift */; };
+		61C568ED1FE599CF00FC2F75 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C568EC1FE599CF00FC2F75 /* ViewController.swift */; };
+		61C568F01FE599CF00FC2F75 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61C568EE1FE599CF00FC2F75 /* Main.storyboard */; };
+		61C568F21FE599CF00FC2F75 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61C568F11FE599CF00FC2F75 /* Assets.xcassets */; };
+		61C568F51FE599CF00FC2F75 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61C568F31FE599CF00FC2F75 /* LaunchScreen.storyboard */; };
+		61C568FA1FE599D900FC2F75 /* TrustKeystore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61FC58211FE2490E00FFC765 /* TrustKeystore.framework */; };
+		61C568FB1FE599D900FC2F75 /* TrustKeystore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 61FC58211FE2490E00FFC765 /* TrustKeystore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		61C569001FE5AB8000FC2F75 /* wallet.json in Resources */ = {isa = PBXBuildFile; fileRef = 61C568FF1FE5AB7F00FC2F75 /* wallet.json */; };
 		61FC582B1FE2490E00FFC765 /* TrustKeystore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61FC58211FE2490E00FFC765 /* TrustKeystore.framework */; };
 		61FC58471FE2496700FFC765 /* TrustKeystore.h in Headers */ = {isa = PBXBuildFile; fileRef = 61FC58411FE2495E00FFC765 /* TrustKeystore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		61FC58481FE2496C00FFC765 /* KeystoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58451FE2495E00FFC765 /* KeystoreTests.swift */; };
 		61FC584C1FE24A8C00FFC765 /* Keystore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC584B1FE24A8C00FFC765 /* Keystore.swift */; };
 		61FC584E1FE2B43000FFC765 /* DataHex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC584D1FE2B43000FFC765 /* DataHex.swift */; };
-		61FC58511FE2BD0100FFC765 /* wallet.json in Resources */ = {isa = PBXBuildFile; fileRef = 61FC584F1FE2BC3100FFC765 /* wallet.json */; };
 		61FC58531FE2BFF100FFC765 /* DataHexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58521FE2BFF100FFC765 /* DataHexTests.swift */; };
 		61FC58551FE2C39700FFC765 /* Scrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58541FE2C39700FFC765 /* Scrypt.swift */; };
 		61FC585D1FE3904600FFC765 /* ScryptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC585C1FE3904600FFC765 /* ScryptTests.swift */; };
 		742A3CD8CA3E56C74A3D84EF /* Pods_TrustKeystore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49CDD76074CC2CFEF09CAA54 /* Pods_TrustKeystore.framework */; };
+		F45B9EE7006B204F676FC2AA /* Pods_TrustKeystore_KeystoreBenchmark.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9A8CDAD6453D4708739B547 /* Pods_TrustKeystore_KeystoreBenchmark.framework */; };
 		F6A9F28E31D4DB81E7CA7F3F /* Pods_TrustKeystore_TrustKeystoreTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B87188CBD5FFF8EC1968F404 /* Pods_TrustKeystore_TrustKeystoreTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		61C568FC1FE599D900FC2F75 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 61FC58181FE2490E00FFC765 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 61FC58201FE2490E00FFC765;
+			remoteInfo = TrustKeystore;
+		};
 		61FC582C1FE2490E00FFC765 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 61FC58181FE2490E00FFC765 /* Project object */;
@@ -31,11 +46,33 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		61C568FE1FE599D900FC2F75 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				61C568FB1FE599D900FC2F75 /* TrustKeystore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0B9466DC8156D7FA54B43B6D /* Pods-TrustKeystore-TrustKeystoreTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrustKeystore-TrustKeystoreTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TrustKeystore-TrustKeystoreTests/Pods-TrustKeystore-TrustKeystoreTests.release.xcconfig"; sourceTree = "<group>"; };
 		17379EC78D11E0161D0E1307 /* Pods-TrustKeystore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrustKeystore.release.xcconfig"; path = "Pods/Target Support Files/Pods-TrustKeystore/Pods-TrustKeystore.release.xcconfig"; sourceTree = "<group>"; };
 		49CDD76074CC2CFEF09CAA54 /* Pods_TrustKeystore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TrustKeystore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6148DA5F1FE3950300D4C17D /* ScryptParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryptParams.swift; sourceTree = "<group>"; };
+		61C568E81FE599CF00FC2F75 /* KeystoreBenchmark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeystoreBenchmark.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		61C568EA1FE599CF00FC2F75 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		61C568EC1FE599CF00FC2F75 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		61C568EF1FE599CF00FC2F75 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		61C568F11FE599CF00FC2F75 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		61C568F41FE599CF00FC2F75 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		61C568F61FE599CF00FC2F75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		61C568FF1FE5AB7F00FC2F75 /* wallet.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wallet.json; sourceTree = "<group>"; };
 		61FC58211FE2490E00FFC765 /* TrustKeystore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TrustKeystore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		61FC582A1FE2490E00FFC765 /* TrustKeystoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrustKeystoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		61FC583F1FE2495E00FFC765 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -45,16 +82,27 @@
 		61FC58461FE2495E00FFC765 /* TestsInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TestsInfo.plist; sourceTree = "<group>"; };
 		61FC584B1FE24A8C00FFC765 /* Keystore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keystore.swift; sourceTree = "<group>"; };
 		61FC584D1FE2B43000FFC765 /* DataHex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHex.swift; sourceTree = "<group>"; };
-		61FC584F1FE2BC3100FFC765 /* wallet.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wallet.json; sourceTree = "<group>"; };
 		61FC58521FE2BFF100FFC765 /* DataHexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHexTests.swift; sourceTree = "<group>"; };
 		61FC58541FE2C39700FFC765 /* Scrypt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scrypt.swift; sourceTree = "<group>"; };
 		61FC585C1FE3904600FFC765 /* ScryptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryptTests.swift; sourceTree = "<group>"; };
+		8D3D60D6FA5E0FDA441C2464 /* Pods-TrustKeystore-KeystoreBenchmark.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrustKeystore-KeystoreBenchmark.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TrustKeystore-KeystoreBenchmark/Pods-TrustKeystore-KeystoreBenchmark.debug.xcconfig"; sourceTree = "<group>"; };
 		B87188CBD5FFF8EC1968F404 /* Pods_TrustKeystore_TrustKeystoreTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TrustKeystore_TrustKeystoreTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2AEC91B9F14D8140DBDCC2C /* Pods-TrustKeystore-TrustKeystoreTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrustKeystore-TrustKeystoreTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TrustKeystore-TrustKeystoreTests/Pods-TrustKeystore-TrustKeystoreTests.debug.xcconfig"; sourceTree = "<group>"; };
+		E9A8CDAD6453D4708739B547 /* Pods_TrustKeystore_KeystoreBenchmark.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TrustKeystore_KeystoreBenchmark.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F89F7E016E73C75E518A36B2 /* Pods-TrustKeystore.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrustKeystore.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TrustKeystore/Pods-TrustKeystore.debug.xcconfig"; sourceTree = "<group>"; };
+		FC8C566AA12572AEF59D1BA0 /* Pods-TrustKeystore-KeystoreBenchmark.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrustKeystore-KeystoreBenchmark.release.xcconfig"; path = "Pods/Target Support Files/Pods-TrustKeystore-KeystoreBenchmark/Pods-TrustKeystore-KeystoreBenchmark.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		61C568E51FE599CF00FC2F75 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61C568FA1FE599D900FC2F75 /* TrustKeystore.framework in Frameworks */,
+				F45B9EE7006B204F676FC2AA /* Pods_TrustKeystore_KeystoreBenchmark.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		61FC581D1FE2490E00FFC765 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -82,8 +130,23 @@
 				17379EC78D11E0161D0E1307 /* Pods-TrustKeystore.release.xcconfig */,
 				C2AEC91B9F14D8140DBDCC2C /* Pods-TrustKeystore-TrustKeystoreTests.debug.xcconfig */,
 				0B9466DC8156D7FA54B43B6D /* Pods-TrustKeystore-TrustKeystoreTests.release.xcconfig */,
+				8D3D60D6FA5E0FDA441C2464 /* Pods-TrustKeystore-KeystoreBenchmark.debug.xcconfig */,
+				FC8C566AA12572AEF59D1BA0 /* Pods-TrustKeystore-KeystoreBenchmark.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		61C568E91FE599CF00FC2F75 /* Benchmark */ = {
+			isa = PBXGroup;
+			children = (
+				61C568EA1FE599CF00FC2F75 /* AppDelegate.swift */,
+				61C568EC1FE599CF00FC2F75 /* ViewController.swift */,
+				61C568EE1FE599CF00FC2F75 /* Main.storyboard */,
+				61C568F11FE599CF00FC2F75 /* Assets.xcassets */,
+				61C568F31FE599CF00FC2F75 /* LaunchScreen.storyboard */,
+				61C568F61FE599CF00FC2F75 /* Info.plist */,
+			);
+			path = Benchmark;
 			sourceTree = "<group>";
 		};
 		61FC58171FE2490E00FFC765 = {
@@ -93,6 +156,7 @@
 				61FC58421FE2495E00FFC765 /* Metadata */,
 				61FC58401FE2495E00FFC765 /* Sources */,
 				61FC58441FE2495E00FFC765 /* Tests */,
+				61C568E91FE599CF00FC2F75 /* Benchmark */,
 				61FC58221FE2490E00FFC765 /* Products */,
 				124BD5EA35BBF064AD69D2DF /* Pods */,
 				CA87661540ADCE75A47829A8 /* Frameworks */,
@@ -104,6 +168,7 @@
 			children = (
 				61FC58211FE2490E00FFC765 /* TrustKeystore.framework */,
 				61FC582A1FE2490E00FFC765 /* TrustKeystoreTests.xctest */,
+				61C568E81FE599CF00FC2F75 /* KeystoreBenchmark.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -111,11 +176,11 @@
 		61FC58401FE2495E00FFC765 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				61FC58411FE2495E00FFC765 /* TrustKeystore.h */,
-				61FC584B1FE24A8C00FFC765 /* Keystore.swift */,
 				61FC584D1FE2B43000FFC765 /* DataHex.swift */,
+				61FC584B1FE24A8C00FFC765 /* Keystore.swift */,
 				61FC58541FE2C39700FFC765 /* Scrypt.swift */,
 				6148DA5F1FE3950300D4C17D /* ScryptParams.swift */,
+				61FC58411FE2495E00FFC765 /* TrustKeystore.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -132,7 +197,7 @@
 		61FC58441FE2495E00FFC765 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				61FC584F1FE2BC3100FFC765 /* wallet.json */,
+				61C568FF1FE5AB7F00FC2F75 /* wallet.json */,
 				61FC58521FE2BFF100FFC765 /* DataHexTests.swift */,
 				61FC58451FE2495E00FFC765 /* KeystoreTests.swift */,
 				61FC585C1FE3904600FFC765 /* ScryptTests.swift */,
@@ -145,6 +210,7 @@
 			children = (
 				49CDD76074CC2CFEF09CAA54 /* Pods_TrustKeystore.framework */,
 				B87188CBD5FFF8EC1968F404 /* Pods_TrustKeystore_TrustKeystoreTests.framework */,
+				E9A8CDAD6453D4708739B547 /* Pods_TrustKeystore_KeystoreBenchmark.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -163,6 +229,28 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		61C568E71FE599CF00FC2F75 /* KeystoreBenchmark */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 61C568F71FE599CF00FC2F75 /* Build configuration list for PBXNativeTarget "KeystoreBenchmark" */;
+			buildPhases = (
+				753738606A221C0BA458D986 /* [CP] Check Pods Manifest.lock */,
+				61C568E41FE599CF00FC2F75 /* Sources */,
+				61C568E51FE599CF00FC2F75 /* Frameworks */,
+				61C568E61FE599CF00FC2F75 /* Resources */,
+				61C568FE1FE599D900FC2F75 /* Embed Frameworks */,
+				96567C8A6F4786D624D0DAF2 /* [CP] Embed Pods Frameworks */,
+				13686547322A5F4BF867B586 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				61C568FD1FE599D900FC2F75 /* PBXTargetDependency */,
+			);
+			name = KeystoreBenchmark;
+			productName = KeystoreBenchmark;
+			productReference = 61C568E81FE599CF00FC2F75 /* KeystoreBenchmark.app */;
+			productType = "com.apple.product-type.application";
+		};
 		61FC58201FE2490E00FFC765 /* TrustKeystore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 61FC58351FE2490E00FFC765 /* Build configuration list for PBXNativeTarget "TrustKeystore" */;
@@ -214,6 +302,10 @@
 				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = Trust;
 				TargetAttributes = {
+					61C568E71FE599CF00FC2F75 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
 					61FC58201FE2490E00FFC765 = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 0920;
@@ -231,6 +323,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 61FC58171FE2490E00FFC765;
 			productRefGroup = 61FC58221FE2490E00FFC765 /* Products */;
@@ -239,11 +332,22 @@
 			targets = (
 				61FC58201FE2490E00FFC765 /* TrustKeystore */,
 				61FC58291FE2490E00FFC765 /* TrustKeystoreTests */,
+				61C568E71FE599CF00FC2F75 /* KeystoreBenchmark */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		61C568E61FE599CF00FC2F75 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61C568F51FE599CF00FC2F75 /* LaunchScreen.storyboard in Resources */,
+				61C568F21FE599CF00FC2F75 /* Assets.xcassets in Resources */,
+				61C568F01FE599CF00FC2F75 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		61FC581F1FE2490E00FFC765 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -255,13 +359,28 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				61FC58511FE2BD0100FFC765 /* wallet.json in Resources */,
+				61C569001FE5AB8000FC2F75 /* wallet.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		13686547322A5F4BF867B586 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TrustKeystore-KeystoreBenchmark/Pods-TrustKeystore-KeystoreBenchmark-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		682878827DE0FBE9361CB1D8 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -274,6 +393,24 @@
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-TrustKeystore-TrustKeystoreTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		753738606A221C0BA458D986 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TrustKeystore-KeystoreBenchmark-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -293,6 +430,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TrustKeystore-TrustKeystoreTests/Pods-TrustKeystore-TrustKeystoreTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		96567C8A6F4786D624D0DAF2 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-TrustKeystore-KeystoreBenchmark/Pods-TrustKeystore-KeystoreBenchmark-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TrustKeystore-KeystoreBenchmark/Pods-TrustKeystore-KeystoreBenchmark-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		98CF816F8608DAEBC0EC68F7 /* [CP] Copy Pods Resources */ = {
@@ -349,6 +504,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		61C568E41FE599CF00FC2F75 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61C568ED1FE599CF00FC2F75 /* ViewController.swift in Sources */,
+				61C568EB1FE599CF00FC2F75 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		61FC581C1FE2490E00FFC765 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -373,6 +537,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		61C568FD1FE599D900FC2F75 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 61FC58201FE2490E00FFC765 /* TrustKeystore */;
+			targetProxy = 61C568FC1FE599D900FC2F75 /* PBXContainerItemProxy */;
+		};
 		61FC582D1FE2490E00FFC765 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 61FC58201FE2490E00FFC765 /* TrustKeystore */;
@@ -380,7 +549,58 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		61C568EE1FE599CF00FC2F75 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				61C568EF1FE599CF00FC2F75 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		61C568F31FE599CF00FC2F75 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				61C568F41FE599CF00FC2F75 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		61C568F81FE599CF00FC2F75 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8D3D60D6FA5E0FDA441C2464 /* Pods-TrustKeystore-KeystoreBenchmark.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = Benchmark/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.trustwalletapp.KeystoreBenchmark;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		61C568F91FE599CF00FC2F75 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FC8C566AA12572AEF59D1BA0 /* Pods-TrustKeystore-KeystoreBenchmark.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = Benchmark/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.trustwalletapp.KeystoreBenchmark;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		61FC58331FE2490E00FFC765 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -511,7 +731,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.trustwalletapp.TrustKeystore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -570,6 +790,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		61C568F71FE599CF00FC2F75 /* Build configuration list for PBXNativeTarget "KeystoreBenchmark" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				61C568F81FE599CF00FC2F75 /* Debug */,
+				61C568F91FE599CF00FC2F75 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		61FC581B1FE2490E00FFC765 /* Build configuration list for PBXProject "TrustKeystore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
