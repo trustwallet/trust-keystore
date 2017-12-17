@@ -17,6 +17,7 @@
 		61C568FB1FE599D900FC2F75 /* TrustKeystore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 61FC58211FE2490E00FFC765 /* TrustKeystore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		61C569001FE5AB8000FC2F75 /* wallet.json in Resources */ = {isa = PBXBuildFile; fileRef = 61C568FF1FE5AB7F00FC2F75 /* wallet.json */; };
 		61C569021FE5B8D800FC2F75 /* KeyHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C569011FE5B8D800FC2F75 /* KeyHeader.swift */; };
+		61C569071FE6497C00FC2F75 /* Secp256k1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C569061FE6497C00FC2F75 /* Secp256k1.swift */; };
 		61FC582B1FE2490E00FFC765 /* TrustKeystore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61FC58211FE2490E00FFC765 /* TrustKeystore.framework */; };
 		61FC58471FE2496700FFC765 /* TrustKeystore.h in Headers */ = {isa = PBXBuildFile; fileRef = 61FC58411FE2495E00FFC765 /* TrustKeystore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		61FC58481FE2496C00FFC765 /* KeystoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58451FE2495E00FFC765 /* KeystoreTests.swift */; };
@@ -75,6 +76,7 @@
 		61C568F61FE599CF00FC2F75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61C568FF1FE5AB7F00FC2F75 /* wallet.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wallet.json; sourceTree = "<group>"; };
 		61C569011FE5B8D800FC2F75 /* KeyHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyHeader.swift; sourceTree = "<group>"; };
+		61C569061FE6497C00FC2F75 /* Secp256k1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secp256k1.swift; sourceTree = "<group>"; };
 		61FC58211FE2490E00FFC765 /* TrustKeystore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TrustKeystore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		61FC582A1FE2490E00FFC765 /* TrustKeystoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrustKeystoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		61FC583F1FE2495E00FFC765 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 				61FC584B1FE24A8C00FFC765 /* Keystore.swift */,
 				61FC58541FE2C39700FFC765 /* Scrypt.swift */,
 				6148DA5F1FE3950300D4C17D /* ScryptParams.swift */,
+				61C569061FE6497C00FC2F75 /* Secp256k1.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -443,10 +446,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-TrustKeystore-KeystoreBenchmark/Pods-TrustKeystore-KeystoreBenchmark-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/secp256k1/secp256k1.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/secp256k1.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -494,10 +499,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-TrustKeystore-TrustKeystoreTests/Pods-TrustKeystore-TrustKeystoreTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/secp256k1/secp256k1.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/secp256k1.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -522,6 +529,7 @@
 			files = (
 				61FC58551FE2C39700FFC765 /* Scrypt.swift in Sources */,
 				61FC584C1FE24A8C00FFC765 /* Keystore.swift in Sources */,
+				61C569071FE6497C00FC2F75 /* Secp256k1.swift in Sources */,
 				6148DA601FE3950300D4C17D /* ScryptParams.swift in Sources */,
 				61C569021FE5B8D800FC2F75 /* KeyHeader.swift in Sources */,
 				61FC584E1FE2B43000FFC765 /* DataHex.swift in Sources */,

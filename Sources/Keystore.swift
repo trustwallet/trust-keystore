@@ -6,6 +6,7 @@
 
 import CryptoSwift
 import Foundation
+import secp256k1
 
 /// Keystore wallet definition.
 public struct Keystore: Codable {
@@ -51,7 +52,16 @@ public struct Keystore: Codable {
 
         crypto = KeyHeader(cipherText: Data(bytes: encryptedKey), cipherParams: cipherParams, kdfParams: kdfParams, mac: mac)
 
-        // TODO: use SECP256K1 to extract ethereum address form `key`
+        let pubKey = Secp256k1.shared.pubicKey(from: key)
+        address = Keystore.decodeAddress(from: pubKey).hexString
+    }
+
+    /// Decodes an Ethereum address from a public key.
+    static func decodeAddress(from publicKey: Data) -> Data {
+        precondition(publicKey.count == 65, "Expect 64-byte public key")
+        precondition(publicKey[0] == 4, "Invalid public key")
+        let sha3 = publicKey[1...].sha3(.keccak256)
+        return sha3[12..<32]
     }
 
     /// Decrypts the keystore and returns the private key.

@@ -47,6 +47,12 @@ class TrustKeystoreTests: XCTestCase {
         XCTAssertEqual(key.hexString, "7a28b5ba57c53603b0b07b56bba752f7784bf506fa95edc395f5cf6c7514fe9d")
     }
 
+    func testSetAddress() {
+        let key = Data(hexString: "7a28b5ba57c53603b0b07b56bba752f7784bf506fa95edc395f5cf6c7514fe9d")!
+        let keystore = try! Keystore(password: "testpassword", key: key)
+        XCTAssertEqual(keystore.address, "008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
+    }
+
     func testCreateWallet() {
         let key = Data(hexString: "3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266")!
         let keystore = try! Keystore(password: "password", key: key)
