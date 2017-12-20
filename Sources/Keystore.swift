@@ -102,6 +102,18 @@ public struct Keystore: Codable {
         data.append(key)
         return data.sha3(.keccak256)
     }
+
+    /// Signs a hash with the given password.
+    ///
+    /// - Parameters:
+    ///   - hash: hash to sign
+    ///   - password: keystore password
+    /// - Returns: signature
+    /// - Throws: `DecryptError` or `Secp256k1Error`
+    public func sign(hash: Data, password: String) throws -> Data {
+        let key = try decrypt(password: password)
+        return try Secp256k1.shared.sign(hash: hash, privateKey: key)
+    }
 }
 
 public enum DecryptError: Error {

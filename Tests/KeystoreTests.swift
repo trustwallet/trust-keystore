@@ -59,4 +59,14 @@ class TrustKeystoreTests: XCTestCase {
         let decrypted = try! keystore.decrypt(password: "password")
         XCTAssertEqual(decrypted.hexString, key.hexString)
     }
+
+    func testSignHash() {
+        let key = Data(hexString: "D30519BCAE8D180DBFCC94FE0B8383DC310185B0BE97B4365083EBCECCD75759")!
+        let keystore = try! Keystore(password: "password", key: key)
+        let hash = Data(hexString: "3F891FDA3704F0368DAB65FA81EBE616F4AA2A0854995DA4DC0B59D2CADBD64F")!
+        let result = try! keystore.sign(hash: hash, password: "password")
+
+        let publicKey = Secp256k1.shared.pubicKey(from: key)
+        XCTAssertTrue(try Secp256k1.shared.verify(signature: result, message: hash, publicKey: publicKey))
+    }
 }
