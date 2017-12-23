@@ -4,8 +4,8 @@ A general-purpose Ethereum keystore for managing wallets. This is part of the [T
 
 - [x] Creating new wallets from a private key
 - [x] Loading JSON wallet files
-- [ ] Loading BIP39 mnemonic phrase backups
-- [ ] Signing transactions
+- [x] Loading BIP39 mnemonic phrase backups
+- [x] Signing hashes
 
 
 ---
