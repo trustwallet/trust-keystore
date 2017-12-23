@@ -7,6 +7,7 @@
 import Foundation
 
 public final class Mnemonic {
+    /// Encodes a message using a list of words.
     public static func encode(message: String) -> [String] {
         var out = [String]()
         let n = UInt(mnemonicWords.count)
@@ -26,6 +27,7 @@ public final class Mnemonic {
         return out
     }
 
+    /// Decodes a message from a list of words.
     public static func decode(words: [String]) -> String? {
         var out = ""
         let n = mnemonicWords.count
