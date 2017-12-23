@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		6148DA601FE3950300D4C17D /* ScryptParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6148DA5F1FE3950300D4C17D /* ScryptParams.swift */; };
+		6152D4AF1FEEC92300DE7978 /* MnemonicWords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6152D4AE1FEEC92300DE7978 /* MnemonicWords.swift */; };
+		6152D4B11FEEC98500DE7978 /* Mnemonic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6152D4B01FEEC98500DE7978 /* Mnemonic.swift */; };
+		6152D4B31FEECF0000DE7978 /* MnemonicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6152D4B21FEECF0000DE7978 /* MnemonicTests.swift */; };
 		61C568EB1FE599CF00FC2F75 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C568EA1FE599CF00FC2F75 /* AppDelegate.swift */; };
 		61C568ED1FE599CF00FC2F75 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C568EC1FE599CF00FC2F75 /* ViewController.swift */; };
 		61C568F01FE599CF00FC2F75 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61C568EE1FE599CF00FC2F75 /* Main.storyboard */; };
@@ -67,6 +70,9 @@
 		17379EC78D11E0161D0E1307 /* Pods-TrustKeystore.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrustKeystore.release.xcconfig"; path = "Pods/Target Support Files/Pods-TrustKeystore/Pods-TrustKeystore.release.xcconfig"; sourceTree = "<group>"; };
 		49CDD76074CC2CFEF09CAA54 /* Pods_TrustKeystore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TrustKeystore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6148DA5F1FE3950300D4C17D /* ScryptParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryptParams.swift; sourceTree = "<group>"; };
+		6152D4AE1FEEC92300DE7978 /* MnemonicWords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MnemonicWords.swift; sourceTree = "<group>"; };
+		6152D4B01FEEC98500DE7978 /* Mnemonic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mnemonic.swift; sourceTree = "<group>"; };
+		6152D4B21FEECF0000DE7978 /* MnemonicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MnemonicTests.swift; sourceTree = "<group>"; };
 		61C568E81FE599CF00FC2F75 /* KeystoreBenchmark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeystoreBenchmark.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		61C568EA1FE599CF00FC2F75 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		61C568EC1FE599CF00FC2F75 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -184,6 +190,8 @@
 				61FC584D1FE2B43000FFC765 /* DataHex.swift */,
 				61C569011FE5B8D800FC2F75 /* KeyHeader.swift */,
 				61FC584B1FE24A8C00FFC765 /* Keystore.swift */,
+				6152D4B01FEEC98500DE7978 /* Mnemonic.swift */,
+				6152D4AE1FEEC92300DE7978 /* MnemonicWords.swift */,
 				61FC58541FE2C39700FFC765 /* Scrypt.swift */,
 				6148DA5F1FE3950300D4C17D /* ScryptParams.swift */,
 				61C569061FE6497C00FC2F75 /* Secp256k1.swift */,
@@ -206,6 +214,7 @@
 				61C568FF1FE5AB7F00FC2F75 /* wallet.json */,
 				61FC58521FE2BFF100FFC765 /* DataHexTests.swift */,
 				61FC58451FE2495E00FFC765 /* KeystoreTests.swift */,
+				6152D4B21FEECF0000DE7978 /* MnemonicTests.swift */,
 				61FC585C1FE3904600FFC765 /* ScryptTests.swift */,
 			);
 			path = Tests;
@@ -533,6 +542,8 @@
 				6148DA601FE3950300D4C17D /* ScryptParams.swift in Sources */,
 				61C569021FE5B8D800FC2F75 /* KeyHeader.swift in Sources */,
 				61FC584E1FE2B43000FFC765 /* DataHex.swift in Sources */,
+				6152D4AF1FEEC92300DE7978 /* MnemonicWords.swift in Sources */,
+				6152D4B11FEEC98500DE7978 /* Mnemonic.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,6 +554,7 @@
 				61FC58481FE2496C00FFC765 /* KeystoreTests.swift in Sources */,
 				61FC585D1FE3904600FFC765 /* ScryptTests.swift in Sources */,
 				61FC58531FE2BFF100FFC765 /* DataHexTests.swift in Sources */,
+				6152D4B31FEECF0000DE7978 /* MnemonicTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
