@@ -14,7 +14,7 @@ class ScryptTests: XCTestCase {
         params.n = 1024
         params.r = 8
         params.p = 16
-        params.derivedKeyLength = 64
+        params.desiredKeyLength = 64
         params.salt = "NaCl".data(using: .utf8)!
 
         let scrypt = Scrypt(params: params)
@@ -29,7 +29,7 @@ class ScryptTests: XCTestCase {
         params.n = 16384
         params.r = 8
         params.p = 1
-        params.derivedKeyLength = 64
+        params.desiredKeyLength = 64
         params.salt = "SodiumChloride".data(using: .utf8)!
 
         let scrypt = Scrypt(params: params)
@@ -44,7 +44,7 @@ class ScryptTests: XCTestCase {
         params.n = 262144
         params.r = 1
         params.p = 8
-        params.derivedKeyLength = 32
+        params.desiredKeyLength = 32
         params.salt = Data(hexString: "ab0c7876052600dd703518d6fc3fe8984592145b591fc8fb5c6d43190334ba19")!
 
         let scrypt = Scrypt(params: params)
@@ -56,7 +56,7 @@ class ScryptTests: XCTestCase {
 
     func testInvalidDesiredKeyLength() {
         let dklen = ((1 << 32) - 1) * 32 + 1
-        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 1024, r: 1, p: 1, derivedKeyLength: dklen)) { error in
+        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 1024, r: 1, p: 1, desiredKeyLength: dklen)) { error in
             if case ScryptParams.ValidationError.desiredKeyLengthTooLarge = error {} else {
                 XCTFail("Invalid error generated: \(error)")
             }
@@ -64,7 +64,7 @@ class ScryptTests: XCTestCase {
     }
 
     func testZeroCostInvalid() {
-        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 0, r: 1, p: 1, derivedKeyLength: 64)) { error in
+        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 0, r: 1, p: 1, desiredKeyLength: 64)) { error in
             if case ScryptParams.ValidationError.invalidCostFactor = error {} else {
                 XCTFail("Invalid error generated: \(error)")
             }
@@ -72,7 +72,7 @@ class ScryptTests: XCTestCase {
     }
 
     func testOddCostInvalid() {
-        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 3, r: 1, p: 1, derivedKeyLength: 64)) { error in
+        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 3, r: 1, p: 1, desiredKeyLength: 64)) { error in
             if case ScryptParams.ValidationError.invalidCostFactor = error {} else {
                 XCTFail("Invalid error generated: \(error)")
             }
@@ -80,7 +80,7 @@ class ScryptTests: XCTestCase {
     }
 
     func testLargeCostInvalid() {
-        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: Int.max / 128, r: 8, p: 1, derivedKeyLength: 64)) { error in
+        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: Int.max / 128, r: 8, p: 1, desiredKeyLength: 64)) { error in
             if case ScryptParams.ValidationError.invalidCostFactor = error {} else {
                 XCTFail("Invalid error generated: \(error)")
             }
@@ -88,7 +88,7 @@ class ScryptTests: XCTestCase {
     }
 
     func testLargeBlockSizeInvalid() {
-        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 1024, r: Int.max / 128 + 1, p: 1, derivedKeyLength: 64)) { error in
+        XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 1024, r: Int.max / 128 + 1, p: 1, desiredKeyLength: 64)) { error in
             if case ScryptParams.ValidationError.blockSizeTooLarge = error {} else {
                 XCTFail("Invalid error generated: \(error)")
             }

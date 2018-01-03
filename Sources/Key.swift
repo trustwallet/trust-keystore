@@ -8,8 +8,8 @@ import CryptoSwift
 import Foundation
 import secp256k1
 
-/// Keystore wallet definition.
-public struct Keystore: Codable {
+/// Key definition.
+public struct Key: Codable {
     /// Ethereum address, optional.
     public var address: String?
 
@@ -19,21 +19,21 @@ public struct Keystore: Codable {
     /// Key header with encrypted private key and crypto parameters.
     public var crypto: KeyHeader
 
-    /// Keystore version, must be 3.
+    /// Key version, must be 3.
     public var version = 3
 
-    /// Initializes a `Keystore` with a crypto header.
+    /// Initializes a `Key` with a crypto header.
     public init(header: KeyHeader) {
         self.crypto = header
     }
 
-    /// Initializes a `Keystore` from a JSON wallet.
+    /// Initializes a `Key` from a JSON wallet.
     public init(contentsOf url: URL) throws {
         let data = try Data(contentsOf: url)
-        self = try JSONDecoder().decode(Keystore.self, from: data)
+        self = try JSONDecoder().decode(Key.self, from: data)
     }
 
-    /// Initializes a `Keystore` by encrypting a private key with a password.
+    /// Initializes a `Key` by encrypting a private key with a password.
     public init(password: String, key: Data) throws {
         id = UUID().uuidString.lowercased()
 
@@ -48,12 +48,12 @@ public struct Keystore: Codable {
 
         let encryptedKey = try aecCipher.encrypt(key.bytes)
         let prefix = derivedKey[(derivedKey.count - 16) ..< derivedKey.count]
-        let mac = Keystore.computeMAC(prefix: prefix, key: Data(bytes: encryptedKey))
+        let mac = Key.computeMAC(prefix: prefix, key: Data(bytes: encryptedKey))
 
         crypto = KeyHeader(cipherText: Data(bytes: encryptedKey), cipherParams: cipherParams, kdfParams: kdfParams, mac: mac)
 
         let pubKey = Secp256k1.shared.pubicKey(from: key)
-        address = Keystore.decodeAddress(from: pubKey).hexString
+        address = Key.decodeAddress(from: pubKey).hexString
     }
 
     /// Decodes an Ethereum address from a public key.
@@ -64,7 +64,7 @@ public struct Keystore: Codable {
         return sha3[12..<32]
     }
 
-    /// Decrypts the keystore and returns the private key.
+    /// Decrypts the key and returns the private key.
     public func decrypt(password: String) throws -> Data {
         let derivedKey: Data
         switch crypto.kdf {
@@ -75,7 +75,7 @@ public struct Keystore: Codable {
             throw DecryptError.unsupportedKDF
         }
 
-        let mac = Keystore.computeMAC(prefix: derivedKey[derivedKey.count - 16 ..< derivedKey.count], key: crypto.cipherText)
+        let mac = Key.computeMAC(prefix: derivedKey[derivedKey.count - 16 ..< derivedKey.count], key: crypto.cipherText)
         if mac != crypto.mac {
             throw DecryptError.invalidPassword
         }
@@ -107,12 +107,32 @@ public struct Keystore: Codable {
     ///
     /// - Parameters:
     ///   - hash: hash to sign
-    ///   - password: keystore password
+    ///   - password: key password
     /// - Returns: signature
     /// - Throws: `DecryptError` or `Secp256k1Error`
     public func sign(hash: Data, password: String) throws -> Data {
         let key = try decrypt(password: password)
         return try Secp256k1.shared.sign(hash: hash, privateKey: key)
+    }
+
+    /// Generates a unique file name for this key.
+    public func generateFileName(date: Date = Date(), timeZone: TimeZone = .current) -> String {
+        // keyFileName implements the naming convention for keyfiles:
+        // UTC--<created_at UTC ISO8601>-<address hex>
+        return "UTC--\(filenameTimestamp(for: date, in: timeZone))--\(address ?? "")"
+    }
+
+    private func filenameTimestamp(for date: Date, in timeZone: TimeZone = .current) -> String {
+        var tz = ""
+        let offset = timeZone.secondsFromGMT()
+        if offset == 0 {
+            tz = "Z"
+        } else {
+            tz = String(format: "%03d00", offset/60)
+        }
+
+        let components = Calendar(identifier: .iso8601).dateComponents(in: timeZone, from: date)
+        return String(format: "%04d-%02d-%02dT%02d-%02d-%02d.%09d%@", components.year!, components.month!, components.day!, components.hour!, components.minute!, components.second!, components.nanosecond!, tz)
     }
 }
 
