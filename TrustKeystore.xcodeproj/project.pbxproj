@@ -23,8 +23,8 @@
 		61C569071FE6497C00FC2F75 /* Secp256k1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C569061FE6497C00FC2F75 /* Secp256k1.swift */; };
 		61FC582B1FE2490E00FFC765 /* TrustKeystore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61FC58211FE2490E00FFC765 /* TrustKeystore.framework */; };
 		61FC58471FE2496700FFC765 /* TrustKeystore.h in Headers */ = {isa = PBXBuildFile; fileRef = 61FC58411FE2495E00FFC765 /* TrustKeystore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		61FC58481FE2496C00FFC765 /* KeystoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58451FE2495E00FFC765 /* KeystoreTests.swift */; };
-		61FC584C1FE24A8C00FFC765 /* Keystore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC584B1FE24A8C00FFC765 /* Keystore.swift */; };
+		61FC58481FE2496C00FFC765 /* KeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58451FE2495E00FFC765 /* KeyTests.swift */; };
+		61FC584C1FE24A8C00FFC765 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC584B1FE24A8C00FFC765 /* Key.swift */; };
 		61FC584E1FE2B43000FFC765 /* DataHex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC584D1FE2B43000FFC765 /* DataHex.swift */; };
 		61FC58531FE2BFF100FFC765 /* DataHexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58521FE2BFF100FFC765 /* DataHexTests.swift */; };
 		61FC58551FE2C39700FFC765 /* Scrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58541FE2C39700FFC765 /* Scrypt.swift */; };
@@ -88,9 +88,9 @@
 		61FC583F1FE2495E00FFC765 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		61FC58411FE2495E00FFC765 /* TrustKeystore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrustKeystore.h; sourceTree = "<group>"; };
 		61FC58431FE2495E00FFC765 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		61FC58451FE2495E00FFC765 /* KeystoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeystoreTests.swift; sourceTree = "<group>"; };
+		61FC58451FE2495E00FFC765 /* KeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyTests.swift; sourceTree = "<group>"; };
 		61FC58461FE2495E00FFC765 /* TestsInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TestsInfo.plist; sourceTree = "<group>"; };
-		61FC584B1FE24A8C00FFC765 /* Keystore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keystore.swift; sourceTree = "<group>"; };
+		61FC584B1FE24A8C00FFC765 /* Key.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		61FC584D1FE2B43000FFC765 /* DataHex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHex.swift; sourceTree = "<group>"; };
 		61FC58521FE2BFF100FFC765 /* DataHexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHexTests.swift; sourceTree = "<group>"; };
 		61FC58541FE2C39700FFC765 /* Scrypt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scrypt.swift; sourceTree = "<group>"; };
@@ -189,7 +189,7 @@
 				61FC58411FE2495E00FFC765 /* TrustKeystore.h */,
 				61FC584D1FE2B43000FFC765 /* DataHex.swift */,
 				61C569011FE5B8D800FC2F75 /* KeyHeader.swift */,
-				61FC584B1FE24A8C00FFC765 /* Keystore.swift */,
+				61FC584B1FE24A8C00FFC765 /* Key.swift */,
 				6152D4B01FEEC98500DE7978 /* Mnemonic.swift */,
 				6152D4AE1FEEC92300DE7978 /* MnemonicWords.swift */,
 				61FC58541FE2C39700FFC765 /* Scrypt.swift */,
@@ -213,7 +213,7 @@
 			children = (
 				61C568FF1FE5AB7F00FC2F75 /* wallet.json */,
 				61FC58521FE2BFF100FFC765 /* DataHexTests.swift */,
-				61FC58451FE2495E00FFC765 /* KeystoreTests.swift */,
+				61FC58451FE2495E00FFC765 /* KeyTests.swift */,
 				6152D4B21FEECF0000DE7978 /* MnemonicTests.swift */,
 				61FC585C1FE3904600FFC765 /* ScryptTests.swift */,
 			);
@@ -537,7 +537,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				61FC58551FE2C39700FFC765 /* Scrypt.swift in Sources */,
-				61FC584C1FE24A8C00FFC765 /* Keystore.swift in Sources */,
+				61FC584C1FE24A8C00FFC765 /* Key.swift in Sources */,
 				61C569071FE6497C00FC2F75 /* Secp256k1.swift in Sources */,
 				6148DA601FE3950300D4C17D /* ScryptParams.swift in Sources */,
 				61C569021FE5B8D800FC2F75 /* KeyHeader.swift in Sources */,
@@ -551,7 +551,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				61FC58481FE2496C00FFC765 /* KeystoreTests.swift in Sources */,
+				61FC58481FE2496C00FFC765 /* KeyTests.swift in Sources */,
 				61FC585D1FE3904600FFC765 /* ScryptTests.swift in Sources */,
 				61FC58531FE2BFF100FFC765 /* DataHexTests.swift in Sources */,
 				6152D4B31FEECF0000DE7978 /* MnemonicTests.swift in Sources */,

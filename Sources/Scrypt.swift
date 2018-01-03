@@ -71,7 +71,7 @@ public final class Scrypt {
         let pointer = B.assumingMemoryBound(to: UInt8.self)
         let bufferPointer = UnsafeBufferPointer(start: pointer, count: params.p * 128 * params.r)
         let block = [UInt8](bufferPointer)
-        return try PKCS5.PBKDF2(password: password, salt: block, iterations: 1, keyLength: params.derivedKeyLength, variant: .sha256).calculate()
+        return try PKCS5.PBKDF2(password: password, salt: block, iterations: 1, keyLength: params.desiredKeyLength, variant: .sha256).calculate()
     }
 
     /// Computes `B = SMix_r(B, N)`.

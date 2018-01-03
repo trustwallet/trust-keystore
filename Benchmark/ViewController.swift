@@ -38,10 +38,10 @@ class ViewController: UIViewController {
 
     func run() {
         log("Creating keystore ")
-        let key = Data(hexString: "3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266")!
-        let keystore = try! Keystore(password: "password", key: key)
+        let privateKey = Data(hexString: "3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266")!
+        let key = try! Key(password: "password", key: privateKey)
         log("Decrypting keystore")
-        let decrypted = try! keystore.decrypt(password: "password")
+        let decrypted = try! key.decrypt(password: "password")
         log("Finished")
     }
 
