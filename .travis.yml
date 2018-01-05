@@ -1,0 +1,18 @@
+language: swift
+osx_image: xcode9.2
+
+cache:
+  - cocoapods
+  - bundler
+
+before_install:
+  - pod install --repo-update
+  - brew update
+  - brew install swiftlint || true
+
+script:
+  - set -o pipefail
+  - xcodebuild clean test -workspace TrustKeystore.xcworkspace -scheme "TrustKeystore" -destination 'platform=iOS Simulator,name=iPhone 8'
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
