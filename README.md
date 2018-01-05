@@ -1,7 +1,7 @@
 # Trust Keystore
 
 [![Build Status](https://travis-ci.org/TrustWallet/trust-keystore.svg?branch=master)](https://travis-ci.org/TrustWallet/trust-keystore)
-[![License](https://img.shields.io/badge/license-GPL3-green.svg?style=flat)](https://github.com/fastlane/fastlane/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-GPL3-green.svg?style=flat)](https://github.com/TrustWallet/trust-keystore/blob/master/LICENSE)
 
 A general-purpose Ethereum keystore for managing wallets. This is part of the [Trust Ethereum Wallet for iOS](https://github.com/TrustWallet/trust-wallet-ios), but can be used standalone. It supports:
 
@@ -34,4 +34,4 @@ behavior violating this base foundation of respect.
 
 ## License
 
-Trust Keystore is available under the GNU GPL. See the LICENSE file for more info.
+Trust Keystore is available under the GNU GPL. See the [LICENSE](https://github.com/TrustWallet/trust-keystore/blob/master/LICENSE) file for more info.
