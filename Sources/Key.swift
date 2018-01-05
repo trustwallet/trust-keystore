@@ -10,7 +10,8 @@ import secp256k1
 import Security
 
 /// Key definition.
-public struct Key: Codable {
+public struct Key
+{
     /// Ethereum address.
     public var address: Data
 
@@ -46,7 +47,6 @@ public struct Key: Codable {
             fatalError("Failed to extract new private key")
         }
         let key = keyRepresentation[(keyRepresentation.count - 32)...]
-        print(key.hexString, key.count)
         try self.init(password: password, key: key)
     }
 
@@ -164,4 +164,29 @@ public enum DecryptError: Error {
     case unsupportedCipher
     case invalidCipher
     case invalidPassword
+}
+
+extension Key: Codable {
+    enum CodingKeys: String, CodingKey {
+        case address
+        case id
+        case crypto
+        case version
+    }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        address = try values.decodeHexString(forKey: .address)
+        id = try values.decode(String.self, forKey: .id)
+        crypto = try values.decode(KeyHeader.self, forKey: .crypto)
+        version = try values.decode(Int.self, forKey: .version)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(address.hexString, forKey: .address)
+        try container.encode(id, forKey: .id)
+        try container.encode(crypto, forKey: .crypto)
+        try container.encode(version, forKey: .version)
+    }
 }

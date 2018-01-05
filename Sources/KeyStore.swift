@@ -22,7 +22,7 @@ public final class KeyStore {
         for url in accountURLs {
             do {
                 let key = try Key(contentsOf: url)
-                let account = Account(address: key.address, url: url, key: key)
+                let account = Account(key: key, url: url)
                 accountsByAddress[key.address] = account
             } catch {
                 // Ignore invalid keys
@@ -34,9 +34,8 @@ public final class KeyStore {
     @available(iOS 10.0, *)
     public func createAccount(password: String) throws -> Account {
         let key = try Key(password: password)
-        let fileName = key.generateFileName()
-        let url = keydir.appendingPathComponent(fileName)
-        let account = Account(address: key.address, url: url, key: key)
+        let account = Account(key: key)
+        try account.save(in: keydir)
         accountsByAddress[key.address] = account
         return account
     }
