@@ -7,11 +7,12 @@
 import CryptoSwift
 import Foundation
 import secp256k1
+import Security
 
 /// Key definition.
 public struct Key: Codable {
-    /// Ethereum address, optional.
-    public var address: String?
+    /// Ethereum address.
+    public var address: Data
 
     /// Wallet UUID, optional.
     public var id: String?
@@ -22,9 +23,31 @@ public struct Key: Codable {
     /// Key version, must be 3.
     public var version = 3
 
-    /// Initializes a `Key` with a crypto header.
-    public init(header: KeyHeader) {
-        self.crypto = header
+    /// Creates a new `Key` with a password.
+    @available(iOS 10.0, *)
+    public init(password: String) throws {
+        let privateAttributes: [String: Any] = [
+            kSecAttrIsExtractable as String: true
+        ]
+        let parameters: [String: Any] = [
+            kSecAttrKeyType as String: kSecAttrKeyTypeEC,
+            kSecAttrKeySizeInBits as String: 256,
+            kSecPrivateKeyAttrs as String: privateAttributes,
+        ]
+
+        var pubKey: SecKey?
+        var privKey: SecKey?
+        let status = SecKeyGeneratePair(parameters as CFDictionary, &pubKey, &privKey)
+        guard let privateKey = privKey, status == noErr else {
+            fatalError("Failed to generate key pair")
+        }
+
+        guard let keyRepresentation = SecKeyCopyExternalRepresentation(privateKey, nil) as Data? else {
+            fatalError("Failed to extract new private key")
+        }
+        let key = keyRepresentation[(keyRepresentation.count - 32)...]
+        print(key.hexString, key.count)
+        try self.init(password: password, key: key)
     }
 
     /// Initializes a `Key` from a JSON wallet.
@@ -53,7 +76,7 @@ public struct Key: Codable {
         crypto = KeyHeader(cipherText: Data(bytes: encryptedKey), cipherParams: cipherParams, kdfParams: kdfParams, mac: mac)
 
         let pubKey = Secp256k1.shared.pubicKey(from: key)
-        address = Key.decodeAddress(from: pubKey).hexString
+        address = Key.decodeAddress(from: pubKey)
     }
 
     /// Decodes an Ethereum address from a public key.
@@ -119,7 +142,7 @@ public struct Key: Codable {
     public func generateFileName(date: Date = Date(), timeZone: TimeZone = .current) -> String {
         // keyFileName implements the naming convention for keyfiles:
         // UTC--<created_at UTC ISO8601>-<address hex>
-        return "UTC--\(filenameTimestamp(for: date, in: timeZone))--\(address ?? "")"
+        return "UTC--\(filenameTimestamp(for: date, in: timeZone))--\(address.hexString)"
     }
 
     private func filenameTimestamp(for date: Date, in timeZone: TimeZone = .current) -> String {
