@@ -6,6 +6,8 @@
 
 import Foundation
 
+// swiftlint:disable file_length
+
 let mnemonicWords: [String] = [
     "like",
     "just",

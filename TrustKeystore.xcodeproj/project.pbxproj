@@ -282,6 +282,7 @@
 				61FC581E1FE2490E00FFC765 /* Headers */,
 				61FC581F1FE2490E00FFC765 /* Resources */,
 				98CF816F8608DAEBC0EC68F7 /* [CP] Copy Pods Resources */,
+				61DCE1691FFF50810053939F /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -400,6 +401,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TrustKeystore-KeystoreBenchmark/Pods-TrustKeystore-KeystoreBenchmark-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		61DCE1691FFF50810053939F /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
 			showEnvVarsInLog = 0;
 		};
 		682878827DE0FBE9361CB1D8 /* [CP] Check Pods Manifest.lock */ = {

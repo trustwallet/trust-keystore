@@ -10,8 +10,7 @@ import secp256k1
 import Security
 
 /// Key definition.
-public struct Key
-{
+public struct Key {
     /// Ethereum address.
     public var address: Data
 
@@ -28,7 +27,7 @@ public struct Key
     @available(iOS 10.0, *)
     public init(password: String) throws {
         let privateAttributes: [String: Any] = [
-            kSecAttrIsExtractable as String: true
+            kSecAttrIsExtractable as String: true,
         ]
         let parameters: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeEC,

@@ -13,7 +13,7 @@ public final class KeyStore {
 
     /// Dictionary of accounts by address.
     private var accountsByAddress = [Data: Account]()
-    
+
     /// Creates a `KeyStore` for the given directory.
     public init(keydir: URL) throws {
         self.keydir = keydir

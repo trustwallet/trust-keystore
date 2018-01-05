@@ -8,7 +8,7 @@
 import XCTest
 
 class ScryptTests: XCTestCase {
-    
+
     func testCase1() {
         var params = ScryptParams()
         params.n = 1024

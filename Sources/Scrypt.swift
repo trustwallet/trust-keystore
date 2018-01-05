@@ -173,6 +173,7 @@ public final class Scrypt {
             }
 
             // Operate on columns.
+            // swiftlint:disable comma
             salsaBlock[ 4] ^= R(salsaBlock[ 0] &+ salsaBlock[12], 7)
             salsaBlock[ 8] ^= R(salsaBlock[ 4] &+ salsaBlock[ 0], 9)
             salsaBlock[12] ^= R(salsaBlock[ 8] &+ salsaBlock[ 4],13)
@@ -213,6 +214,7 @@ public final class Scrypt {
             salsaBlock[13] ^= R(salsaBlock[12] &+ salsaBlock[15], 9)
             salsaBlock[14] ^= R(salsaBlock[13] &+ salsaBlock[12],13)
             salsaBlock[15] ^= R(salsaBlock[14] &+ salsaBlock[13],18)
+            // swiftlint:enable comma
         }
         for i in 0 ..< 16 {
             block[i] = block[i] &+ salsaBlock[i]
