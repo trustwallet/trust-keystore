@@ -6,8 +6,12 @@
 
 import Foundation
 
+/// Manages a directory of key files and presents them as accounts.
 public final class KeyStore {
+    /// The key file directory.
     public let keydir: URL
+
+    /// Dictionary of accounts by address.
     private var accountsByAddress = [Data: Account]()
     
     /// Creates a `KeyStore` for the given directory.
@@ -30,6 +34,11 @@ public final class KeyStore {
         }
     }
 
+    /// List of accounts.
+    public var accounts: [Account] {
+        return Array(accountsByAddress.values)
+    }
+
     /// Creates a new account.
     @available(iOS 10.0, *)
     public func createAccount(password: String) throws -> Account {
@@ -38,5 +47,10 @@ public final class KeyStore {
         try account.save(in: keydir)
         accountsByAddress[key.address] = account
         return account
+    }
+
+    /// Retrieves an account for the given address, if it exists.
+    public func account(for address: Data) -> Account? {
+        return accountsByAddress[address]
     }
 }
