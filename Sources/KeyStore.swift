@@ -12,7 +12,7 @@ public final class KeyStore {
     public let keydir: URL
 
     /// Dictionary of accounts by address.
-    private var accountsByAddress = [Data: Account]()
+    private var accountsByAddress = [Address: Account]()
 
     /// Creates a `KeyStore` for the given directory.
     public init(keydir: URL) throws {
@@ -50,7 +50,7 @@ public final class KeyStore {
     }
 
     /// Retrieves an account for the given address, if it exists.
-    public func account(for address: Data) -> Account? {
+    public func account(for address: Address) -> Account? {
         return accountsByAddress[address]
     }
 }

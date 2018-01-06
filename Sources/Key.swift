@@ -12,7 +12,7 @@ import Security
 /// Key definition.
 public struct Key {
     /// Ethereum address.
-    public var address: Data
+    public var address: Address
 
     /// Wallet UUID, optional.
     public var id: String?
@@ -79,11 +79,11 @@ public struct Key {
     }
 
     /// Decodes an Ethereum address from a public key.
-    static func decodeAddress(from publicKey: Data) -> Data {
+    static func decodeAddress(from publicKey: Data) -> Address {
         precondition(publicKey.count == 65, "Expect 64-byte public key")
         precondition(publicKey[0] == 4, "Invalid public key")
         let sha3 = publicKey[1...].sha3(.keccak256)
-        return sha3[12..<32]
+        return Address(data: sha3[12..<32])
     }
 
     /// Decrypts the key and returns the private key.
@@ -141,7 +141,7 @@ public struct Key {
     public func generateFileName(date: Date = Date(), timeZone: TimeZone = .current) -> String {
         // keyFileName implements the naming convention for keyfiles:
         // UTC--<created_at UTC ISO8601>-<address hex>
-        return "UTC--\(filenameTimestamp(for: date, in: timeZone))--\(address.hexString)"
+        return "UTC--\(filenameTimestamp(for: date, in: timeZone))--\(address.description)"
     }
 
     private func filenameTimestamp(for date: Date, in timeZone: TimeZone = .current) -> String {
@@ -175,7 +175,7 @@ extension Key: Codable {
 
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        address = try values.decodeHexString(forKey: .address)
+        address = Address(data: try values.decodeHexString(forKey: .address))
         id = try values.decode(String.self, forKey: .id)
         crypto = try values.decode(KeyHeader.self, forKey: .crypto)
         version = try values.decode(Int.self, forKey: .version)
@@ -183,7 +183,7 @@ extension Key: Codable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(address.hexString, forKey: .address)
+        try container.encode(address.description, forKey: .address)
         try container.encode(id, forKey: .id)
         try container.encode(crypto, forKey: .crypto)
         try container.encode(version, forKey: .version)

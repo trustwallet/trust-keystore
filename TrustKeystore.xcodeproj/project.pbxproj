@@ -23,6 +23,7 @@
 		61C569071FE6497C00FC2F75 /* Secp256k1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C569061FE6497C00FC2F75 /* Secp256k1.swift */; };
 		61DCE1661FFF14B70053939F /* KeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DCE1651FFF14B70053939F /* KeyStore.swift */; };
 		61DCE1681FFF15ED0053939F /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DCE1671FFF15ED0053939F /* Account.swift */; };
+		61DCE16E1FFF655A0053939F /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DCE16D1FFF655A0053939F /* Address.swift */; };
 		61FC582B1FE2490E00FFC765 /* TrustKeystore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61FC58211FE2490E00FFC765 /* TrustKeystore.framework */; };
 		61FC58471FE2496700FFC765 /* TrustKeystore.h in Headers */ = {isa = PBXBuildFile; fileRef = 61FC58411FE2495E00FFC765 /* TrustKeystore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		61FC58481FE2496C00FFC765 /* KeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58451FE2495E00FFC765 /* KeyTests.swift */; };
@@ -87,6 +88,7 @@
 		61C569061FE6497C00FC2F75 /* Secp256k1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secp256k1.swift; sourceTree = "<group>"; };
 		61DCE1651FFF14B70053939F /* KeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyStore.swift; sourceTree = "<group>"; };
 		61DCE1671FFF15ED0053939F /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		61DCE16D1FFF655A0053939F /* Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
 		61FC58211FE2490E00FFC765 /* TrustKeystore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TrustKeystore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		61FC582A1FE2490E00FFC765 /* TrustKeystoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrustKeystoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		61FC583F1FE2495E00FFC765 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 			children = (
 				61FC58411FE2495E00FFC765 /* TrustKeystore.h */,
 				61DCE1671FFF15ED0053939F /* Account.swift */,
+				61DCE16D1FFF655A0053939F /* Address.swift */,
 				61FC584D1FE2B43000FFC765 /* DataHex.swift */,
 				61FC584B1FE24A8C00FFC765 /* Key.swift */,
 				61C569011FE5B8D800FC2F75 /* KeyHeader.swift */,
@@ -567,6 +570,7 @@
 				61C569021FE5B8D800FC2F75 /* KeyHeader.swift in Sources */,
 				61FC584E1FE2B43000FFC765 /* DataHex.swift in Sources */,
 				6152D4AF1FEEC92300DE7978 /* MnemonicWords.swift in Sources */,
+				61DCE16E1FFF655A0053939F /* Address.swift in Sources */,
 				6152D4B11FEEC98500DE7978 /* Mnemonic.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

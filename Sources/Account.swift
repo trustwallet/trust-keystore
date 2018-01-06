@@ -12,7 +12,7 @@ public struct Account {
     public var key: Key
 
     /// Ethereum 20-byte account address derived from the key.
-    public var address: Data {
+    public var address: Address {
         return key.address
     }
 
