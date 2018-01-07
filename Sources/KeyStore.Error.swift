@@ -9,5 +9,6 @@ import Foundation
 extension KeyStore {
     public enum Error: Swift.Error {
         case accountAlreadyExists
+        case accountNotFound
     }
 }

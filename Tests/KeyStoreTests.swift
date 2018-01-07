@@ -43,11 +43,9 @@ class KeyStoreTests: XCTestCase {
 
     func testUpdateAccount() {
         let keyStore = try! KeyStore(keydir: keydir)
-        try! keyStore.update(account: keyStore.accounts.first!, password: "testpassword", newPassword: "password")
-
-        let key = keyStore.key(for: Address(string: "008aeeda4d805471df9b2a5b0f38a0c3bcba786b"))
-        XCTAssertNotNil(key)
-        XCTAssertNoThrow(try key!.decrypt(password: "password"))
+        let account = keyStore.accounts.first!
+        try! keyStore.update(account: account, password: "testpassword", newPassword: "password")
+        XCTAssertNoThrow(try keyStore.signHash(Data(), account: account, password: "password"))
     }
 
     func testDeleteAccount() {
@@ -63,9 +61,8 @@ class KeyStoreTests: XCTestCase {
         let json = try! JSONEncoder().encode(key)
 
         let account = try! keyStore.import(json: json, password: "password", newPassword: "newPassword")
-        let newKey = keyStore.key(for: account.address)!
 
         XCTAssertNotNil(keyStore.account(for: account.address))
-        XCTAssertNoThrow(try newKey.decrypt(password: "newPassword"))
+        XCTAssertNoThrow(try keyStore.signHash(Data(), account: account, password: "newPassword"))
     }
 }

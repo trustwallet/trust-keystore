@@ -135,24 +135,6 @@ public final class KeyStore {
         keysByAddress[newKey.address] = newKey
     }
 
-    /// Saves the account to the given directory.
-    private func save(account: Account, in directory: URL) throws {
-        guard let key = keysByAddress[account.address] else {
-            fatalError("Missing account key")
-        }
-        if let url = account.url {
-            try save(key: key, to: url)
-        } else {
-            let url = directory.appendingPathComponent(key.generateFileName())
-            try save(key: key, to: url)
-        }
-    }
-
-    private func save(key: Key, to url: URL) throws {
-        let json = try JSONEncoder().encode(key)
-        try json.write(to: url, options: [.atomicWrite])
-    }
-
     /// Deletes an account including its key if the password is correct.
     public func delete(account: Account, password: String) throws {
         guard let key = keysByAddress[account.address] else {
@@ -169,5 +151,40 @@ public final class KeyStore {
         }
         accountsByAddress[account.address] = nil
         keysByAddress[account.address] = nil
+    }
+
+    /// Calculates a ECDSA signature for the give hash.
+    ///
+    /// - Parameters:
+    ///   - data: hash to sign
+    ///   - account: account to use for signing
+    ///   - password: account password
+    /// - Returns: signature
+    /// - Throws: `DecryptError`, `Secp256k1Error`, or `KeyStore.Error`
+    public func signHash(_ data: Data, account: Account, password: String) throws -> Data {
+        guard let key = keysByAddress[account.address] else {
+            throw KeyStore.Error.accountNotFound
+        }
+        return try key.sign(hash: data, password: password)
+    }
+
+    // MARK: Helpers
+
+    /// Saves the account to the given directory.
+    private func save(account: Account, in directory: URL) throws {
+        guard let key = keysByAddress[account.address] else {
+            fatalError("Missing account key")
+        }
+        if let url = account.url {
+            try save(key: key, to: url)
+        } else {
+            let url = directory.appendingPathComponent(key.generateFileName())
+            try save(key: key, to: url)
+        }
+    }
+
+    private func save(key: Key, to url: URL) throws {
+        let json = try JSONEncoder().encode(key)
+        try json.write(to: url, options: [.atomicWrite])
     }
 }
