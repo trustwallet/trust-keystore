@@ -19,6 +19,15 @@ extension Data {
         self.init(capacity: string.count / 2)
         for offset in stride(from: 0, to: string.count, by: 2) {
             let start = string.index(string.startIndex, offsetBy: offset)
+            guard string.distance(from: start, to: string.endIndex) >= 2 else {
+                let byte = string[start...]
+                guard let number = UInt8(byte, radix: 16) else {
+                    return nil
+                }
+                append(number)
+                break
+            }
+
             let end = string.index(string.startIndex, offsetBy: offset + 2)
             let byte = string[start ..< end]
             guard let number = UInt8(byte, radix: 16) else {
