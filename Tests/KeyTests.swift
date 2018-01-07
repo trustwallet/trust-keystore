@@ -12,7 +12,7 @@ class KeyTests: XCTestCase {
         let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
         let key = try! Key(contentsOf: url)
 
-        XCTAssertEqual(key.address.hexString, "008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
+        XCTAssertEqual(key.address.description, "008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
         XCTAssertEqual(key.id, "e13b209c-3b2f-4327-bab0-3bef2e51630d")
         XCTAssertEqual(key.version, 3)
 
@@ -50,7 +50,7 @@ class KeyTests: XCTestCase {
     func testSetAddress() {
         let privateKey = Data(hexString: "7a28b5ba57c53603b0b07b56bba752f7784bf506fa95edc395f5cf6c7514fe9d")!
         let key = try! Key(password: "testpassword", key: privateKey)
-        XCTAssertEqual(key.address.hexString, "008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
+        XCTAssertEqual(key.address.description, "008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
     }
 
     func testCreateWallet() {
@@ -96,7 +96,6 @@ class KeyTests: XCTestCase {
     func testCreateKey() {
         let password = "password"
         let key = try! Key(password: password)
-        XCTAssertTrue(key.address.count == 20)
 
         let hash = Data(hexString: "3F891FDA3704F0368DAB65FA81EBE616F4AA2A0854995DA4DC0B59D2CADBD64F")!
         let result = try! key.sign(hash: hash, password: password)

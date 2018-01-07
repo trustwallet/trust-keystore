@@ -27,4 +27,9 @@ class DataHexTests: XCTestCase {
         let data = Data(hexString: "invalid")
         XCTAssertNil(data)
     }
+
+    func testShortHexToData() {
+        let data = Data(hexString: "0x1")!
+        XCTAssertEqual(data.hexString, "01")
+    }
 }
