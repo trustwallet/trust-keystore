@@ -55,4 +55,14 @@ extension KeyedDecodingContainerProtocol {
         }
         return data
     }
+
+    func decodeHexStringIfPresent(forKey key: Self.Key) throws -> Data? {
+        guard let hexString = try decodeIfPresent(String.self, forKey: key) else {
+            return nil
+        }
+        guard let data = Data(hexString: hexString) else {
+            throw DecodingError.dataCorruptedError(forKey: key, in: self, debugDescription: "Expected hexadecimal string")
+        }
+        return data
+    }
 }

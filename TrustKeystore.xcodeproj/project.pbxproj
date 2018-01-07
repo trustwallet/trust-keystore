@@ -202,13 +202,13 @@
 				61FC584D1FE2B43000FFC765 /* DataHex.swift */,
 				61FC584B1FE24A8C00FFC765 /* Key.swift */,
 				61C569011FE5B8D800FC2F75 /* KeyHeader.swift */,
+				61DCE172200197A30053939F /* KeyStore.Error.swift */,
 				61DCE1651FFF14B70053939F /* KeyStore.swift */,
 				6152D4B01FEEC98500DE7978 /* Mnemonic.swift */,
 				6152D4AE1FEEC92300DE7978 /* MnemonicWords.swift */,
 				61FC58541FE2C39700FFC765 /* Scrypt.swift */,
 				6148DA5F1FE3950300D4C17D /* ScryptParams.swift */,
 				61C569061FE6497C00FC2F75 /* Secp256k1.swift */,
-				61DCE172200197A30053939F /* KeyStore.Error.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
