@@ -25,6 +25,8 @@ public final class KeyStore {
 
     private func load() throws {
         let fileManager = FileManager.default
+        try? fileManager.createDirectory(at: keydir, withIntermediateDirectories: true, attributes: nil)
+
         let accountURLs = try fileManager.contentsOfDirectory(at: keydir, includingPropertiesForKeys: [], options: [.skipsHiddenFiles])
         for url in accountURLs {
             do {
