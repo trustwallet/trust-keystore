@@ -67,6 +67,7 @@ class KeyTests: XCTestCase {
         let result = try! key.sign(hash: hash, password: "password")
 
         let publicKey = Secp256k1.shared.pubicKey(from: privateKey)
+        XCTAssertEqual(result.count, 65)
         XCTAssertTrue(try Secp256k1.shared.verify(signature: result, message: hash, publicKey: publicKey))
     }
 

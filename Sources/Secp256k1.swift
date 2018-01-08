@@ -5,7 +5,7 @@
 // file LICENSE at the root of the source code distribution tree.
 
 import Foundation
-import secp256k1
+import secp256k1_ios
 
 /// `Secp256k1` provides functions for the ECDSA curve used in Ethereum.
 ///
@@ -41,23 +41,33 @@ public final class Secp256k1 {
     /// - Parameters:
     ///   - hash: hash to sign
     ///   - privateKey: private key to use for signing
-    /// - Returns: signature
+    /// - Returns: signature is in the 65-byte [R || S || V] format where V is 0 or 1.
     /// - Throws: `Secp256k1Error` if the private key is invalid.
     public func sign(hash: Data, privateKey: Data) throws -> Data {
-        var signature = secp256k1_ecdsa_signature()
-        let result = hash.withUnsafeBytes { hash in
-            privateKey.withUnsafeBytes { key in
-                secp256k1_ecdsa_sign(context, &signature, hash, key, nil, nil)
+        precondition(hash.count == 32, "Expect hash size to be 32")
+        precondition(privateKey.count == 32, "Expect private key size to be 32")
+
+        var signature = secp256k1_ecdsa_recoverable_signature()
+        try privateKey.withUnsafeBytes { (key: UnsafePointer<UInt8>) in
+            if secp256k1_ec_seckey_verify(context, key) != 1 {
+                throw Secp256k1Error.invalidPrivateKey
+            }
+            let result = hash.withUnsafeBytes { hash in
+                secp256k1_ecdsa_sign_recoverable(context, &signature, hash, key, nil, nil)
+            }
+            if result == 0 {
+                throw Secp256k1Error.invalidPrivateKey
             }
         }
-        if result == 0 {
-            throw Secp256k1Error.invalidPrivateKey
+
+        var output = Data(count: 65)
+        var recid = 0 as Int32
+        _ = output.withUnsafeMutableBytes { (output: UnsafeMutablePointer<UInt8>) in
+            secp256k1_ecdsa_recoverable_signature_serialize_compact(context, output, &recid, &signature)
         }
 
-        var output = Data(count: 64)
-        _ = output.withUnsafeMutableBytes { (output: UnsafeMutablePointer<UInt8>) in
-            secp256k1_ecdsa_signature_serialize_compact(context, output, &signature)
-        }
+        // add back recid to get 65 bytes sig
+        output[64] = UInt8(recid)
 
         return output
     }

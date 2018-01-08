@@ -486,12 +486,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-TrustKeystore-KeystoreBenchmark/Pods-TrustKeystore-KeystoreBenchmark-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/secp256k1/secp256k1.framework",
+				"${BUILT_PRODUCTS_DIR}/secp256k1_ios/secp256k1_ios.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/secp256k1.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/secp256k1_ios.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -539,12 +539,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-TrustKeystore-TrustKeystoreTests/Pods-TrustKeystore-TrustKeystoreTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/secp256k1/secp256k1.framework",
+				"${BUILT_PRODUCTS_DIR}/secp256k1_ios/secp256k1_ios.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/secp256k1.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/secp256k1_ios.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

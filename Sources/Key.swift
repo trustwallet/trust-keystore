@@ -6,7 +6,7 @@
 
 import CryptoSwift
 import Foundation
-import secp256k1
+import secp256k1_ios
 import Security
 
 /// Key definition.
