@@ -28,7 +28,7 @@ class KeyStoreTests: XCTestCase {
 
     func testLoadKeyStore() {
         let keyStore = try! KeyStore(keydir: keydir)
-        let account = keyStore.account(for: Address(string: "008aeeda4d805471df9b2a5b0f38a0c3bcba786b"))
+        let account = keyStore.account(for: Address(string: "008aeeda4d805471df9b2a5b0f38a0c3bcba786b")!)
         XCTAssertNotNil(account)
     }
 
