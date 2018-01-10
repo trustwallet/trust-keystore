@@ -25,7 +25,7 @@ public struct ScryptParams {
     public static let lightP = 6
 
     /// Default `R` parameter of Scrypt encryption algorithm.
-    public static let defaultR     = 8
+    public static let defaultR = 8
 
     /// Default desired key length of Scrypt encryption algorithm.
     public static let defaultDesiredKeyLength = 32
@@ -37,10 +37,10 @@ public struct ScryptParams {
     public var desiredKeyLength = defaultDesiredKeyLength
 
     /// CPU/Memory cost factor.
-    public var n = standardN
+    public var n = lightN
 
     /// Parallelization factor (1..232-1 * hLen/MFlen).
-    public var p = standardP
+    public var p = lightP
 
     /// Block size factor.
     public var r = defaultR

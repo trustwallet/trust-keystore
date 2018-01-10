@@ -141,7 +141,7 @@ public struct Key {
     public func generateFileName(date: Date = Date(), timeZone: TimeZone = .current) -> String {
         // keyFileName implements the naming convention for keyfiles:
         // UTC--<created_at UTC ISO8601>-<address hex>
-        return "UTC--\(filenameTimestamp(for: date, in: timeZone))--\(address.description)"
+        return "UTC--\(filenameTimestamp(for: date, in: timeZone))--\(address.data.hexString)"
     }
 
     private func filenameTimestamp(for date: Date, in timeZone: TimeZone = .current) -> String {
