@@ -1,15 +1,24 @@
 PODS:
   - CryptoSwift (0.8.0)
-  - secp256k1_ios (0.0.7)
+  - secp256k1_ios (0.1.0)
 
 DEPENDENCIES:
   - CryptoSwift
-  - secp256k1_ios (~> 0.0.7)
+  - secp256k1_ios (from `https://github.com/shamatar/secp256k1_ios.git`)
+
+EXTERNAL SOURCES:
+  secp256k1_ios:
+    :git: https://github.com/shamatar/secp256k1_ios.git
+
+CHECKOUT OPTIONS:
+  secp256k1_ios:
+    :commit: d928b05deab15ba780b07dd0071fdde7305dc143
+    :git: https://github.com/shamatar/secp256k1_ios.git
 
 SPEC CHECKSUMS:
   CryptoSwift: f81907430ebbe38b8404b4f6fb40f3c576a8755f
-  secp256k1_ios: 12a9bddc3d7aa723efbb32b42413f041b11a7765
+  secp256k1_ios: e36fe281fd9d4e66e897b5c540c3bde226e6a730
 
-PODFILE CHECKSUM: 1bdd75cd8ae96a2e13e64bb2e41fd6af2e71dfc0
+PODFILE CHECKSUM: 417eb2a1c193e25103b985ea0b048cd8b903c984
 
 COCOAPODS: 1.3.1
