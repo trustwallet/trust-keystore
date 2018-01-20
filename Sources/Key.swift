@@ -173,11 +173,21 @@ extension Key: Codable {
         case version
     }
 
+    enum UppercaseCodingKeys: String, CodingKey {
+        case crypto = "Crypto"
+    }
+
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
+        let altValues = try decoder.container(keyedBy: UppercaseCodingKeys.self)
         address = Address(data: try values.decodeHexString(forKey: .address))
         id = try values.decode(String.self, forKey: .id)
-        crypto = try values.decode(KeyHeader.self, forKey: .crypto)
+        if let crypto = try? values.decode(KeyHeader.self, forKey: .crypto) {
+            self.crypto = crypto
+        } else {
+            // Workaround for myEtherWallet files
+            self.crypto = try altValues.decode(KeyHeader.self, forKey: .crypto)
+        }
         version = try values.decode(Int.self, forKey: .version)
     }
 
