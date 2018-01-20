@@ -27,6 +27,7 @@
 		61DCE1681FFF15ED0053939F /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DCE1671FFF15ED0053939F /* Account.swift */; };
 		61DCE16E1FFF655A0053939F /* Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DCE16D1FFF655A0053939F /* Address.swift */; };
 		61DCE173200197A30053939F /* KeyStore.Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DCE172200197A30053939F /* KeyStore.Error.swift */; };
+		61ED9D832012D1D600E1C4D1 /* myetherwallet.uu in Resources */ = {isa = PBXBuildFile; fileRef = 61ED9D822012D1D600E1C4D1 /* myetherwallet.uu */; };
 		61FC582B1FE2490E00FFC765 /* TrustKeystore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61FC58211FE2490E00FFC765 /* TrustKeystore.framework */; };
 		61FC58471FE2496700FFC765 /* TrustKeystore.h in Headers */ = {isa = PBXBuildFile; fileRef = 61FC58411FE2495E00FFC765 /* TrustKeystore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		61FC58481FE2496C00FFC765 /* KeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58451FE2495E00FFC765 /* KeyTests.swift */; };
@@ -95,6 +96,7 @@
 		61DCE1671FFF15ED0053939F /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		61DCE16D1FFF655A0053939F /* Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Address.swift; sourceTree = "<group>"; };
 		61DCE172200197A30053939F /* KeyStore.Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyStore.Error.swift; sourceTree = "<group>"; };
+		61ED9D822012D1D600E1C4D1 /* myetherwallet.uu */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 4; path = myetherwallet.uu; sourceTree = "<group>"; };
 		61FC58211FE2490E00FFC765 /* TrustKeystore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TrustKeystore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		61FC582A1FE2490E00FFC765 /* TrustKeystoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrustKeystoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		61FC583F1FE2495E00FFC765 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 		61FC58441FE2495E00FFC765 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				61ED9D822012D1D600E1C4D1 /* myetherwallet.uu */,
 				61C568FF1FE5AB7F00FC2F75 /* wallet.json */,
 				6126019120049F440007B7C9 /* AddressTests.swift */,
 				61FC58521FE2BFF100FFC765 /* DataHexTests.swift */,
@@ -394,6 +397,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				61C569001FE5AB8000FC2F75 /* wallet.json in Resources */,
+				61ED9D832012D1D600E1C4D1 /* myetherwallet.uu in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

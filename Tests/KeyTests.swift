@@ -29,6 +29,11 @@ class KeyTests: XCTestCase {
         XCTAssertEqual(header.kdfParams.salt.hexString, "ab0c7876052600dd703518d6fc3fe8984592145b591fc8fb5c6d43190334ba19")
     }
 
+    func testReadMyEtherWallet() {
+        let url = Bundle(for: type(of: self)).url(forResource: "myetherwallet", withExtension: "uu")!
+        XCTAssertNoThrow(try Key(contentsOf: url))
+    }
+
     func testInvalidPassword() {
         let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
         let key = try! Key(contentsOf: url)
