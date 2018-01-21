@@ -5,56 +5,58 @@
 // file LICENSE at the root of the source code distribution tree.
 
 import Foundation
+import TrezorCrypto
 
 public final class Mnemonic {
-    /// Encodes a message using a list of words.
-    public static func encode(message: String) -> [String] {
-        var out = [String]()
-        let n = UInt(mnemonicWords.count)
-
-        for i in stride(from: 0, to: message.count, by: message.count / 8) {
-            let start = message.index(message.startIndex, offsetBy: i)
-            let end = message.index(message.startIndex, offsetBy: i + 8)
-            let x = message[start ..< end]
-            let bit = strtoul(x.cString(using: .utf8), nil, 16)
-            let w1 = (bit % n)
-            let w2 = ((bit / n) + w1) % n
-            let w3 = ((bit / n / n) + w2) % n
-            out.append(mnemonicWords[Int(w1)])
-            out.append(mnemonicWords[Int(w2)])
-            out.append(mnemonicWords[Int(w3)])
-        }
-        return out
+    /// Generates a menmoic string with the given strength in bits.
+    ///
+    /// - Precondition: `strength` is a multiple of 32 between 128 and 256
+    /// - Parameter strength: strength in bits
+    /// - Returns: mnemonic string
+    public static func generate(strength: Int) -> String {
+        precondition(strength % 32 == 0 && strength >= 128 && strength <= 256)
+        let rawString = mnemonic_generate(Int32(strength))!
+        return String(cString: rawString)
     }
 
-    /// Decodes a message from a list of words.
-    public static func decode(words: [String]) -> String? {
-        var out = ""
-        let n = mnemonicWords.count
-
-        for i in stride(from: 0, to: words.count, by: 3) {
-            guard let w1 = mnemonicWords.index(of: words[i]) else {
-                return nil
-            }
-            guard let w2 = mnemonicWords.index(of: words[i+1]) else {
-                return nil
-            }
-            guard let w3 = mnemonicWords.index(of: words[i+2]) else {
-                return nil
-            }
-
-            var y = (w2 - w1) % n
-            var z = (w3 - w2) % n
-
-            if z < 0 {
-                z += n
-            }
-            if y < 0 {
-                y += n
-            }
-            let x = w1 + n*(y) + n*n*(z)
-            out += String(format: "%08x", x)
+    /// Generates a mnemonic from seed data.
+    ///
+    /// - Precondition: the length of `data` is a multiple of 4 between 16 and 32
+    /// - Parameter data: seed data for the mnemonic
+    /// - Returns: mnemonic string
+    public static func generate(from data: Data) -> String {
+        precondition(data.count % 4 == 0 && data.count >= 16 && data.count <= 32)
+        let rawString = data.withUnsafeBytes { dataPtr in
+            mnemonic_from_data(dataPtr, Int32(data.count))!
         }
-        return out
+        return String(cString: rawString)
+    }
+
+    /// Determines if a mnemonic string is valid.
+    ///
+    /// - Parameter string: mnemonic string
+    /// - Returns: `true` if the string is valid; `false` otherwise.
+    public static func isValid(_ string: String) -> Bool {
+        return mnemonic_check(string) != 0
+    }
+
+    /// Decodes a mnemonic string producing the original seed data.
+    ///
+    /// - Parameters:
+    ///   - mnemonic: mnemonic string
+    ///   - password: mnemonic password
+    /// - Returns: original seed data
+    public static func decode(mnemonic: String, password: String) -> Data {
+        var seed = Data(repeating: 0, count: 512 / 8)
+        seed.withUnsafeMutableBytes { seedPtr in
+            mnemonic_to_seed(mnemonic, password, seedPtr, nil)
+        }
+        return seed
+    }
+}
+
+extension Mnemonic {
+    enum Error: Swift.Error {
+        case invalidStrength
     }
 }
