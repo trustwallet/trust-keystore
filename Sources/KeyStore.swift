@@ -118,6 +118,7 @@ public final class KeyStore {
     /// Exports an account as private key data.
     ///
     /// - Parameters:
+    ///   - account: account to export
     ///   - password: account password
     /// - Returns: private key data
 
