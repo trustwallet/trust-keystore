@@ -115,6 +115,20 @@ public final class KeyStore {
         return try JSONEncoder().encode(newKey)
     }
 
+    /// Exports an account as private key data.
+    ///
+    /// - Parameters:
+    ///   - account: account to export
+    ///   - password: account password
+    /// - Returns: private key data
+
+    public func exportPrivateKey(account: Account, password: String) throws -> Data {
+        guard let key = keysByAddress[account.address] else {
+            fatalError("Missing account key")
+        }
+        return try key.decrypt(password: password)
+    }
+
     /// Updates the password of an existing account.
     ///
     /// - Parameters:
