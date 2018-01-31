@@ -61,7 +61,8 @@ public final class KeyStore {
         let key = try Key(password: password)
         keysByAddress[key.address] = key
 
-        let account = Account(address: key.address)
+        let url = keydir.appendingPathComponent(key.generateFileName())
+        let account = Account(address: key.address, url: url)
         try save(account: account, in: keydir)
         accountsByAddress[key.address] = account
         return account
@@ -87,7 +88,8 @@ public final class KeyStore {
         let newKey = try Key(password: newPassword, key: privateKey)
         keysByAddress[newKey.address] = newKey
 
-        let account = Account(address: newKey.address)
+        let url = keydir.appendingPathComponent(key.generateFileName())
+        let account = Account(address: newKey.address, url: url)
         try save(account: account, in: keydir)
         accountsByAddress[newKey.address] = account
 
@@ -160,9 +162,7 @@ public final class KeyStore {
             privateKey.resetBytes(in: 0..<privateKey.count)
         }
 
-        if let url = account.url {
-            try FileManager.default.removeItem(at: url)
-        }
+        try FileManager.default.removeItem(at: account.url)
         accountsByAddress[account.address] = nil
         keysByAddress[account.address] = nil
     }
@@ -189,12 +189,7 @@ public final class KeyStore {
         guard let key = keysByAddress[account.address] else {
             fatalError("Missing account key")
         }
-        if let url = account.url {
-            try save(key: key, to: url)
-        } else {
-            let url = directory.appendingPathComponent(key.generateFileName())
-            try save(key: key, to: url)
-        }
+        try save(key: key, to: account.url)
     }
 
     private func save(key: Key, to url: URL) throws {
