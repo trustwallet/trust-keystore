@@ -61,7 +61,7 @@ public final class KeyStore {
         let key = try Key(password: password)
         keysByAddress[key.address] = key
 
-        let url = keydir.appendingPathComponent(key.generateFileName())
+        let url = makeAccountURL(for: key)
         let account = Account(address: key.address, url: url)
         try save(account: account, in: keydir)
         accountsByAddress[key.address] = account
@@ -88,7 +88,7 @@ public final class KeyStore {
         let newKey = try Key(password: newPassword, key: privateKey)
         keysByAddress[newKey.address] = newKey
 
-        let url = keydir.appendingPathComponent(key.generateFileName())
+        let url = makeAccountURL(for: key)
         let account = Account(address: newKey.address, url: url)
         try save(account: account, in: keydir)
         accountsByAddress[newKey.address] = account
@@ -183,6 +183,10 @@ public final class KeyStore {
     }
 
     // MARK: Helpers
+
+    private func makeAccountURL(for key: Key) -> URL {
+        return keydir.appendingPathComponent(key.generateFileName())
+    }
 
     /// Saves the account to the given directory.
     private func save(account: Account, in directory: URL) throws {
