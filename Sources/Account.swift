@@ -11,11 +11,11 @@ public struct Account: Hashable {
     /// Ethereum 20-byte account address derived from the key.
     public var address: Address
 
-    /// Optional URL for the key file on disk.
-    public var url: URL?
+    /// URL for the key file on disk.
+    public var url: URL
 
     /// Creates an `Account` with an Ethereum address and a `Key`.
-    public init(address: Address, url: URL? = nil) {
+    public init(address: Address, url: URL) {
         self.address = address
         self.url = url
     }
