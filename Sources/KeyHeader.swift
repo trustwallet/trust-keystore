@@ -12,7 +12,7 @@ public struct KeyHeader {
     public var cipherText: Data
 
     /// Cipher algorithm.
-    public var cipher: String = "aes-128-cbc"
+    public var cipher: String = "aes-128-ctr"
 
     /// Cipher parameters.
     public var cipherParams: CipherParams
