@@ -54,6 +54,7 @@ class ScryptTests: XCTestCase {
         XCTAssertEqual(actual.hexString, expected)
     }
 
+    #if (arch(x86_64) || arch(arm64))
     func testInvalidDesiredKeyLength() {
         let dklen = ((1 << 32) - 1) * 32 + 1
         XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 1024, r: 1, p: 1, desiredKeyLength: dklen)) { error in
@@ -62,6 +63,7 @@ class ScryptTests: XCTestCase {
             }
         }
     }
+    #endif
 
     func testZeroCostInvalid() {
         XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 0, r: 1, p: 1, desiredKeyLength: 64)) { error in
@@ -87,6 +89,7 @@ class ScryptTests: XCTestCase {
         }
     }
 
+    #if (arch(x86_64) || arch(arm64))
     func testLargeBlockSizeInvalid() {
         XCTAssertThrowsError(try ScryptParams(salt: Data(), n: 1024, r: Int.max / 128 + 1, p: 1, desiredKeyLength: 64)) { error in
             if case ScryptParams.ValidationError.blockSizeTooLarge = error {} else {
@@ -94,4 +97,5 @@ class ScryptTests: XCTestCase {
             }
         }
     }
+    #endif
 }

@@ -72,7 +72,7 @@ public struct ScryptParams {
     ///
     /// - Returns: a `ValidationError` or `nil` if the parameters are valid.
     public func validate() -> ValidationError? {
-        if desiredKeyLength > ((1 << 32) - 1) * 32 {
+        if desiredKeyLength > ((1 << 32 as Int64) - 1 as Int64) * 32 {
             return ValidationError.desiredKeyLengthTooLarge
         }
         if UInt64(r) * UInt64(p) >= (1 << 30) {
