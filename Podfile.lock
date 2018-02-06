@@ -1,7 +1,7 @@
 PODS:
   - CryptoSwift (0.8.1)
   - secp256k1_ios (0.1.0)
-  - TrezorCrypto (0.0.3)
+  - TrezorCrypto (0.0.4)
 
 DEPENDENCIES:
   - CryptoSwift
@@ -20,7 +20,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   CryptoSwift: 4b07d5b508c1eb67bfa314a727b705f8048a85de
   secp256k1_ios: e36fe281fd9d4e66e897b5c540c3bde226e6a730
-  TrezorCrypto: 318c71afdc66b76109476d407f1eff916be9d175
+  TrezorCrypto: 7f87a2296cf13872b21565c29fd9f7882dd00803
 
 PODFILE CHECKSUM: 5dbee0983efe4f11a54863db23e48139a8e03545
 
