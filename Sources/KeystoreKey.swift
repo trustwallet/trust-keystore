@@ -10,7 +10,7 @@ import secp256k1_ios
 import Security
 
 /// Key definition.
-public struct Key {
+public struct KeystoreKey {
     /// Ethereum address.
     public var address: Address
 
@@ -18,7 +18,7 @@ public struct Key {
     public var id: String?
 
     /// Key header with encrypted private key and crypto parameters.
-    public var crypto: KeyHeader
+    public var crypto: KeystoreKeyHeader
 
     /// Key version, must be 3.
     public var version = 3
@@ -52,7 +52,7 @@ public struct Key {
     /// Initializes a `Key` from a JSON wallet.
     public init(contentsOf url: URL) throws {
         let data = try Data(contentsOf: url)
-        self = try JSONDecoder().decode(Key.self, from: data)
+        self = try JSONDecoder().decode(KeystoreKey.self, from: data)
     }
 
     /// Initializes a `Key` by encrypting a private key with a password.
@@ -70,12 +70,12 @@ public struct Key {
 
         let encryptedKey = try aecCipher.encrypt(key.bytes)
         let prefix = derivedKey[(derivedKey.count - 16) ..< derivedKey.count]
-        let mac = Key.computeMAC(prefix: prefix, key: Data(bytes: encryptedKey))
+        let mac = KeystoreKey.computeMAC(prefix: prefix, key: Data(bytes: encryptedKey))
 
-        crypto = KeyHeader(cipherText: Data(bytes: encryptedKey), cipherParams: cipherParams, kdfParams: kdfParams, mac: mac)
+        crypto = KeystoreKeyHeader(cipherText: Data(bytes: encryptedKey), cipherParams: cipherParams, kdfParams: kdfParams, mac: mac)
 
         let pubKey = Secp256k1.shared.pubicKey(from: key)
-        address = Key.decodeAddress(from: pubKey)
+        address = KeystoreKey.decodeAddress(from: pubKey)
     }
 
     /// Decodes an Ethereum address from a public key.
@@ -97,7 +97,7 @@ public struct Key {
             throw DecryptError.unsupportedKDF
         }
 
-        let mac = Key.computeMAC(prefix: derivedKey[derivedKey.count - 16 ..< derivedKey.count], key: crypto.cipherText)
+        let mac = KeystoreKey.computeMAC(prefix: derivedKey[derivedKey.count - 16 ..< derivedKey.count], key: crypto.cipherText)
         if mac != crypto.mac {
             throw DecryptError.invalidPassword
         }
@@ -165,7 +165,7 @@ public enum DecryptError: Error {
     case invalidPassword
 }
 
-extension Key: Codable {
+extension KeystoreKey: Codable {
     enum CodingKeys: String, CodingKey {
         case address
         case id
@@ -182,11 +182,11 @@ extension Key: Codable {
         let altValues = try decoder.container(keyedBy: UppercaseCodingKeys.self)
         address = Address(data: try values.decodeHexString(forKey: .address))
         id = try values.decode(String.self, forKey: .id)
-        if let crypto = try? values.decode(KeyHeader.self, forKey: .crypto) {
+        if let crypto = try? values.decode(KeystoreKeyHeader.self, forKey: .crypto) {
             self.crypto = crypto
         } else {
             // Workaround for myEtherWallet files
-            self.crypto = try altValues.decode(KeyHeader.self, forKey: .crypto)
+            self.crypto = try altValues.decode(KeystoreKeyHeader.self, forKey: .crypto)
         }
         version = try values.decode(Int.self, forKey: .version)
     }

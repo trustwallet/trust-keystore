@@ -40,13 +40,14 @@ public final class Mnemonic {
         return mnemonic_check(string) != 0
     }
 
-    /// Decodes a mnemonic string producing the original seed data.
+    /// Derives the wallet seed.
     ///
     /// - Parameters:
     ///   - mnemonic: mnemonic string
     ///   - password: mnemonic password
-    /// - Returns: original seed data
-    public static func decode(mnemonic: String, password: String) -> Data {
+    /// - Returns: wallet seed
+    public static func deriveSeed(mnemonic: String, password: String) -> Data {
+        precondition(password.count <= 256, "Password too long")
         var seed = Data(repeating: 0, count: 512 / 8)
         seed.withUnsafeMutableBytes { seedPtr in
             mnemonic_to_seed(mnemonic, password, seedPtr, nil)

@@ -7,10 +7,10 @@
 @testable import TrustKeystore
 import XCTest
 
-class KeyTests: XCTestCase {
+class KeystoreKeyTests: XCTestCase {
     func testReadWallet() {
         let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
-        let key = try! Key(contentsOf: url)
+        let key = try! KeystoreKey(contentsOf: url)
 
         XCTAssertEqual(key.address.description, "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")
         XCTAssertEqual(key.id, "e13b209c-3b2f-4327-bab0-3bef2e51630d")
@@ -31,12 +31,12 @@ class KeyTests: XCTestCase {
 
     func testReadMyEtherWallet() {
         let url = Bundle(for: type(of: self)).url(forResource: "myetherwallet", withExtension: "uu")!
-        XCTAssertNoThrow(try Key(contentsOf: url))
+        XCTAssertNoThrow(try KeystoreKey(contentsOf: url))
     }
 
     func testInvalidPassword() {
         let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
-        let key = try! Key(contentsOf: url)
+        let key = try! KeystoreKey(contentsOf: url)
         XCTAssertThrowsError(try key.decrypt(password: "password")) { error in
             guard case DecryptError.invalidPassword = error else {
                 XCTFail("Expected invalid password error")
@@ -47,27 +47,27 @@ class KeyTests: XCTestCase {
 
     func testDecrypt() {
         let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
-        let key = try! Key(contentsOf: url)
+        let key = try! KeystoreKey(contentsOf: url)
         let privateKey = try! key.decrypt(password: "testpassword")
         XCTAssertEqual(privateKey.hexString, "7a28b5ba57c53603b0b07b56bba752f7784bf506fa95edc395f5cf6c7514fe9d")
     }
 
     func testSetAddress() {
         let privateKey = Data(hexString: "7a28b5ba57c53603b0b07b56bba752f7784bf506fa95edc395f5cf6c7514fe9d")!
-        let key = try! Key(password: "testpassword", key: privateKey)
+        let key = try! KeystoreKey(password: "testpassword", key: privateKey)
         XCTAssertEqual(key.address.description, "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")
     }
 
     func testCreateWallet() {
         let privateKey = Data(hexString: "3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266")!
-        let key = try! Key(password: "password", key: privateKey)
+        let key = try! KeystoreKey(password: "password", key: privateKey)
         let decrypted = try! key.decrypt(password: "password")
         XCTAssertEqual(decrypted.hexString, privateKey.hexString)
     }
 
     func testSignHash() {
         let privateKey = Data(hexString: "D30519BCAE8D180DBFCC94FE0B8383DC310185B0BE97B4365083EBCECCD75759")!
-        let key = try! Key(password: "password", key: privateKey)
+        let key = try! KeystoreKey(password: "password", key: privateKey)
         let hash = Data(hexString: "3F891FDA3704F0368DAB65FA81EBE616F4AA2A0854995DA4DC0B59D2CADBD64F")!
         let result = try! key.sign(hash: hash, password: "password")
 
@@ -78,7 +78,7 @@ class KeyTests: XCTestCase {
 
     func testFileName() {
         let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
-        let key = try! Key(contentsOf: url)
+        let key = try! KeystoreKey(contentsOf: url)
 
         let timeZone = TimeZone(secondsFromGMT: -480)!
         let date = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2018, month: 1, day: 2, hour: 20, minute: 55, second: 25, nanosecond: 186770975).date!
@@ -89,7 +89,7 @@ class KeyTests: XCTestCase {
 
     func testFileNameUTC() {
         let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
-        let key = try! Key(contentsOf: url)
+        let key = try! KeystoreKey(contentsOf: url)
 
         let timeZone = TimeZone(abbreviation: "UTC")!
         let date = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2018, month: 1, day: 2, hour: 20, minute: 55, second: 25, nanosecond: 186770975).date!
@@ -101,7 +101,7 @@ class KeyTests: XCTestCase {
     @available(iOS 10.0, *)
     func testCreateKey() {
         let password = "password"
-        let key = try! Key(password: password)
+        let key = try! KeystoreKey(password: password)
 
         let hash = Data(hexString: "3F891FDA3704F0368DAB65FA81EBE616F4AA2A0854995DA4DC0B59D2CADBD64F")!
         let result = try! key.sign(hash: hash, password: password)

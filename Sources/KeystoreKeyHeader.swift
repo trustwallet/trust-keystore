@@ -7,7 +7,7 @@
 import Foundation
 
 /// Encrypted private key and crypto parameters.
-public struct KeyHeader {
+public struct KeystoreKeyHeader {
     /// Encrypted data.
     public var cipherText: Data
 
@@ -26,7 +26,7 @@ public struct KeyHeader {
     /// Message authentication code.
     public var mac: Data
 
-    /// Initializes a `KeyHeader` with standard values.
+    /// Initializes a `KeystoreKeyHeader` with standard values.
     public init(cipherText: Data, cipherParams: CipherParams, kdfParams: ScryptParams, mac: Data) {
         self.cipherText = cipherText
         self.cipherParams = cipherParams
@@ -35,7 +35,7 @@ public struct KeyHeader {
     }
 }
 
-extension KeyHeader: Codable {
+extension KeystoreKeyHeader: Codable {
     enum CodingKeys: String, CodingKey {
         case cipherText = "ciphertext"
         case cipher
