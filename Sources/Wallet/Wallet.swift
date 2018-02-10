@@ -44,7 +44,7 @@ public class Wallet {
         var node = HDNode()
         hdnode_from_seed(seed.bytes, Int32(seed.count), "secp256k1", &node)
         for index in derivationPath.indices {
-            hdnode_private_ckd(&node, UInt32(index.derivationIndex))
+            hdnode_private_ckd(&node, index.derivationIndex)
         }
         return node
     }

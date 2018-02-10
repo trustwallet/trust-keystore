@@ -16,11 +16,11 @@ extension DerivationPath {
         public var hardened: Bool
 
         /// The derivation index.
-        public var derivationIndex: Int {
+        public var derivationIndex: UInt32 {
             if hardened {
-                return value | 0x80000000
+                return UInt32(value) | 0x80000000
             } else {
-                return value
+                return UInt32(value)
             }
         }
 
