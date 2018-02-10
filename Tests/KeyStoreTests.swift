@@ -57,7 +57,7 @@ class KeyStoreTests: XCTestCase {
     func testImport() {
         let keyStore = try! KeyStore(keydir: keydir)
         let privateKey = Data(hexString: "9cdb5cab19aec3bd0fcd614c5f185e7a1d97634d4225730eba22497dc89a716c")!
-        let key = try! Key(password: "password", key: privateKey)
+        let key = try! KeystoreKey(password: "password", key: privateKey)
         let json = try! JSONEncoder().encode(key)
 
         let account = try! keyStore.import(json: json, password: "password", newPassword: "newPassword")

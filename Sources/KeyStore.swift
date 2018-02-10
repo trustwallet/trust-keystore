@@ -15,7 +15,7 @@ public final class KeyStore {
     private var accountsByAddress = [Address: Account]()
 
     /// Dictionary of keys by address.
-    private var keysByAddress = [Address: Key]()
+    private var keysByAddress = [Address: KeystoreKey]()
 
     /// Creates a `KeyStore` for the given directory.
     public init(keydir: URL) throws {
@@ -30,7 +30,7 @@ public final class KeyStore {
         let accountURLs = try fileManager.contentsOfDirectory(at: keydir, includingPropertiesForKeys: [], options: [.skipsHiddenFiles])
         for url in accountURLs {
             do {
-                let key = try Key(contentsOf: url)
+                let key = try KeystoreKey(contentsOf: url)
                 keysByAddress[key.address] = key
                 let account = Account(address: key.address, url: url)
                 accountsByAddress[key.address] = account
@@ -51,14 +51,14 @@ public final class KeyStore {
     }
 
     /// Retrieves a key for the given address, if it exists.
-    public func key(for address: Address) -> Key? {
+    public func key(for address: Address) -> KeystoreKey? {
         return keysByAddress[address]
     }
 
     /// Creates a new account.
     @available(iOS 10.0, *)
     public func createAccount(password: String) throws -> Account {
-        let key = try Key(password: password)
+        let key = try KeystoreKey(password: password)
         keysByAddress[key.address] = key
 
         let url = makeAccountURL(for: key)
@@ -75,7 +75,7 @@ public final class KeyStore {
     ///   - password: key password
     ///   - newPassword: password to use for the imported key
     public func `import`(json: Data, password: String, newPassword: String) throws -> Account {
-        let key = try JSONDecoder().decode(Key.self, from: json)
+        let key = try JSONDecoder().decode(KeystoreKey.self, from: json)
         if self.account(for: key.address) != nil {
             throw Error.accountAlreadyExists
         }
@@ -85,7 +85,7 @@ public final class KeyStore {
             privateKey.resetBytes(in: 0..<privateKey.count)
         }
 
-        let newKey = try Key(password: newPassword, key: privateKey)
+        let newKey = try KeystoreKey(password: newPassword, key: privateKey)
         keysByAddress[newKey.address] = newKey
 
         let url = makeAccountURL(for: key)
@@ -113,7 +113,7 @@ public final class KeyStore {
             privateKey.resetBytes(in: 0..<privateKey.count)
         }
 
-        let newKey = try Key(password: newPassword, key: privateKey)
+        let newKey = try KeystoreKey(password: newPassword, key: privateKey)
         return try JSONEncoder().encode(newKey)
     }
 
@@ -147,7 +147,7 @@ public final class KeyStore {
             privateKey.resetBytes(in: 0..<privateKey.count)
         }
 
-        let newKey = try Key(password: newPassword, key: privateKey)
+        let newKey = try KeystoreKey(password: newPassword, key: privateKey)
         keysByAddress[newKey.address] = newKey
     }
 
@@ -184,7 +184,7 @@ public final class KeyStore {
 
     // MARK: Helpers
 
-    private func makeAccountURL(for key: Key) -> URL {
+    private func makeAccountURL(for key: KeystoreKey) -> URL {
         return keydir.appendingPathComponent(key.generateFileName())
     }
 
@@ -196,7 +196,7 @@ public final class KeyStore {
         try save(key: key, to: account.url)
     }
 
-    private func save(key: Key, to url: URL) throws {
+    private func save(key: KeystoreKey, to url: URL) throws {
         let json = try JSONEncoder().encode(key)
         try json.write(to: url, options: [.atomicWrite])
     }
