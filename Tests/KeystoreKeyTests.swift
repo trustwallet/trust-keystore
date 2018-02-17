@@ -9,7 +9,7 @@ import XCTest
 
 class KeystoreKeyTests: XCTestCase {
     func testReadWallet() {
-        let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
+        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
         let key = try! KeystoreKey(contentsOf: url)
 
         XCTAssertEqual(key.address.description, "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")
@@ -35,7 +35,7 @@ class KeystoreKeyTests: XCTestCase {
     }
 
     func testInvalidPassword() {
-        let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
+        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
         let key = try! KeystoreKey(contentsOf: url)
         XCTAssertThrowsError(try key.decrypt(password: "password")) { error in
             guard case DecryptError.invalidPassword = error else {
@@ -46,7 +46,7 @@ class KeystoreKeyTests: XCTestCase {
     }
 
     func testDecrypt() {
-        let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
+        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
         let key = try! KeystoreKey(contentsOf: url)
         let privateKey = try! key.decrypt(password: "testpassword")
         XCTAssertEqual(privateKey.hexString, "7a28b5ba57c53603b0b07b56bba752f7784bf506fa95edc395f5cf6c7514fe9d")
@@ -77,7 +77,7 @@ class KeystoreKeyTests: XCTestCase {
     }
 
     func testFileName() {
-        let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
+        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
         let key = try! KeystoreKey(contentsOf: url)
 
         let timeZone = TimeZone(secondsFromGMT: -480)!
@@ -88,7 +88,7 @@ class KeystoreKeyTests: XCTestCase {
     }
 
     func testFileNameUTC() {
-        let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
+        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
         let key = try! KeystoreKey(contentsOf: url)
 
         let timeZone = TimeZone(abbreviation: "UTC")!

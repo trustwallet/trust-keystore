@@ -19,8 +19,8 @@ class KeyStoreTests: XCTestCase {
         try? fileManager.removeItem(at: keydir)
         try? fileManager.createDirectory(at: keydir, withIntermediateDirectories: true, attributes: nil)
 
-        let walletURL = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
-        let destination = keydir.appendingPathComponent("wallet.json")
+        let walletURL = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
+        let destination = keydir.appendingPathComponent("key.json")
 
         try? fileManager.removeItem(at: destination)
         try? fileManager.copyItem(at: walletURL, to: destination)
