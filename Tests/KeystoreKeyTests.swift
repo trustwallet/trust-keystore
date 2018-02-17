@@ -76,28 +76,6 @@ class KeystoreKeyTests: XCTestCase {
         XCTAssertTrue(try Secp256k1.shared.verify(signature: result, message: hash, publicKey: publicKey))
     }
 
-    func testFileName() {
-        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
-        let key = try! KeystoreKey(contentsOf: url)
-
-        let timeZone = TimeZone(secondsFromGMT: -480)!
-        let date = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2018, month: 1, day: 2, hour: 20, minute: 55, second: 25, nanosecond: 186770975).date!
-        let fileName = key.generateFileName(date: date, timeZone: timeZone)
-
-        XCTAssertEqual(fileName, "UTC--2018-01-02T20-55-25.186770975-0800--008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
-    }
-
-    func testFileNameUTC() {
-        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
-        let key = try! KeystoreKey(contentsOf: url)
-
-        let timeZone = TimeZone(abbreviation: "UTC")!
-        let date = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2018, month: 1, day: 2, hour: 20, minute: 55, second: 25, nanosecond: 186770975).date!
-        let fileName = key.generateFileName(date: date, timeZone: timeZone)
-
-        XCTAssertEqual(fileName, "UTC--2018-01-02T20-55-25.186770975Z--008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
-    }
-
     @available(iOS 10.0, *)
     func testCreateKey() {
         let password = "password"

@@ -16,41 +16,16 @@ public struct WalletDescriptor {
     /// Wallet UUID.
     public var id = UUID()
 
-    /// URL for the wallet file on disk.
-    public var url: URL
-
     /// Creates a new `WalletDescriptor`.
-    public init(mnemonic: String, address: Address, url: URL) {
+    public init(mnemonic: String, address: Address) {
         self.mnemonic = mnemonic
         self.address = address
-        self.url = url
     }
 
     /// Initializes a `WalletDescriptor` from a JSON wallet.
     public init(contentsOf url: URL) throws {
         let data = try Data(contentsOf: url)
         self = try JSONDecoder().decode(WalletDescriptor.self, from: data)
-        self.url = url
-    }
-
-    /// Generates a unique file name for an address.
-    public static func generateFileName(address: Address, date: Date = Date(), timeZone: TimeZone = .current) -> String {
-        // keyFileName implements the naming convention for keyfiles:
-        // UTC--<created_at UTC ISO8601>-<address hex>
-        return "UTC--\(filenameTimestamp(for: date, in: timeZone))--\(address.data.hexString)"
-    }
-
-    private static func filenameTimestamp(for date: Date, in timeZone: TimeZone = .current) -> String {
-        var tz = ""
-        let offset = timeZone.secondsFromGMT()
-        if offset == 0 {
-            tz = "Z"
-        } else {
-            tz = String(format: "%03d00", offset/60)
-        }
-
-        let components = Calendar(identifier: .iso8601).dateComponents(in: timeZone, from: date)
-        return String(format: "%04d-%02d-%02dT%02d-%02d-%02d.%09d%@", components.year!, components.month!, components.day!, components.hour!, components.minute!, components.second!, components.nanosecond!, tz)
     }
 }
 
@@ -66,7 +41,6 @@ extension WalletDescriptor: Codable {
         mnemonic = try values.decode(String.self, forKey: .mnemonic)
         address = Address(data: try values.decodeHexString(forKey: .address))
         id = UUID(uuidString: try values.decode(String.self, forKey: .id)) ?? UUID()
-        url = URL(string: "/")!
     }
 
     public func encode(to encoder: Encoder) throws {
