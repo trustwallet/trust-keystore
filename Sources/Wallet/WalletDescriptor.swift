@@ -10,9 +10,6 @@ public struct WalletDescriptor {
     /// Wallet's mnemominc phrase.
     public var mnemonic: String
 
-    /// Optional wallet name.
-    public var name: String?
-
     /// Ethereum address at index 0.
     public var address: Address
 
@@ -23,9 +20,8 @@ public struct WalletDescriptor {
     public var url: URL
 
     /// Creates a new `WalletDescriptor`.
-    public init(mnemonic: String, name: String? = nil, address: Address, url: URL) {
+    public init(mnemonic: String, address: Address, url: URL) {
         self.mnemonic = mnemonic
-        self.name = name
         self.address = address
         self.url = url
     }
@@ -61,7 +57,6 @@ public struct WalletDescriptor {
 extension WalletDescriptor: Codable {
     enum CodingKeys: String, CodingKey {
         case mnemonic
-        case name
         case address
         case id
     }
@@ -69,7 +64,6 @@ extension WalletDescriptor: Codable {
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         mnemonic = try values.decode(String.self, forKey: .mnemonic)
-        name = try values.decodeIfPresent(String.self, forKey: .name)
         address = Address(data: try values.decodeHexString(forKey: .address))
         id = UUID(uuidString: try values.decode(String.self, forKey: .id)) ?? UUID()
         url = URL(string: "/")!
@@ -78,7 +72,6 @@ extension WalletDescriptor: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(mnemonic, forKey: .mnemonic)
-        try container.encodeIfPresent(name, forKey: .name)
         try container.encode(address.description, forKey: .address)
         try container.encode(id.uuidString, forKey: .id)
     }

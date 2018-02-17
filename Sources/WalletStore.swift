@@ -45,12 +45,12 @@ public final class WalletStore {
     }
 
     /// Creates a new wallet.
-    public func createWallet(password: String, name: String? = nil) throws -> WalletDescriptor {
+    public func createWallet(password: String) throws -> WalletDescriptor {
         let mnemonic = Mnemonic.generate(strength: 256)
         let wallet = Wallet(mnemonic: mnemonic, password: password)
         let address = wallet.getKey(at: 0).address
         let url = directory.appendingPathComponent(WalletDescriptor.generateFileName(address: address))
-        let wd = WalletDescriptor(mnemonic: mnemonic, name: name, address: address, url: url)
+        let wd = WalletDescriptor(mnemonic: mnemonic, address: address, url: url)
         walletsByAddress[address] = wd
 
         let json = try JSONEncoder().encode(wd)
@@ -60,11 +60,11 @@ public final class WalletStore {
     }
 
     /// Imports a wallet.
-    public func `import`(mnemonic: String, password: String, name: String? = nil) throws -> WalletDescriptor {
+    public func `import`(mnemonic: String, password: String) throws -> WalletDescriptor {
         let wallet = Wallet(mnemonic: mnemonic, password: password)
         let address = wallet.getKey(at: 0).address
         let url = directory.appendingPathComponent(WalletDescriptor.generateFileName(address: address))
-        let wd = WalletDescriptor(mnemonic: mnemonic, name: name, address: address, url: url)
+        let wd = WalletDescriptor(mnemonic: mnemonic, address: address, url: url)
         walletsByAddress[address] = wd
 
         let json = try JSONEncoder().encode(wd)
