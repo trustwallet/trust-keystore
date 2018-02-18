@@ -1,4 +1,4 @@
-// Copyright © 2017 Trust.
+// Copyright © 2017-2018 Trust.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
@@ -9,7 +9,7 @@ import XCTest
 
 class KeystoreKeyTests: XCTestCase {
     func testReadWallet() {
-        let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
+        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
         let key = try! KeystoreKey(contentsOf: url)
 
         XCTAssertEqual(key.address.description, "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")
@@ -35,7 +35,7 @@ class KeystoreKeyTests: XCTestCase {
     }
 
     func testInvalidPassword() {
-        let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
+        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
         let key = try! KeystoreKey(contentsOf: url)
         XCTAssertThrowsError(try key.decrypt(password: "password")) { error in
             guard case DecryptError.invalidPassword = error else {
@@ -46,7 +46,7 @@ class KeystoreKeyTests: XCTestCase {
     }
 
     func testDecrypt() {
-        let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
+        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
         let key = try! KeystoreKey(contentsOf: url)
         let privateKey = try! key.decrypt(password: "testpassword")
         XCTAssertEqual(privateKey.hexString, "7a28b5ba57c53603b0b07b56bba752f7784bf506fa95edc395f5cf6c7514fe9d")
@@ -74,28 +74,6 @@ class KeystoreKeyTests: XCTestCase {
         let publicKey = Secp256k1.shared.pubicKey(from: privateKey)
         XCTAssertEqual(result.count, 65)
         XCTAssertTrue(try Secp256k1.shared.verify(signature: result, message: hash, publicKey: publicKey))
-    }
-
-    func testFileName() {
-        let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
-        let key = try! KeystoreKey(contentsOf: url)
-
-        let timeZone = TimeZone(secondsFromGMT: -480)!
-        let date = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2018, month: 1, day: 2, hour: 20, minute: 55, second: 25, nanosecond: 186770975).date!
-        let fileName = key.generateFileName(date: date, timeZone: timeZone)
-
-        XCTAssertEqual(fileName, "UTC--2018-01-02T20-55-25.186770975-0800--008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
-    }
-
-    func testFileNameUTC() {
-        let url = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
-        let key = try! KeystoreKey(contentsOf: url)
-
-        let timeZone = TimeZone(abbreviation: "UTC")!
-        let date = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2018, month: 1, day: 2, hour: 20, minute: 55, second: 25, nanosecond: 186770975).date!
-        let fileName = key.generateFileName(date: date, timeZone: timeZone)
-
-        XCTAssertEqual(fileName, "UTC--2018-01-02T20-55-25.186770975Z--008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
     }
 
     @available(iOS 10.0, *)

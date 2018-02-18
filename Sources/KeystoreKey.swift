@@ -1,4 +1,4 @@
-// Copyright © 2017 Trust.
+// Copyright © 2017-2018 Trust.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
@@ -135,26 +135,6 @@ public struct KeystoreKey {
     public func sign(hash: Data, password: String) throws -> Data {
         let key = try decrypt(password: password)
         return try Secp256k1.shared.sign(hash: hash, privateKey: key)
-    }
-
-    /// Generates a unique file name for this key.
-    public func generateFileName(date: Date = Date(), timeZone: TimeZone = .current) -> String {
-        // keyFileName implements the naming convention for keyfiles:
-        // UTC--<created_at UTC ISO8601>-<address hex>
-        return "UTC--\(filenameTimestamp(for: date, in: timeZone))--\(address.data.hexString)"
-    }
-
-    private func filenameTimestamp(for date: Date, in timeZone: TimeZone = .current) -> String {
-        var tz = ""
-        let offset = timeZone.secondsFromGMT()
-        if offset == 0 {
-            tz = "Z"
-        } else {
-            tz = String(format: "%03d00", offset/60)
-        }
-
-        let components = Calendar(identifier: .iso8601).dateComponents(in: timeZone, from: date)
-        return String(format: "%04d-%02d-%02dT%02d-%02d-%02d.%09d%@", components.year!, components.month!, components.day!, components.hour!, components.minute!, components.second!, components.nanosecond!, tz)
     }
 }
 

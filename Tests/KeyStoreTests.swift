@@ -1,4 +1,4 @@
-// Copyright © 2017 Trust.
+// Copyright © 2017-2018 Trust.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
@@ -8,54 +8,85 @@
 import XCTest
 
 class KeyStoreTests: XCTestCase {
-    var keydir: URL!
+    let keyAddress = Address(eip55: "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")!
+    let walletAddress = Address(eip55: "0x27Ef5cDBe01777D62438AfFeb695e33fC2335979")!
+
+    var keyDirectory: URL!
+    var walletDirectory: URL!
 
     override func setUp() {
         super.setUp()
 
         let fileManager = FileManager.default
 
-        keydir = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("KeyStoreTests")
-        try? fileManager.removeItem(at: keydir)
-        try? fileManager.createDirectory(at: keydir, withIntermediateDirectories: true, attributes: nil)
+        keyDirectory = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("KeyStoreTests")
+        try? fileManager.removeItem(at: keyDirectory)
+        try? fileManager.createDirectory(at: keyDirectory, withIntermediateDirectories: true, attributes: nil)
+
+        let keyURL = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
+        let keyDestination = keyDirectory.appendingPathComponent("key.json")
+
+        try? fileManager.removeItem(at: keyDestination)
+        try? fileManager.copyItem(at: keyURL, to: keyDestination)
+
+        walletDirectory = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("WalletStoreTests")
+        try? fileManager.removeItem(at: walletDirectory)
+        try? fileManager.createDirectory(at: walletDirectory, withIntermediateDirectories: true, attributes: nil)
 
         let walletURL = Bundle(for: type(of: self)).url(forResource: "wallet", withExtension: "json")!
-        let destination = keydir.appendingPathComponent("wallet.json")
+        let walletDestination = walletDirectory.appendingPathComponent("wallet.json")
 
-        try? fileManager.removeItem(at: destination)
-        try? fileManager.copyItem(at: walletURL, to: destination)
+        try? fileManager.removeItem(at: walletDestination)
+        try? fileManager.copyItem(at: walletURL, to: walletDestination)
     }
 
     func testLoadKeyStore() {
-        let keyStore = try! KeyStore(keydir: keydir)
-        let account = keyStore.account(for: Address(string: "008aeeda4d805471df9b2a5b0f38a0c3bcba786b")!)
-        XCTAssertNotNil(account)
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
+
+        let keyAccount = keyStore.account(for: keyAddress)
+        XCTAssertNotNil(keyAccount)
+
+        let walletAccount = keyStore.wallet(for: walletAddress)
+        XCTAssertNotNil(walletAccount)
     }
 
-    @available(iOS 10.0, *)
-    func testCreateAccount() {
-        let keyStore = try! KeyStore(keydir: keydir)
-        let newAccount = try! keyStore.createAccount(password: "password")
+    func testCreateKey() {
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
+        let newAccount = try! keyStore.createAccount(password: "password", type: .encryptedKey)
 
         XCTAssertNotNil(keyStore.account(for: newAccount.address))
-        XCTAssertEqual(keyStore.accounts.count, 2)
+        XCTAssertEqual(keyStore.accounts.count, 3)
     }
 
-    func testUpdateAccount() {
-        let keyStore = try! KeyStore(keydir: keydir)
-        let account = keyStore.accounts.first!
+    func testCreateWallet() {
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
+        let newAccount = try! keyStore.createAccount(password: "password", type: .hierarchicalDeterministicWallet)
+
+        XCTAssertNotNil(keyStore.wallet(for: newAccount.address))
+        XCTAssertEqual(keyStore.accounts.count, 3)
+    }
+
+    func testUpdateKey() {
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
+        let account = keyStore.account(for: keyAddress)!
         try! keyStore.update(account: account, password: "testpassword", newPassword: "password")
         XCTAssertNoThrow(try keyStore.signHash(Data(repeating: 0, count: 32), account: account, password: "password"))
     }
 
-    func testDeleteAccount() {
-        let keyStore = try! KeyStore(keydir: keydir)
-        try! keyStore.delete(account: keyStore.accounts.first!, password: "testpassword")
-        XCTAssertTrue(keyStore.accounts.isEmpty)
+    func testDeleteKey() {
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
+        try! keyStore.delete(account: keyStore.account(for: keyAddress)!, password: "testpassword")
+        XCTAssertNil(keyStore.account(for: keyAddress))
     }
 
-    func testImport() {
-        let keyStore = try! KeyStore(keydir: keydir)
+    func testDeleteWallet() {
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
+        try! keyStore.delete(account: keyStore.account(for: walletAddress)!, password: "TREZOR")
+        XCTAssertNil(keyStore.account(for: walletAddress))
+    }
+
+    func testImportKey() {
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
         let privateKey = Data(hexString: "9cdb5cab19aec3bd0fcd614c5f185e7a1d97634d4225730eba22497dc89a716c")!
         let key = try! KeystoreKey(password: "password", key: privateKey)
         let json = try! JSONEncoder().encode(key)
@@ -64,5 +95,33 @@ class KeyStoreTests: XCTestCase {
 
         XCTAssertNotNil(keyStore.account(for: account.address))
         XCTAssertNoThrow(try keyStore.signHash(Data(repeating: 0, count: 32), account: account, password: "newPassword"))
+    }
+
+    func testImportWallet() {
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
+        let account = try! keyStore.import(mnemonic: "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn back", password: "password")
+
+        XCTAssertNotNil(keyStore.account(for: account.address))
+        XCTAssertNoThrow(try keyStore.signHash(Data(repeating: 0, count: 32), account: account, password: "password"))
+    }
+
+    func testFileName() {
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
+
+        let timeZone = TimeZone(secondsFromGMT: -480)!
+        let date = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2018, month: 1, day: 2, hour: 20, minute: 55, second: 25, nanosecond: 186770975).date!
+        let fileName = keyStore.generateFileName(address: keyAddress, date: date, timeZone: timeZone)
+
+        XCTAssertEqual(fileName, "UTC--2018-01-02T20-55-25.186770975-0800--008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
+    }
+
+    func testFileNameUTC() {
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
+
+        let timeZone = TimeZone(abbreviation: "UTC")!
+        let date = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2018, month: 1, day: 2, hour: 20, minute: 55, second: 25, nanosecond: 186770975).date!
+        let fileName = keyStore.generateFileName(address: keyAddress, date: date, timeZone: timeZone)
+
+        XCTAssertEqual(fileName, "UTC--2018-01-02T20-55-25.186770975Z--008aeeda4d805471df9b2a5b0f38a0c3bcba786b")
     }
 }
