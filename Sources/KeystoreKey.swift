@@ -173,7 +173,11 @@ extension KeystoreKey: Codable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(address.description, forKey: .address)
+        var addressString = address.description
+        if addressString.hasPrefix("0x") {
+            addressString = String(addressString.dropFirst(2))
+        }
+        try container.encode(addressString, forKey: .address)
         try container.encode(id, forKey: .id)
         try container.encode(crypto, forKey: .crypto)
         try container.encode(version, forKey: .version)
