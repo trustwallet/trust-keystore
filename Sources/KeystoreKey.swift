@@ -136,6 +136,23 @@ public struct KeystoreKey {
         let key = try decrypt(password: password)
         return try Secp256k1.shared.sign(hash: hash, privateKey: key)
     }
+
+    /// Signs multiple hashes with the given password.
+    ///
+    /// - Parameters:
+    ///   - hashes: array of hashes to sign
+    ///   - password: key password
+    /// - Returns: [signature]
+    /// - Throws: `DecryptError` or `Secp256k1Error`
+    public func signBulkHashes(hashes: [Data], password: String) throws -> [Data] {
+        let key = try decrypt(password: password)
+        var signatures = [Data]()
+        for i in 0...hashes.count - 1 {
+            let signature = try Secp256k1.shared.sign(hash: hashes[i], privateKey: key)
+            signatures.append(signature)
+        }
+        return signatures
+    }
 }
 
 public enum DecryptError: Error {
