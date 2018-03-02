@@ -288,21 +288,22 @@ public final class KeyStore {
     ///   - password: key password
     /// - Returns: array of signatures
     /// - Throws: `DecryptError` or `Secp256k1Error` or `KeyStore.Error`
-    public func signBulk(_ data: [Data], account: Account, password: String) throws -> [Data] {
+    public func signHashes(_ data: [Data], account: Account, password: String) throws -> [Data] {
         switch account.type {
         case .encryptedKey:
             guard let key = keysByAddress[account.address] else {
                 throw KeyStore.Error.accountNotFound
             }
-            return try key.signBulkHashes(hashes: data, password: password)
+            return try key.signHashes(hashes: data, password: password)
         case .hierarchicalDeterministicWallet:
             guard let wd = walletsByAddress[account.address] else {
                 throw KeyStore.Error.accountNotFound
             }
             var arrayOfSignatures = [Data]()
             let wallet = Wallet(mnemonic: wd.mnemonic, password: password)
+            let key = try wallet.getKey(at: 0)
             for i in 0...data.count - 1 {
-                let signature = try wallet.getKey(at: 0).sign(hash: data[i])
+                let signature = try key.sign(hash: data[i])
                 arrayOfSignatures.append(signature)
             }
             return arrayOfSignatures

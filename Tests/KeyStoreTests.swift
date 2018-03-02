@@ -73,6 +73,16 @@ class KeyStoreTests: XCTestCase {
         XCTAssertNoThrow(try keyStore.signHash(Data(repeating: 0, count: 32), account: account, password: "password"))
     }
 
+    func testSigningMultiple() {
+        let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
+        let account = keyStore.account(for: keyAddress)!
+        var multipleMessages = [Data]()
+        for i in 0...2000 {
+            multipleMessages.append(Data(repeating: 0, count: 32))
+        }
+        XCTAssertNoThrow(try keyStore.signHashes(multipleMessages, account: account, password: "testpassword"))
+    }
+
     func testDeleteKey() {
         let keyStore = try! KeyStore(keyDirectory: keyDirectory, walletDirectory: walletDirectory)
         try! keyStore.delete(account: keyStore.account(for: keyAddress)!, password: "testpassword")
