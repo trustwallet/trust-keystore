@@ -144,7 +144,7 @@ public struct KeystoreKey {
     ///   - password: key password
     /// - Returns: [signature]
     /// - Throws: `DecryptError` or `Secp256k1Error`
-    public func signHashes(hashes: [Data], password: String) throws -> [Data] {
+    public func signHashes(_ hashes: [Data], password: String) throws -> [Data] {
         let key = try decrypt(password: password)
         var signatures = [Data]()
         for i in 0...hashes.count - 1 {
