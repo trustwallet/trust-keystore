@@ -294,7 +294,7 @@ public final class KeyStore {
             guard let key = keysByAddress[account.address] else {
                 throw KeyStore.Error.accountNotFound
             }
-            return try key.signHashes(hashes: data, password: password)
+            return try key.signHashes(data, password: password)
         case .hierarchicalDeterministicWallet:
             guard let wd = walletsByAddress[account.address] else {
                 throw KeyStore.Error.accountNotFound
