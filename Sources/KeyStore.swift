@@ -32,7 +32,7 @@ public final class KeyStore {
             do {
                 let key = try KeystoreKey(contentsOf: url)
                 keysByAddress[key.address] = key
-                let account = Account(address: key.address, type: .encryptedKey, url: url)
+                let account = Account(address: key.address, type: key.type, url: url)
                 accountsByAddress[key.address] = account
             } catch {
                 // Ignore invalid keys
@@ -89,7 +89,7 @@ public final class KeyStore {
         keysByAddress[newKey.address] = newKey
 
         let url = makeAccountURL(for: key.address)
-        let account = Account(address: newKey.address, type: .encryptedKey, url: url)
+        let account = Account(address: newKey.address, type: key.type, url: url)
         try save(account: account, in: keyDirectory)
         accountsByAddress[newKey.address] = account
 
