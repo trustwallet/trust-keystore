@@ -14,39 +14,51 @@ public struct KeystoreKey {
     /// Ethereum address.
     public var address: Address
 
+    /// Account type.
+    public var type: AccountType
+
     /// Wallet UUID, optional.
     public var id: String?
 
     /// Key header with encrypted private key and crypto parameters.
     public var crypto: KeystoreKeyHeader
 
+    /// Mnemonic passphrase
+    public var passphrase = ""
+
     /// Key version, must be 3.
     public var version = 3
 
     /// Creates a new `Key` with a password.
     @available(iOS 10.0, *)
-    public init(password: String) throws {
-        let privateAttributes: [String: Any] = [
-            kSecAttrIsExtractable as String: true,
-        ]
-        let parameters: [String: Any] = [
-            kSecAttrKeyType as String: kSecAttrKeyTypeEC,
-            kSecAttrKeySizeInBits as String: 256,
-            kSecPrivateKeyAttrs as String: privateAttributes,
-        ]
+    public init(password: String, type: AccountType) throws {
+        switch type {
+        case .encryptedKey:
+            let privateAttributes: [String: Any] = [
+                kSecAttrIsExtractable as String: true,
+            ]
+            let parameters: [String: Any] = [
+                kSecAttrKeyType as String: kSecAttrKeyTypeEC,
+                kSecAttrKeySizeInBits as String: 256,
+                kSecPrivateKeyAttrs as String: privateAttributes,
+            ]
 
-        var pubKey: SecKey?
-        var privKey: SecKey?
-        let status = SecKeyGeneratePair(parameters as CFDictionary, &pubKey, &privKey)
-        guard let privateKey = privKey, status == noErr else {
-            fatalError("Failed to generate key pair")
-        }
+            var pubKey: SecKey?
+            var privKey: SecKey?
+            let status = SecKeyGeneratePair(parameters as CFDictionary, &pubKey, &privKey)
+            guard let privateKey = privKey, status == noErr else {
+                fatalError("Failed to generate key pair")
+            }
 
-        guard let keyRepresentation = SecKeyCopyExternalRepresentation(privateKey, nil) as Data? else {
-            fatalError("Failed to extract new private key")
+            guard let keyRepresentation = SecKeyCopyExternalRepresentation(privateKey, nil) as Data? else {
+                fatalError("Failed to extract new private key")
+            }
+            let key = keyRepresentation[(keyRepresentation.count - 32)...]
+            try self.init(password: password, key: key)
+        case .hierarchicalDeterministicWallet:
+            let mnemonic = Mnemonic.generate(strength: 256)
+            try self.init(password: password, mnemonic: mnemonic, passphrase: "")
         }
-        let key = keyRepresentation[(keyRepresentation.count - 32)...]
-        try self.init(password: password, key: key)
     }
 
     /// Initializes a `Key` from a JSON wallet.
@@ -58,24 +70,27 @@ public struct KeystoreKey {
     /// Initializes a `Key` by encrypting a private key with a password.
     public init(password: String, key: Data) throws {
         id = UUID().uuidString.lowercased()
-
-        let cipherParams = CipherParams()
-        let kdfParams = ScryptParams()
-
-        let scrypt = Scrypt(params: kdfParams)
-        let derivedKey = try scrypt.calculate(password: password)
-
-        let encryptionKey = derivedKey[0...15]
-        let aecCipher = try AES(key: encryptionKey.bytes, blockMode: .CTR(iv: cipherParams.iv.bytes), padding: .noPadding)
-
-        let encryptedKey = try aecCipher.encrypt(key.bytes)
-        let prefix = derivedKey[(derivedKey.count - 16) ..< derivedKey.count]
-        let mac = KeystoreKey.computeMAC(prefix: prefix, key: Data(bytes: encryptedKey))
-
-        crypto = KeystoreKeyHeader(cipherText: Data(bytes: encryptedKey), cipherParams: cipherParams, kdfParams: kdfParams, mac: mac)
+        crypto = try KeystoreKeyHeader(password: password, data: key)
 
         let pubKey = Secp256k1.shared.pubicKey(from: key)
         address = KeystoreKey.decodeAddress(from: pubKey)
+        type = .encryptedKey
+    }
+
+    /// Initializes a `Key` by encrypting a mnemonic phrase with a password.
+    public init(password: String, mnemonic: String, passphrase: String = "") throws {
+        id = UUID().uuidString.lowercased()
+
+        guard let cstring = mnemonic.cString(using: .ascii) else {
+            throw EncryptError.invalidMnemonic
+        }
+        let data = Data(bytes: cstring.map({ UInt8($0) }))
+        crypto = try KeystoreKeyHeader(password: password, data: data)
+
+        let key = Wallet(mnemonic: mnemonic, passphrase: passphrase).getKey(at: 0)
+        address = key.address
+        type = .hierarchicalDeterministicWallet
+        self.passphrase = passphrase
     }
 
     /// Decodes an Ethereum address from a public key.
@@ -118,7 +133,7 @@ public struct KeystoreKey {
         return Data(bytes: decryptedPK)
     }
 
-    private static func computeMAC(prefix: Data, key: Data) -> Data {
+    static func computeMAC(prefix: Data, key: Data) -> Data {
         var data = Data(capacity: prefix.count + key.count)
         data.append(prefix)
         data.append(key)
@@ -133,8 +148,27 @@ public struct KeystoreKey {
     /// - Returns: signature
     /// - Throws: `DecryptError` or `Secp256k1Error`
     public func sign(hash: Data, password: String) throws -> Data {
-        let key = try decrypt(password: password)
-        return try Secp256k1.shared.sign(hash: hash, privateKey: key)
+        switch type {
+        case .encryptedKey:
+            var key = try decrypt(password: password)
+            defer {
+                // Clear memory after signing
+                key.resetBytes(in: 0..<key.count)
+            }
+            return try Secp256k1.shared.sign(hash: hash, privateKey: key)
+        case .hierarchicalDeterministicWallet:
+            guard var mnemonic = String(data: try decrypt(password: password), encoding: .ascii) else {
+                throw DecryptError.invalidPassword
+            }
+            defer {
+                // Clear memory after signing
+                mnemonic.withMutableCharacters { chars in
+                    chars.replaceSubrange(chars.startIndex ..< chars.endIndex, with: [Character](repeating: " ", count: chars.count))
+                }
+            }
+            let wallet = Wallet(mnemonic: mnemonic, passphrase: passphrase)
+            return try wallet.getKey(at: 0).sign(hash: hash)
+        }
     }
 
     /// Signs multiple hashes with the given password.
@@ -145,13 +179,28 @@ public struct KeystoreKey {
     /// - Returns: [signature]
     /// - Throws: `DecryptError` or `Secp256k1Error`
     public func signHashes(_ hashes: [Data], password: String) throws -> [Data] {
-        let key = try decrypt(password: password)
-        var signatures = [Data]()
-        for i in 0...hashes.count - 1 {
-            let signature = try Secp256k1.shared.sign(hash: hashes[i], privateKey: key)
-            signatures.append(signature)
+        switch type {
+        case .encryptedKey:
+            var key = try decrypt(password: password)
+            defer {
+                // Clear memory after signing
+                key.resetBytes(in: 0..<key.count)
+            }
+            return try hashes.map({ try Secp256k1.shared.sign(hash: $0, privateKey: key) })
+        case .hierarchicalDeterministicWallet:
+            guard var mnemonic = String(data: try decrypt(password: password), encoding: .ascii) else {
+                throw DecryptError.invalidPassword
+            }
+            defer {
+                // Clear memory after signing
+                mnemonic.withMutableCharacters { chars in
+                    chars.replaceSubrange(chars.startIndex ..< chars.endIndex, with: [Character](repeating: " ", count: chars.count))
+                }
+            }
+            let wallet = Wallet(mnemonic: mnemonic)
+            let key = wallet.getKey(at: 0)
+            return try hashes.map({ try key.sign(hash: $0) })
         }
-        return signatures
     }
 }
 
@@ -162,9 +211,14 @@ public enum DecryptError: Error {
     case invalidPassword
 }
 
+public enum EncryptError: Error {
+    case invalidMnemonic
+}
+
 extension KeystoreKey: Codable {
     enum CodingKeys: String, CodingKey {
         case address
+        case type
         case id
         case crypto
         case version
@@ -174,10 +228,23 @@ extension KeystoreKey: Codable {
         case crypto = "Crypto"
     }
 
+    struct TypeString {
+        static let privateKey = "private-key"
+        static let mnemonic = "mnemonic"
+    }
+
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let altValues = try decoder.container(keyedBy: UppercaseCodingKeys.self)
+
         address = Address(data: try values.decodeHexString(forKey: .address))
+        switch try values.decodeIfPresent(String.self, forKey: .type) {
+        case TypeString.mnemonic?:
+            type = .hierarchicalDeterministicWallet
+        default:
+            type = .encryptedKey
+        }
+
         id = try values.decode(String.self, forKey: .id)
         if let crypto = try? values.decode(KeystoreKeyHeader.self, forKey: .crypto) {
             self.crypto = crypto
@@ -191,6 +258,12 @@ extension KeystoreKey: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(address.description.drop0x(), forKey: .address)
+        switch type {
+        case .encryptedKey:
+            try container.encode(TypeString.privateKey, forKey: .type)
+        case .hierarchicalDeterministicWallet:
+            try container.encode(TypeString.mnemonic, forKey: .type)
+        }
         try container.encode(id, forKey: .id)
         try container.encode(crypto, forKey: .crypto)
         try container.encode(version, forKey: .version)

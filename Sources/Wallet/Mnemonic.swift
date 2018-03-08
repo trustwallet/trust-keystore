@@ -44,13 +44,13 @@ public final class Mnemonic {
     ///
     /// - Parameters:
     ///   - mnemonic: mnemonic string
-    ///   - password: mnemonic password
+    ///   - passphrase: mnemonic passphrase
     /// - Returns: wallet seed
-    public static func deriveSeed(mnemonic: String, password: String) -> Data {
-        precondition(password.count <= 256, "Password too long")
+    public static func deriveSeed(mnemonic: String, passphrase: String) -> Data {
+        precondition(passphrase.count <= 256, "Passphrase too long")
         var seed = Data(repeating: 0, count: 512 / 8)
         seed.withUnsafeMutableBytes { seedPtr in
-            mnemonic_to_seed(mnemonic, password, seedPtr, nil)
+            mnemonic_to_seed(mnemonic, passphrase, seedPtr, nil)
         }
         return seed
     }

@@ -10,10 +10,10 @@ import XCTest
 class MnemonicTests: XCTestCase {
     func testDeriveSeed() {
         let mnemonic = "often tobacco bread scare imitate song kind common bar forest yard wisdom"
-        let password = "testtest123"
-        let seed = Data(hexString: "b4186ab8ac0ebfd3c20f992d0b602639fe59f0e4d2e66dea487194580e0aa0031387c9f30488a7628ed7350a63dd97e1acb259896082e3b34a1ff0dd85c287d1")
+        let passphrase = "testtest123"
+        let seed = Data(hexString: "b4186ab8ac0ebfd3c20f992d0b602639fe59f0e4d2e66dea487194580e0aa0031387c9f30488a7628ed7350a63dd97e1acb259896082e3b34a1ff0dd85c287d1")!
 
-        XCTAssertEqual(Mnemonic.deriveSeed(mnemonic: mnemonic, password: password), seed)
+        XCTAssertEqual(Mnemonic.deriveSeed(mnemonic: mnemonic, passphrase: passphrase), seed)
     }
 
     func testEncode() {

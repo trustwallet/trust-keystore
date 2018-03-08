@@ -16,20 +16,17 @@ public class Wallet {
     /// Mnemonic word list.
     public var mnemonic: String
 
+    /// Mnemonic passphrase.
+    public var passphrase: String
+
     /// Derivation path.
     public var path: String
 
-    /// Initializes a wallet from a mnemonic string and a password.
-    public init(mnemonic: String, password: String, path: String = Wallet.defaultPath) {
-        seed = Mnemonic.deriveSeed(mnemonic: mnemonic, password: password)
+    /// Initializes a wallet from a mnemonic string and a passphrase.
+    public init(mnemonic: String, passphrase: String = "", path: String = Wallet.defaultPath) {
+        seed = Mnemonic.deriveSeed(mnemonic: mnemonic, passphrase: passphrase)
         self.mnemonic = mnemonic
-        self.path = path
-    }
-
-    /// Initializes a wallet from a wallet seed.
-    public init(seed: Data, path: String = Wallet.defaultPath) {
-        self.seed = seed
-        self.mnemonic = Mnemonic.generate(from: seed)
+        self.passphrase = ""
         self.path = path
     }
 
