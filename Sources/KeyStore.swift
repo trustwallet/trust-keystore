@@ -11,29 +11,21 @@ public final class KeyStore {
     /// The key file directory.
     public let keyDirectory: URL
 
-    /// The wallet file directory.
-    public let walletDirectory: URL
-
     /// Dictionary of accounts by address.
     private var accountsByAddress = [Address: Account]()
 
     /// Dictionary of keys by address.
     private var keysByAddress = [Address: KeystoreKey]()
 
-    /// Dictionary of wallets by address.
-    private var walletsByAddress = [Address: WalletDescriptor]()
-
     /// Creates a `KeyStore` for the given directory.
-    public init(keyDirectory: URL, walletDirectory: URL) throws {
+    public init(keyDirectory: URL) throws {
         self.keyDirectory = keyDirectory
-        self.walletDirectory = walletDirectory
         try load()
     }
 
     private func load() throws {
         let fileManager = FileManager.default
         try? fileManager.createDirectory(at: keyDirectory, withIntermediateDirectories: true, attributes: nil)
-        try? fileManager.createDirectory(at: walletDirectory, withIntermediateDirectories: true, attributes: nil)
 
         let accountURLs = try fileManager.contentsOfDirectory(at: keyDirectory, includingPropertiesForKeys: [], options: [.skipsHiddenFiles])
         for url in accountURLs {
@@ -42,18 +34,6 @@ public final class KeyStore {
                 keysByAddress[key.address] = key
                 let account = Account(address: key.address, type: .encryptedKey, url: url)
                 accountsByAddress[key.address] = account
-            } catch {
-                // Ignore invalid keys
-            }
-        }
-
-        let walletURLs = try fileManager.contentsOfDirectory(at: walletDirectory, includingPropertiesForKeys: [], options: [.skipsHiddenFiles])
-        for url in walletURLs {
-            do {
-                let wd = try WalletDescriptor(contentsOf: url)
-                walletsByAddress[wd.address] = wd
-                let account = Account(address: wd.address, type: .hierarchicalDeterministicWallet, url: url)
-                accountsByAddress[wd.address] = account
             } catch {
                 // Ignore invalid keys
             }
@@ -75,44 +55,15 @@ public final class KeyStore {
         return keysByAddress[address]
     }
 
-    /// Retrieves a wallet for the given address, if it exists.
-    public func wallet(for address: Address) -> WalletDescriptor? {
-        return walletsByAddress[address]
-    }
-
     /// Creates a new account.
     public func createAccount(password: String, type: AccountType) throws -> Account {
-        switch type {
-        case .encryptedKey:
-            return try createKey(password: password)
-        case .hierarchicalDeterministicWallet:
-            return try createWallet(password: password)
-        }
-    }
-
-    func createKey(password: String) throws -> Account {
-        let key = try KeystoreKey(password: password)
+        let key = try KeystoreKey(password: password, type: type)
         keysByAddress[key.address] = key
 
-        let url = makeAccountURL(for: key.address, type: .encryptedKey)
-        let account = Account(address: key.address, type: .encryptedKey, url: url)
+        let url = makeAccountURL(for: key.address)
+        let account = Account(address: key.address, type: type, url: url)
         try save(account: account, in: keyDirectory)
         accountsByAddress[key.address] = account
-        return account
-    }
-
-    func createWallet(password: String) throws -> Account {
-        let mnemonic = Mnemonic.generate(strength: 256)
-        let wallet = Wallet(mnemonic: mnemonic, password: password)
-        let address = wallet.getKey(at: 0).address
-        let url = makeAccountURL(for: address, type: .hierarchicalDeterministicWallet)
-        let wd = WalletDescriptor(mnemonic: mnemonic, address: address)
-        walletsByAddress[address] = wd
-
-        let account = Account(address: address, type: .hierarchicalDeterministicWallet, url: url)
-        try save(account: account, in: keyDirectory)
-        accountsByAddress[address] = account
-
         return account
     }
 
@@ -137,7 +88,7 @@ public final class KeyStore {
         let newKey = try KeystoreKey(password: newPassword, key: privateKey)
         keysByAddress[newKey.address] = newKey
 
-        let url = makeAccountURL(for: key.address, type: .encryptedKey)
+        let url = makeAccountURL(for: key.address)
         let account = Account(address: newKey.address, type: .encryptedKey, url: url)
         try save(account: account, in: keyDirectory)
         accountsByAddress[newKey.address] = account
@@ -149,19 +100,20 @@ public final class KeyStore {
     ///
     /// - Parameters:
     ///   - mnemonic: wallet's mnemonic phrase
-    ///   - password: password
+    ///   - passphrase: wallet's password
+    ///   - encryptPassword: password to use for encrypting
     /// - Returns: new account
-    public func `import`(mnemonic: String, password: String) throws -> Account {
-        let wallet = Wallet(mnemonic: mnemonic, password: password)
+    public func `import`(mnemonic: String, passphrase: String = "", encryptPassword: String) throws -> Account {
+        let wallet = Wallet(mnemonic: mnemonic, passphrase: passphrase)
         let address = wallet.getKey(at: 0).address
         if self.account(for: address) != nil {
             throw Error.accountAlreadyExists
         }
 
-        let wd = WalletDescriptor(mnemonic: mnemonic, address: address)
-        walletsByAddress[address] = wd
+        let newKey = try KeystoreKey(password: encryptPassword, mnemonic: mnemonic, passphrase: passphrase)
+        keysByAddress[newKey.address] = newKey
 
-        let url = makeAccountURL(for: address, type: .hierarchicalDeterministicWallet)
+        let url = makeAccountURL(for: address)
         let account = Account(address: address, type: .hierarchicalDeterministicWallet, url: url)
         try save(account: account, in: keyDirectory)
         accountsByAddress[address] = account
@@ -186,7 +138,16 @@ public final class KeyStore {
             privateKey.resetBytes(in: 0..<privateKey.count)
         }
 
-        let newKey = try KeystoreKey(password: newPassword, key: privateKey)
+        let newKey: KeystoreKey
+        switch key.type {
+        case .encryptedKey:
+            newKey = try KeystoreKey(password: newPassword, key: privateKey)
+        case .hierarchicalDeterministicWallet:
+            guard let string = String(data: privateKey, encoding: .ascii) else {
+                throw EncryptError.invalidMnemonic
+            }
+            newKey = try KeystoreKey(password: newPassword, mnemonic: string, passphrase: key.passphrase)
+        }
         return try JSONEncoder().encode(newKey)
     }
 
@@ -196,12 +157,25 @@ public final class KeyStore {
     ///   - account: account to export
     ///   - password: account password
     /// - Returns: private key data
-
     public func exportPrivateKey(account: Account, password: String) throws -> Data {
         guard let key = keysByAddress[account.address] else {
             fatalError("Missing account key")
         }
-        return try key.decrypt(password: password)
+
+        var privateKey = try key.decrypt(password: password)
+        defer {
+            privateKey.resetBytes(in: 0..<privateKey.count)
+        }
+
+        switch key.type {
+        case .encryptedKey:
+            return privateKey
+        case .hierarchicalDeterministicWallet:
+            guard let string = String(data: privateKey, encoding: .ascii) else {
+                throw EncryptError.invalidMnemonic
+            }
+            return Wallet(mnemonic: string, passphrase: key.passphrase).getKey(at: 0).privateKey
+        }
     }
 
     /// Updates the password of an existing account.
@@ -220,37 +194,31 @@ public final class KeyStore {
             privateKey.resetBytes(in: 0..<privateKey.count)
         }
 
-        let newKey = try KeystoreKey(password: newPassword, key: privateKey)
+        let newKey: KeystoreKey
+        switch key.type {
+        case .encryptedKey:
+            newKey = try KeystoreKey(password: newPassword, key: privateKey)
+        case .hierarchicalDeterministicWallet:
+            guard let string = String(data: privateKey, encoding: .ascii) else {
+                throw EncryptError.invalidMnemonic
+            }
+            newKey = try KeystoreKey(password: newPassword, mnemonic: string, passphrase: key.passphrase)
+        }
         keysByAddress[newKey.address] = newKey
     }
 
     /// Deletes an account including its key if the password is correct.
     public func delete(account: Account, password: String) throws {
-        switch account.type {
-        case .encryptedKey:
-            guard let key = keysByAddress[account.address] else {
-                fatalError("Missing account key")
-            }
-
-            var privateKey = try key.decrypt(password: password)
-            defer {
-                privateKey.resetBytes(in: 0..<privateKey.count)
-            }
-
-            keysByAddress[account.address] = nil
-        case .hierarchicalDeterministicWallet:
-            guard let wd = walletsByAddress[account.address] else {
-                fatalError("Missing account wallet")
-            }
-
-            let wallet = Wallet(mnemonic: wd.mnemonic, password: password)
-            if wallet.getKey(at: 0).address != wd.address {
-                // Wrong password
-                return
-            }
-
-            walletsByAddress[wd.address] = nil
+        guard let key = keysByAddress[account.address] else {
+            fatalError("Missing account key")
         }
+
+        var privateKey = try key.decrypt(password: password)
+        defer {
+            privateKey.resetBytes(in: 0..<privateKey.count)
+        }
+
+        keysByAddress[account.address] = nil
 
         try FileManager.default.removeItem(at: account.url)
         accountsByAddress[account.address] = nil
@@ -265,19 +233,10 @@ public final class KeyStore {
     /// - Returns: signature
     /// - Throws: `DecryptError`, `Secp256k1Error`, or `KeyStore.Error`
     public func signHash(_ data: Data, account: Account, password: String) throws -> Data {
-        switch account.type {
-        case .encryptedKey:
-            guard let key = keysByAddress[account.address] else {
-                throw KeyStore.Error.accountNotFound
-            }
-            return try key.sign(hash: data, password: password)
-        case .hierarchicalDeterministicWallet:
-            guard let wd = walletsByAddress[account.address] else {
-                throw KeyStore.Error.accountNotFound
-            }
-            let wallet = Wallet(mnemonic: wd.mnemonic, password: password)
-            return try wallet.getKey(at: 0).sign(hash: data)
+        guard let key = keysByAddress[account.address] else {
+            throw KeyStore.Error.accountNotFound
         }
+        return try key.sign(hash: data, password: password)
     }
 
     /// Signs an array of hashes with the given password.
@@ -289,52 +248,24 @@ public final class KeyStore {
     /// - Returns: array of signatures
     /// - Throws: `DecryptError` or `Secp256k1Error` or `KeyStore.Error`
     public func signHashes(_ data: [Data], account: Account, password: String) throws -> [Data] {
-        switch account.type {
-        case .encryptedKey:
-            guard let key = keysByAddress[account.address] else {
-                throw KeyStore.Error.accountNotFound
-            }
-            return try key.signHashes(data, password: password)
-        case .hierarchicalDeterministicWallet:
-            guard let wd = walletsByAddress[account.address] else {
-                throw KeyStore.Error.accountNotFound
-            }
-            var arrayOfSignatures = [Data]()
-            let wallet = Wallet(mnemonic: wd.mnemonic, password: password)
-            let key = try wallet.getKey(at: 0)
-            for i in 0...data.count - 1 {
-                let signature = try key.sign(hash: data[i])
-                arrayOfSignatures.append(signature)
-            }
-            return arrayOfSignatures
+        guard let key = keysByAddress[account.address] else {
+            throw KeyStore.Error.accountNotFound
         }
+        return try key.signHashes(data, password: password)
     }
 
     // MARK: Helpers
 
-    private func makeAccountURL(for address: Address, type: AccountType) -> URL {
-        switch type {
-        case .encryptedKey:
-            return keyDirectory.appendingPathComponent(generateFileName(address: address))
-        case .hierarchicalDeterministicWallet:
-            return walletDirectory.appendingPathComponent(generateFileName(address: address))
-        }
+    private func makeAccountURL(for address: Address) -> URL {
+        return keyDirectory.appendingPathComponent(generateFileName(address: address))
     }
 
     /// Saves the account to the given directory.
     private func save(account: Account, in directory: URL) throws {
-        switch account.type {
-        case .encryptedKey:
-            guard let key = keysByAddress[account.address] else {
-                fatalError("Missing account key")
-            }
-            try save(key: key, to: account.url)
-        case .hierarchicalDeterministicWallet:
-            guard let wallet = walletsByAddress[account.address] else {
-                fatalError("Missing account wallet")
-            }
-            try save(wallet: wallet, to: account.url)
+        guard let key = keysByAddress[account.address] else {
+            fatalError("Missing account key")
         }
+        try save(key: key, to: account.url)
     }
 
     /// Generates a unique file name for an address.
@@ -359,11 +290,6 @@ public final class KeyStore {
 
     private func save(key: KeystoreKey, to url: URL) throws {
         let json = try JSONEncoder().encode(key)
-        try json.write(to: url, options: [.atomicWrite])
-    }
-
-    private func save(wallet: WalletDescriptor, to url: URL) throws {
-        let json = try JSONEncoder().encode(wallet)
         try json.write(to: url, options: [.atomicWrite])
     }
 }
