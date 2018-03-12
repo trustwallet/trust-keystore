@@ -10,5 +10,6 @@ extension KeyStore {
     public enum Error: Swift.Error {
         case accountAlreadyExists
         case accountNotFound
+        case invalidMnemonic
     }
 }

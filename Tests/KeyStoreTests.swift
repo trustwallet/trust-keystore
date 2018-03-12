@@ -104,7 +104,7 @@ class KeyStoreTests: XCTestCase {
 
     func testImportWallet() throws {
         let keyStore = try KeyStore(keyDirectory: keyDirectory)
-        let account = try keyStore.import(mnemonic: "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn back", passphrase: "TREZOR", encryptPassword: "newPassword")
+        let account = try keyStore.import(mnemonic: "often tobacco bread scare imitate song kind common bar forest yard wisdom", passphrase: "TREZOR", encryptPassword: "newPassword")
 
         XCTAssertNotNil(keyStore.account(for: account.address))
         XCTAssertNoThrow(try keyStore.signHash(Data(repeating: 0, count: 32), account: account, password: "newPassword"))
