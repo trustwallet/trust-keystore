@@ -104,6 +104,10 @@ public final class KeyStore {
     ///   - encryptPassword: password to use for encrypting
     /// - Returns: new account
     public func `import`(mnemonic: String, passphrase: String = "", encryptPassword: String) throws -> Account {
+        if !Mnemonic.isValid(mnemonic) {
+            throw Error.invalidMnemonic
+        }
+
         let wallet = Wallet(mnemonic: mnemonic, passphrase: passphrase)
         let address = wallet.getKey(at: 0).address
         if self.account(for: address) != nil {
