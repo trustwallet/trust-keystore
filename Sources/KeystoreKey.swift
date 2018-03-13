@@ -26,6 +26,9 @@ public struct KeystoreKey {
     /// Mnemonic passphrase
     public var passphrase = ""
 
+    /// Mnemonic derivation path
+    public var derivationPath = Wallet.defaultPath
+
     /// Key version, must be 3.
     public var version = 3
 
@@ -78,7 +81,7 @@ public struct KeystoreKey {
     }
 
     /// Initializes a `Key` by encrypting a mnemonic phrase with a password.
-    public init(password: String, mnemonic: String, passphrase: String = "") throws {
+    public init(password: String, mnemonic: String, passphrase: String = "", derivationPath: String = Wallet.defaultPath) throws {
         id = UUID().uuidString.lowercased()
 
         guard let cstring = mnemonic.cString(using: .ascii) else {
@@ -87,10 +90,11 @@ public struct KeystoreKey {
         let data = Data(bytes: cstring.map({ UInt8($0) }))
         crypto = try KeystoreKeyHeader(password: password, data: data)
 
-        let key = Wallet(mnemonic: mnemonic, passphrase: passphrase).getKey(at: 0)
+        let key = Wallet(mnemonic: mnemonic, passphrase: passphrase, path: derivationPath).getKey(at: 0)
         address = key.address
         type = .hierarchicalDeterministicWallet
         self.passphrase = passphrase
+        self.derivationPath = derivationPath
     }
 
     /// Decodes an Ethereum address from a public key.
@@ -166,7 +170,7 @@ public struct KeystoreKey {
                     chars.replaceSubrange(chars.startIndex ..< chars.endIndex, with: [Character](repeating: " ", count: chars.count))
                 }
             }
-            let wallet = Wallet(mnemonic: mnemonic, passphrase: passphrase)
+            let wallet = Wallet(mnemonic: mnemonic, passphrase: passphrase, path: derivationPath)
             return try wallet.getKey(at: 0).sign(hash: hash)
         }
     }
@@ -221,6 +225,7 @@ extension KeystoreKey: Codable {
         case type
         case id
         case crypto
+        case derivationPath
         case version
     }
 
@@ -241,6 +246,7 @@ extension KeystoreKey: Codable {
         switch try values.decodeIfPresent(String.self, forKey: .type) {
         case TypeString.mnemonic?:
             type = .hierarchicalDeterministicWallet
+            derivationPath = try values.decodeIfPresent(String.self, forKey: .derivationPath) ?? Wallet.defaultPath
         default:
             type = .encryptedKey
         }
@@ -263,6 +269,7 @@ extension KeystoreKey: Codable {
             try container.encode(TypeString.privateKey, forKey: .type)
         case .hierarchicalDeterministicWallet:
             try container.encode(TypeString.mnemonic, forKey: .type)
+            try container.encode(derivationPath, forKey: .derivationPath)
         }
         try container.encode(id, forKey: .id)
         try container.encode(crypto, forKey: .crypto)

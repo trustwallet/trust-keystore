@@ -101,20 +101,21 @@ public final class KeyStore {
     /// - Parameters:
     ///   - mnemonic: wallet's mnemonic phrase
     ///   - passphrase: wallet's password
+    ///   - derivationPath: wallet's derivation path
     ///   - encryptPassword: password to use for encrypting
     /// - Returns: new account
-    public func `import`(mnemonic: String, passphrase: String = "", encryptPassword: String) throws -> Account {
+    public func `import`(mnemonic: String, passphrase: String = "", derivationPath: String = Wallet.defaultPath, encryptPassword: String) throws -> Account {
         if !Mnemonic.isValid(mnemonic) {
             throw Error.invalidMnemonic
         }
 
-        let wallet = Wallet(mnemonic: mnemonic, passphrase: passphrase)
+        let wallet = Wallet(mnemonic: mnemonic, passphrase: passphrase, path: derivationPath)
         let address = wallet.getKey(at: 0).address
         if self.account(for: address) != nil {
             throw Error.accountAlreadyExists
         }
 
-        let newKey = try KeystoreKey(password: encryptPassword, mnemonic: mnemonic, passphrase: passphrase)
+        let newKey = try KeystoreKey(password: encryptPassword, mnemonic: mnemonic, passphrase: passphrase, derivationPath: derivationPath)
         keysByAddress[newKey.address] = newKey
 
         let url = makeAccountURL(for: address)
@@ -150,7 +151,7 @@ public final class KeyStore {
             guard let string = String(data: privateKey, encoding: .ascii) else {
                 throw EncryptError.invalidMnemonic
             }
-            newKey = try KeystoreKey(password: newPassword, mnemonic: string, passphrase: key.passphrase)
+            newKey = try KeystoreKey(password: newPassword, mnemonic: string, passphrase: key.passphrase, derivationPath: key.derivationPath)
         }
         return try JSONEncoder().encode(newKey)
     }
@@ -178,7 +179,7 @@ public final class KeyStore {
             guard let string = String(data: privateKey, encoding: .ascii) else {
                 throw EncryptError.invalidMnemonic
             }
-            return Wallet(mnemonic: string, passphrase: key.passphrase).getKey(at: 0).privateKey
+            return Wallet(mnemonic: string, passphrase: key.passphrase, path: key.derivationPath).getKey(at: 0).privateKey
         }
     }
 
