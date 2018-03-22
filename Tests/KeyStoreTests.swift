@@ -36,7 +36,12 @@ class KeyStoreTests: XCTestCase {
     }
 
     func testLoadKeyStore() {
-        let keyStore = try! KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
 
         let keyAccount = keyStore.account(for: keyAddress)
         XCTAssertNotNil(keyAccount)
@@ -46,7 +51,13 @@ class KeyStoreTests: XCTestCase {
     }
 
     func testCreateKey() {
-        let keyStore = try! KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
+
         let newAccount = try! keyStore.createAccount(password: "password", type: .encryptedKey)
 
         XCTAssertNotNil(keyStore.account(for: newAccount.address))
@@ -54,7 +65,13 @@ class KeyStoreTests: XCTestCase {
     }
 
     func testCreateWallet() {
-        let keyStore = try! KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
+
         let newAccount = try! keyStore.createAccount(password: "password", type: .hierarchicalDeterministicWallet)
 
         XCTAssertNotNil(keyStore.account(for: newAccount.address))
@@ -62,14 +79,26 @@ class KeyStoreTests: XCTestCase {
     }
 
     func testUpdateKey() {
-        let keyStore = try! KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
+
         let account = keyStore.account(for: keyAddress)!
         try! keyStore.update(account: account, password: "testpassword", newPassword: "password")
         XCTAssertNoThrow(try keyStore.signHash(Data(repeating: 0, count: 32), account: account, password: "password"))
     }
 
     func testSigningMultiple() {
-        let keyStore = try! KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
+
         let account = keyStore.account(for: keyAddress)!
         var multipleMessages = [Data]()
         for _ in 0...2000 {
@@ -79,19 +108,37 @@ class KeyStoreTests: XCTestCase {
     }
 
     func testDeleteKey() {
-        let keyStore = try! KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
+
         try! keyStore.delete(account: keyStore.account(for: keyAddress)!, password: "testpassword")
         XCTAssertNil(keyStore.account(for: keyAddress))
     }
 
     func testDeleteWallet() {
-        let keyStore = try! KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
+
         try! keyStore.delete(account: keyStore.account(for: walletAddress)!, password: "password")
         XCTAssertNil(keyStore.account(for: walletAddress))
     }
 
     func testImportKey() {
-        let keyStore = try! KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
+
         let privateKey = Data(hexString: "9cdb5cab19aec3bd0fcd614c5f185e7a1d97634d4225730eba22497dc89a716c")!
         let key = try! KeystoreKey(password: "password", key: privateKey)
         let json = try! JSONEncoder().encode(key)
@@ -103,7 +150,13 @@ class KeyStoreTests: XCTestCase {
     }
 
     func testImportWallet() throws {
-        let keyStore = try KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
+
         let account = try keyStore.import(mnemonic: "often tobacco bread scare imitate song kind common bar forest yard wisdom", passphrase: "TREZOR", encryptPassword: "newPassword")
 
         XCTAssertNotNil(keyStore.account(for: account.address))
@@ -111,7 +164,12 @@ class KeyStoreTests: XCTestCase {
     }
 
     func testFileName() {
-        let keyStore = try! KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
 
         let timeZone = TimeZone(secondsFromGMT: -480)!
         let date = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2018, month: 1, day: 2, hour: 20, minute: 55, second: 25, nanosecond: 186770975).date!
@@ -121,7 +179,12 @@ class KeyStoreTests: XCTestCase {
     }
 
     func testFileNameUTC() {
-        let keyStore = try! KeyStore(keyDirectory: keyDirectory)
+        let loadExpectation = expectation(description: "KeyStore loaded")
+        let keyStore = KeyStore(keyDirectory: keyDirectory)
+        keyStore.load {
+            loadExpectation.fulfill()
+        }
+        wait(for: [loadExpectation], timeout: 1)
 
         let timeZone = TimeZone(abbreviation: "UTC")!
         let date = DateComponents(calendar: Calendar(identifier: .iso8601), timeZone: timeZone, year: 2018, month: 1, day: 2, hour: 20, minute: 55, second: 25, nanosecond: 186770975).date!

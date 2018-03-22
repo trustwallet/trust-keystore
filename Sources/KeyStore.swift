@@ -11,6 +11,9 @@ public final class KeyStore {
     /// The key file directory.
     public let keyDirectory: URL
 
+    /// Determines whether the key store files have been loaded from disk.
+    public private(set) var isLoaded = false
+
     /// Dictionary of accounts by address.
     private var accountsByAddress = [Address: Account]()
 
@@ -18,24 +21,37 @@ public final class KeyStore {
     private var keysByAddress = [Address: KeystoreKey]()
 
     /// Creates a `KeyStore` for the given directory.
-    public init(keyDirectory: URL) throws {
+    public init(keyDirectory: URL) {
         self.keyDirectory = keyDirectory
-        try load()
     }
 
-    private func load() throws {
-        let fileManager = FileManager.default
-        try? fileManager.createDirectory(at: keyDirectory, withIntermediateDirectories: true, attributes: nil)
+    /// Loads the keys from disk on a background queue.
+    ///
+    /// - Parameter completion: completion called on the main queue after loading
+    public func load(completion: @escaping () -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let fileManager = FileManager()
+            try? fileManager.createDirectory(at: self.keyDirectory, withIntermediateDirectories: true, attributes: nil)
 
-        let accountURLs = try fileManager.contentsOfDirectory(at: keyDirectory, includingPropertiesForKeys: [], options: [.skipsHiddenFiles])
-        for url in accountURLs {
-            do {
-                let key = try KeystoreKey(contentsOf: url)
-                keysByAddress[key.address] = key
-                let account = Account(address: key.address, type: key.type, url: url)
-                accountsByAddress[key.address] = account
-            } catch {
-                // Ignore invalid keys
+            var accountsByAddress = [Address: Account]()
+            var keysByAddress = [Address: KeystoreKey]()
+            let accountURLs = try? fileManager.contentsOfDirectory(at: self.keyDirectory, includingPropertiesForKeys: [], options: [.skipsHiddenFiles])
+            for url in accountURLs ?? [] {
+                do {
+                    let key = try KeystoreKey(contentsOf: url)
+                    keysByAddress[key.address] = key
+                    let account = Account(address: key.address, type: key.type, url: url)
+                    accountsByAddress[key.address] = account
+                } catch {
+                    // Ignore invalid keys
+                }
+            }
+
+            DispatchQueue.main.async {
+                self.accountsByAddress = accountsByAddress
+                self.keysByAddress = keysByAddress
+                self.isLoaded = true
+                completion()
             }
         }
     }
