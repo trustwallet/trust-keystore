@@ -5,6 +5,7 @@
 // file LICENSE at the root of the source code distribution tree.
 
 import TrezorCrypto
+import TrustCore
 
 // Hierarchical deterministic key.
 public class HDKey {
@@ -12,15 +13,6 @@ public class HDKey {
 
     init(node: HDNode) {
         self.node = node
-    }
-
-    /// Signs a hash using this key.
-    ///
-    /// - Parameters:
-    ///   - hash: hash to sign
-    /// - Returns: signature
-    public func sign(hash: Data) throws -> Data {
-        return try Secp256k1.shared.sign(hash: hash, privateKey: privateKey)
     }
 
     /// The key's address.

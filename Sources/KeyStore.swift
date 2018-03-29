@@ -5,6 +5,7 @@
 // file LICENSE at the root of the source code distribution tree.
 
 import Foundation
+import TrustCore
 
 /// Manages directories of key and wallet files and presents them as accounts.
 public final class KeyStore {

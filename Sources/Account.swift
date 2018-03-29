@@ -5,6 +5,7 @@
 // file LICENSE at the root of the source code distribution tree.
 
 import Foundation
+import TrustCore
 
 /// Ethereum account representation.
 public struct Account: Hashable {

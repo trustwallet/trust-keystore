@@ -2,35 +2,28 @@ PODS:
   - BigInt (3.0.1):
     - SipHash (~> 1.2)
   - CryptoSwift (0.8.1)
-  - secp256k1_ios (0.1.0)
   - SipHash (1.2.0)
   - SwiftLint (0.25.0)
   - TrezorCrypto (0.0.4)
+  - TrustCore (0.0.2):
+    - BigInt
+    - TrezorCrypto
 
 DEPENDENCIES:
   - BigInt
   - CryptoSwift
-  - secp256k1_ios (from `https://github.com/shamatar/secp256k1_ios.git`)
   - SwiftLint
   - TrezorCrypto
-
-EXTERNAL SOURCES:
-  secp256k1_ios:
-    :git: https://github.com/shamatar/secp256k1_ios.git
-
-CHECKOUT OPTIONS:
-  secp256k1_ios:
-    :commit: d928b05deab15ba780b07dd0071fdde7305dc143
-    :git: https://github.com/shamatar/secp256k1_ios.git
+  - TrustCore
 
 SPEC CHECKSUMS:
   BigInt: 8e8a52161c745cd3ab78e3dc346a9fbee51e6cf6
   CryptoSwift: 4b07d5b508c1eb67bfa314a727b705f8048a85de
-  secp256k1_ios: e36fe281fd9d4e66e897b5c540c3bde226e6a730
   SipHash: c6e9e43e9c531b5bc6602545130c26194a6d31ce
   SwiftLint: e14651157288e9e01d6e1a71db7014fb5744a8ea
   TrezorCrypto: 7f87a2296cf13872b21565c29fd9f7882dd00803
+  TrustCore: a7459655e560ec0d3779cf115a6a293fc5dd48a1
 
-PODFILE CHECKSUM: 02d17be8816b500131fbb64cc4794f0f6a6f1197
+PODFILE CHECKSUM: 72869e8e272bcd81fbd2d12d6b950a20dc8cdf2d
 
 COCOAPODS: 1.4.0

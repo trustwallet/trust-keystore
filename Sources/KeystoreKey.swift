@@ -6,8 +6,8 @@
 
 import CryptoSwift
 import Foundation
-import secp256k1_ios
 import Security
+import TrustCore
 
 /// Key definition.
 public struct KeystoreKey {
@@ -75,7 +75,7 @@ public struct KeystoreKey {
         id = UUID().uuidString.lowercased()
         crypto = try KeystoreKeyHeader(password: password, data: key)
 
-        let pubKey = Secp256k1.shared.pubicKey(from: key)
+        let pubKey = EthereumCrypto.getPublicKey(from: key)
         address = KeystoreKey.decodeAddress(from: pubKey)
         type = .encryptedKey
     }
@@ -159,7 +159,7 @@ public struct KeystoreKey {
                 // Clear memory after signing
                 key.resetBytes(in: 0..<key.count)
             }
-            return try Secp256k1.shared.sign(hash: hash, privateKey: key)
+            return EthereumCrypto.sign(hash: hash, privateKey: key)
         case .hierarchicalDeterministicWallet:
             guard var mnemonic = String(data: try decrypt(password: password), encoding: .ascii) else {
                 throw DecryptError.invalidPassword
@@ -171,7 +171,7 @@ public struct KeystoreKey {
                 }
             }
             let wallet = Wallet(mnemonic: mnemonic, passphrase: passphrase, path: derivationPath)
-            return try wallet.getKey(at: 0).sign(hash: hash)
+            return EthereumCrypto.sign(hash: hash, privateKey: wallet.getKey(at: 0).privateKey)
         }
     }
 
@@ -190,7 +190,7 @@ public struct KeystoreKey {
                 // Clear memory after signing
                 key.resetBytes(in: 0..<key.count)
             }
-            return try hashes.map({ try Secp256k1.shared.sign(hash: $0, privateKey: key) })
+            return hashes.map({ EthereumCrypto.sign(hash: $0, privateKey: key) })
         case .hierarchicalDeterministicWallet:
             guard var mnemonic = String(data: try decrypt(password: password), encoding: .ascii) else {
                 throw DecryptError.invalidPassword
@@ -202,8 +202,8 @@ public struct KeystoreKey {
                 }
             }
             let wallet = Wallet(mnemonic: mnemonic)
-            let key = wallet.getKey(at: 0)
-            return try hashes.map({ try key.sign(hash: $0) })
+            let key = wallet.getKey(at: 0).privateKey
+            return hashes.map({ EthereumCrypto.sign(hash: $0, privateKey: key) })
         }
     }
 }
