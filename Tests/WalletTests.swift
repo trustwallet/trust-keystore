@@ -5,6 +5,7 @@
 // file LICENSE at the root of the source code distribution tree.
 
 import TrezorCrypto
+import TrustCore
 @testable import TrustKeystore
 import XCTest
 
@@ -34,10 +35,10 @@ class WalletTests: XCTestCase {
         let wallet = Wallet(mnemonic: words, passphrase: passphrase)
         let key = wallet.getKey(at: 0)
         let hash = Data(hexString: "3F891FDA3704F0368DAB65FA81EBE616F4AA2A0854995DA4DC0B59D2CADBD64F")!
-        let result = try! key.sign(hash: hash)
+        let result = EthereumCrypto.sign(hash: hash, privateKey: key.privateKey)
 
         let publicKey = key.publicKey
         XCTAssertEqual(result.count, 65)
-        XCTAssertTrue(try Secp256k1.shared.verify(signature: result, message: hash, publicKey: publicKey))
+        XCTAssertTrue(EthereumCrypto.verify(signature: result, message: hash, publicKey: publicKey))
     }
 }
