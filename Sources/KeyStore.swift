@@ -207,7 +207,11 @@ public final class KeyStore {
             guard let string = String(data: privateKey, encoding: .ascii) else {
                 throw EncryptError.invalidMnemonic
             }
-            return string
+            if string.hasSuffix("\0") {
+                return String(string.dropLast())
+            } else {
+                return string
+            }
         }
     }
 

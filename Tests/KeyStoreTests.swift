@@ -111,6 +111,15 @@ class KeyStoreTests: XCTestCase {
         XCTAssertNoThrow(try keyStore.signHash(Data(repeating: 0, count: 32), account: account, password: "newPassword"))
     }
 
+    func testExportMnemonic() throws {
+        let mnemonic = "often tobacco bread scare imitate song kind common bar forest yard wisdom"
+        let keyStore = try KeyStore(keyDirectory: keyDirectory)
+        let account = try keyStore.import(mnemonic: mnemonic, passphrase: "TREZOR", encryptPassword: "newPassword")
+        let exported = try keyStore.exportMnemonic(account: account, password: "newPassword")
+
+        XCTAssertEqual(mnemonic.bytes, exported.bytes)
+    }
+
     func testFileName() {
         let keyStore = try! KeyStore(keyDirectory: keyDirectory)
 
