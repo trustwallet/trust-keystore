@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'TrustKeystore'
-  s.version      = '0.3.1'
+  s.version      = '0.4.1'
   s.summary      = 'A general-purpose Ethereum keystore for managing wallets.'
   s.homepage     = 'https://github.com/TrustWallet/trust-keystore'
   s.license      = 'GPL'
@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.dependency 'BigInt'
   s.dependency 'CryptoSwift'
   s.dependency 'TrezorCrypto'
+  s.dependency 'TrustCore'
 
   s.pod_target_xcconfig = { 'SWIFT_OPTIMIZATION_LEVEL' => '-Owholemodule' }
 end
