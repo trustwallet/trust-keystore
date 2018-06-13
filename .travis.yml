@@ -1,11 +1,12 @@
 language: swift
-osx_image: xcode9.2
+osx_image: xcode9.3
 
 cache:
   - cocoapods
   - bundler
 
 before_install:
+  - gem update cocoapods
   - pod install --repo-update
   - brew update
   - brew install swiftlint || true
