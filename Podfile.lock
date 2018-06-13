@@ -1,7 +1,7 @@
 PODS:
   - BigInt (3.0.1):
     - SipHash (~> 1.2)
-  - CryptoSwift (0.8.3)
+  - CryptoSwift (0.10.0)
   - SipHash (1.2.0)
   - SwiftLint (0.25.0)
   - TrezorCrypto (0.0.5)
@@ -11,19 +11,28 @@ PODS:
 
 DEPENDENCIES:
   - BigInt
-  - CryptoSwift (~> 0.8.1)
+  - CryptoSwift (~> 0.10.0)
   - SwiftLint
   - TrezorCrypto
   - TrustCore
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - BigInt
+    - CryptoSwift
+    - SipHash
+    - SwiftLint
+    - TrezorCrypto
+    - TrustCore
+
 SPEC CHECKSUMS:
   BigInt: 8e8a52161c745cd3ab78e3dc346a9fbee51e6cf6
-  CryptoSwift: 033efc3523865d19cc6ab6612fa17a62613b5dfa
+  CryptoSwift: 6c778d69282bed3b4e975ff97a79d074f20bb011
   SipHash: c6e9e43e9c531b5bc6602545130c26194a6d31ce
   SwiftLint: e14651157288e9e01d6e1a71db7014fb5744a8ea
   TrezorCrypto: ecef681446bf02af6248d3b5e394026d7e766e56
   TrustCore: 305289e5b1d484d6fe935fc47c724f3ceeae4100
 
-PODFILE CHECKSUM: 6022582b9cc05f0b0e516ee89ce9c8b57234b7cd
+PODFILE CHECKSUM: a0a890ff765761a35b54cd998795a7a0ddb5b8de
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.3
