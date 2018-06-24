@@ -59,7 +59,7 @@ public struct KeystoreKey {
             let key = keyRepresentation[(keyRepresentation.count - 32)...]
             try self.init(password: password, key: key)
         case .hierarchicalDeterministicWallet:
-            let mnemonic = Mnemonic.generate(strength: 256)
+            let mnemonic = Mnemonic.generate(strength: 128)
             try self.init(password: password, mnemonic: mnemonic, passphrase: "")
         }
     }
