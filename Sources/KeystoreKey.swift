@@ -125,10 +125,10 @@ public struct KeystoreKey {
         let decryptedPK: [UInt8]
         switch crypto.cipher {
         case "aes-128-ctr":
-            let aesCipher = try AES(key: decryptionKey.bytes, blockMode: BlockMode.CTR(iv: crypto.cipherParams.iv.bytes), padding: .noPadding)
+            let aesCipher = try AES(key: decryptionKey.bytes, blockMode: CTR(iv: crypto.cipherParams.iv.bytes), padding: .noPadding)
             decryptedPK = try aesCipher.decrypt(crypto.cipherText.bytes)
         case "aes-128-cbc":
-            let aesCipher = try AES(key: decryptionKey.bytes, blockMode: BlockMode.CBC(iv: crypto.cipherParams.iv.bytes), padding: .noPadding)
+            let aesCipher = try AES(key: decryptionKey.bytes, blockMode: CBC(iv: crypto.cipherParams.iv.bytes), padding: .noPadding)
             decryptedPK = try aesCipher.decrypt(crypto.cipherText.bytes)
         default:
             throw DecryptError.unsupportedCipher
