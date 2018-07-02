@@ -14,7 +14,9 @@
 		6147C6B8202D8F71009183FB /* Wallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6147C6B7202D8F71009183FB /* Wallet.swift */; };
 		6147C6BC202E499E009183FB /* HDKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6147C6BB202E499E009183FB /* HDKey.swift */; };
 		6148DA601FE3950300D4C17D /* ScryptParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6148DA5F1FE3950300D4C17D /* ScryptParams.swift */; };
+		6152D4AF1FEEC92300DE7978 /* MnemonicWords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6152D4AE1FEEC92300DE7978 /* MnemonicWords.swift */; };
 		6152D4B11FEEC98500DE7978 /* Mnemonic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6152D4B01FEEC98500DE7978 /* Mnemonic.swift */; };
+		6152D4B31FEECF0000DE7978 /* MnemonicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6152D4B21FEECF0000DE7978 /* MnemonicTests.swift */; };
 		61882E152002B62800038860 /* KeyStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61882E142002B62800038860 /* KeyStoreTests.swift */; };
 		61BBC0D52038DEE500371E4A /* key.json in Resources */ = {isa = PBXBuildFile; fileRef = 61BBC0D42038DEE500371E4A /* key.json */; };
 		61C568EB1FE599CF00FC2F75 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C568EA1FE599CF00FC2F75 /* AppDelegate.swift */; };
@@ -83,7 +85,9 @@
 		6147C6B7202D8F71009183FB /* Wallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wallet.swift; sourceTree = "<group>"; };
 		6147C6BB202E499E009183FB /* HDKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HDKey.swift; sourceTree = "<group>"; };
 		6148DA5F1FE3950300D4C17D /* ScryptParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryptParams.swift; sourceTree = "<group>"; };
+		6152D4AE1FEEC92300DE7978 /* MnemonicWords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MnemonicWords.swift; sourceTree = "<group>"; };
 		6152D4B01FEEC98500DE7978 /* Mnemonic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mnemonic.swift; sourceTree = "<group>"; };
+		6152D4B21FEECF0000DE7978 /* MnemonicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MnemonicTests.swift; sourceTree = "<group>"; };
 		61882E142002B62800038860 /* KeyStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyStoreTests.swift; sourceTree = "<group>"; };
 		61BBC0D42038DEE500371E4A /* key.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = key.json; sourceTree = "<group>"; };
 		61C568E81FE599CF00FC2F75 /* KeystoreBenchmark.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeystoreBenchmark.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,6 +171,7 @@
 				6147C6B5202D8B60009183FB /* DerivationPath.swift */,
 				6147C6BB202E499E009183FB /* HDKey.swift */,
 				6152D4B01FEEC98500DE7978 /* Mnemonic.swift */,
+				6152D4AE1FEEC92300DE7978 /* MnemonicWords.swift */,
 				6147C6B7202D8F71009183FB /* Wallet.swift */,
 			);
 			path = Wallet;
@@ -250,6 +255,7 @@
 				610B9B9A202EDB7500C4B10C /* DerivationPathTests.swift */,
 				61FC58451FE2495E00FFC765 /* KeystoreKeyTests.swift */,
 				61882E142002B62800038860 /* KeyStoreTests.swift */,
+				6152D4B21FEECF0000DE7978 /* MnemonicTests.swift */,
 				61FC585C1FE3904600FFC765 /* ScryptTests.swift */,
 				6147C6B3202C1B67009183FB /* WalletTests.swift */,
 				610B9B9F202EE20E00C4B10C /* Data */,
@@ -564,6 +570,7 @@
 				61DCE1681FFF15ED0053939F /* Account.swift in Sources */,
 				6147C6BC202E499E009183FB /* HDKey.swift in Sources */,
 				61C569021FE5B8D800FC2F75 /* KeystoreKeyHeader.swift in Sources */,
+				6152D4AF1FEEC92300DE7978 /* MnemonicWords.swift in Sources */,
 				6152D4B11FEEC98500DE7978 /* Mnemonic.swift in Sources */,
 				6147C6B6202D8B60009183FB /* DerivationPath.swift in Sources */,
 			);
@@ -578,6 +585,7 @@
 				61882E152002B62800038860 /* KeyStoreTests.swift in Sources */,
 				61FC585D1FE3904600FFC765 /* ScryptTests.swift in Sources */,
 				6147C6B4202C1B67009183FB /* WalletTests.swift in Sources */,
+				6152D4B31FEECF0000DE7978 /* MnemonicTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
