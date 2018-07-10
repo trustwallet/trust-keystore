@@ -10,7 +10,7 @@ import TrustCore
 /// Ethereum account representation.
 public struct Account: Hashable {
     /// Ethereum 20-byte account address derived from the key.
-    public var address: Address
+    public var address: EthereumAddress
 
     /// Account type.
     public var type: AccountType
@@ -19,7 +19,7 @@ public struct Account: Hashable {
     public var url: URL
 
     /// Creates an `Account` with an Ethereum address and a `Key`.
-    public init(address: Address, type: AccountType, url: URL) {
+    public init(address: EthereumAddress, type: AccountType, url: URL) {
         self.address = address
         self.type = type
         self.url = url

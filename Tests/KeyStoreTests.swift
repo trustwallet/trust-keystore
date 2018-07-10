@@ -9,8 +9,8 @@ import TrustCore
 import XCTest
 
 class KeyStoreTests: XCTestCase {
-    let keyAddress = Address(eip55: "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")!
-    let walletAddress = Address(eip55: "0x32dd55E0BCF509a35A3F5eEb8593fbEb244796b1")!
+    let keyAddress = EthereumAddress(string: "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")!
+    let walletAddress = EthereumAddress(string: "0x32dd55E0BCF509a35A3F5eEb8593fbEb244796b1")!
 
     var keyDirectory: URL!
 

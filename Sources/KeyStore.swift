@@ -13,10 +13,10 @@ public final class KeyStore {
     public let keyDirectory: URL
 
     /// Dictionary of accounts by address.
-    private var accountsByAddress = [Address: Account]()
+    private var accountsByAddress = [EthereumAddress: Account]()
 
     /// Dictionary of keys by address.
-    private var keysByAddress = [Address: KeystoreKey]()
+    private var keysByAddress = [EthereumAddress: KeystoreKey]()
 
     /// Creates a `KeyStore` for the given directory.
     public init(keyDirectory: URL) throws {
@@ -47,12 +47,12 @@ public final class KeyStore {
     }
 
     /// Retrieves an account for the given address, if it exists.
-    public func account(for address: Address) -> Account? {
+    public func account(for address: EthereumAddress) -> Account? {
         return accountsByAddress[address]
     }
 
     /// Retrieves a key for the given address, if it exists.
-    public func key(for address: Address) -> KeystoreKey? {
+    public func key(for address: EthereumAddress) -> KeystoreKey? {
         return keysByAddress[address]
     }
 

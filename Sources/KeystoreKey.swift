@@ -12,7 +12,7 @@ import TrustCore
 /// Key definition.
 public struct KeystoreKey {
     /// Ethereum address.
-    public var address: Address
+    public var address: EthereumAddress
 
     /// Account type.
     public var type: AccountType
@@ -98,11 +98,11 @@ public struct KeystoreKey {
     }
 
     /// Decodes an Ethereum address from a public key.
-    static func decodeAddress(from publicKey: Data) -> Address {
+    static func decodeAddress(from publicKey: Data) -> EthereumAddress {
         precondition(publicKey.count == 65, "Expect 64-byte public key")
         precondition(publicKey[0] == 4, "Invalid public key")
         let sha3 = publicKey[1...].sha3(.keccak256)
-        return Address(data: sha3[12..<32])
+        return EthereumAddress(data: sha3[12..<32])!
     }
 
     /// Decrypts the key and returns the private key.
@@ -166,9 +166,7 @@ public struct KeystoreKey {
             }
             defer {
                 // Clear memory after signing
-                mnemonic.withMutableCharacters { chars in
-                    chars.replaceSubrange(chars.startIndex ..< chars.endIndex, with: [Character](repeating: " ", count: chars.count))
-                }
+                mnemonic.clear()
             }
             let wallet = Wallet(mnemonic: mnemonic, passphrase: passphrase, path: derivationPath)
             return EthereumCrypto.sign(hash: hash, privateKey: wallet.getKey(at: 0).privateKey)
@@ -197,9 +195,7 @@ public struct KeystoreKey {
             }
             defer {
                 // Clear memory after signing
-                mnemonic.withMutableCharacters { chars in
-                    chars.replaceSubrange(chars.startIndex ..< chars.endIndex, with: [Character](repeating: " ", count: chars.count))
-                }
+                mnemonic.clear()
             }
             let wallet = Wallet(mnemonic: mnemonic)
             let key = wallet.getKey(at: 0).privateKey
@@ -242,7 +238,11 @@ extension KeystoreKey: Codable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let altValues = try decoder.container(keyedBy: UppercaseCodingKeys.self)
 
-        address = Address(data: try values.decodeHexString(forKey: .address))
+        guard let address = EthereumAddress(data: try values.decodeHexString(forKey: .address)) else {
+            throw DecodingError.dataCorruptedError(forKey: CodingKeys.address, in: values, debugDescription: "Invalid address")
+        }
+        self.address = address
+
         switch try values.decodeIfPresent(String.self, forKey: .type) {
         case TypeString.mnemonic?:
             type = .hierarchicalDeterministicWallet

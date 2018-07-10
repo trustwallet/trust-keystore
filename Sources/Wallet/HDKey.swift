@@ -16,12 +16,12 @@ public class HDKey {
     }
 
     /// The key's address.
-    public var address: Address {
+    public var address: EthereumAddress {
         var addressData = Data(repeating: 0, count: 20)
         _ = addressData.withUnsafeMutableBytes { addrPtr in
             hdnode_get_ethereum_pubkeyhash(&node, addrPtr)
         }
-        return Address(data: addressData)
+        return EthereumAddress(data: addressData)!
     }
 
     /// Private key data.
