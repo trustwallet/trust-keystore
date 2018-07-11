@@ -14,7 +14,7 @@ DEPENDENCIES:
   - CryptoSwift (~> 0.10.0)
   - SwiftLint
   - TrezorCrypto
-  - TrustCore
+  - TrustCore (from `../trust-core`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -34,7 +34,7 @@ SPEC CHECKSUMS:
   SipHash: c6e9e43e9c531b5bc6602545130c26194a6d31ce
   SwiftLint: e14651157288e9e01d6e1a71db7014fb5744a8ea
   TrezorCrypto: bea2dab002f9a5fe885df004694b9ece52dc088b
-  TrustCore: 5a2c32f960e95860987b803c86a57da95dd7c45c
+  TrustCore: 9cac530d46908587d7d2bb51c78b75dc1ac2d003
 
 PODFILE CHECKSUM: fffbd653465bcab5a8a16800b77111750bf71b16
 

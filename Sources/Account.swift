@@ -7,35 +7,92 @@
 import Foundation
 import TrustCore
 
-/// Ethereum account representation.
-public struct Account: Hashable {
-    /// Ethereum 20-byte account address derived from the key.
-    public var address: EthereumAddress
+/// Account represents a specific address in a wallet.
+public final class Account: Hashable {
+    /// Wallet this account belongs to.
+    weak var wallet: Wallet?
 
-    /// Account type.
-    public var type: AccountType
+    /// Account public address
+    public var address: Address
 
-    /// URL for the key file on disk.
-    public var url: URL
+    /// Account derivation path, only relevant for HD wallets.
+    public let derivationPath: DerivationPath
 
-    /// Creates an `Account` with an Ethereum address and a `Key`.
-    public init(address: EthereumAddress, type: AccountType, url: URL) {
-        self.address = address
-        self.type = type
-        self.url = url
+    /// Blockchain this account is for.
+    public var blockchain: Blockchain {
+        return address.blockchain
     }
 
+    /// Creates a new `Account`.
+    ///
+    /// - Parameters:
+    ///   - wallet: wallet that owns the account
+    ///   - address: account's public address
+    ///   - derivationPath: HD derivation path, only relevant for HD wallets
+    public init(wallet: Wallet, address: Address, derivationPath: DerivationPath) {
+        self.wallet = wallet
+        self.address = address
+        self.derivationPath = derivationPath
+    }
+
+    /// Signs a hash with the given password.
+    ///
+    /// - Parameters:
+    ///   - hash: hash to sign
+    ///   - password: key password
+    /// - Returns: signature
+    /// - Throws: `DecryptError` or `Secp256k1Error`
+    public func sign(hash: Data, password: String) throws -> Data {
+        let key = try privateKey(password: password)
+        return Crypto.sign(hash: hash, privateKey: key.data)
+    }
+
+    /// Signs multiple hashes with the given password.
+    ///
+    /// - Parameters:
+    ///   - hashes: array of hashes to sign
+    ///   - password: key password
+    /// - Returns: [signature]
+    /// - Throws: `DecryptError` or `Secp256k1Error`
+    public func signHashes(_ hashes: [Data], password: String) throws -> [Data] {
+        let key = try privateKey(password: password)
+        return hashes.map({ Crypto.sign(hash: $0, privateKey: key.data) })
+    }
+
+    public func privateKey(password: String) throws -> PrivateKey {
+        guard let wallet = wallet else {
+            fatalError("Wallet no longer exists")
+        }
+
+        let key = wallet.key
+        switch key.type {
+        case .encryptedKey:
+            var key = try key.decrypt(password: password)
+            defer {
+                // Clear memory after signing
+                key.resetBytes(in: 0..<key.count)
+            }
+            return PrivateKey(data: key)!
+        case .hierarchicalDeterministicWallet:
+            guard var mnemonic = String(data: try key.decrypt(password: password), encoding: .ascii) else {
+                throw DecryptError.invalidPassword
+            }
+            defer {
+                // Clear memory after signing
+                mnemonic.clear()
+            }
+            let wallet = HDWallet(mnemonic: mnemonic, passphrase: key.passphrase)
+            return wallet.getKey(at: derivationPath)
+        }
+    }
+
+    // MARK: Hashable
+
     public var hashValue: Int {
-        return address.hashValue
+        return address.data.hashValue
     }
 
     public static func == (lhs: Account, rhs: Account) -> Bool {
-        return lhs.address == rhs.address
+        return lhs.address.data == rhs.address.data
     }
-}
-
-/// Support account types.
-public enum AccountType {
-    case encryptedKey
-    case hierarchicalDeterministicWallet
 }

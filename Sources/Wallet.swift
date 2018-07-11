@@ -1,0 +1,110 @@
+// Copyright © 2017-2018 Trust.
+//
+// This file is part of Trust. The full Trust copyright notice, including
+// terms governing use, modification, and redistribution, is contained in the
+// file LICENSE at the root of the source code distribution tree.
+
+import Foundation
+import TrustCore
+
+/// Blockchain wallet.
+public final class Wallet: Hashable {
+    /// Unique wallet identifier.
+    public let identifier: String
+
+    /// URL for the key file on disk.
+    public var url: URL
+
+    /// Encrypted wallet key
+    public var key: KeystoreKey
+
+    /// Wallet type.
+    public var type: WalletType {
+        return key.type
+    }
+
+    /// Wallet accounts.
+    public var accounts = [Account]()
+
+    /// Creates a `Wallet` from an encrypted key.
+    public init(url: URL, key: KeystoreKey) {
+        identifier = url.deletingPathExtension().lastPathComponent
+        self.url = url
+        self.key = key
+    }
+
+    /// Returns the only account for non HD-wallets.
+    ///
+    /// - Parameter password: wallet encryption password
+    /// - Returns: the account
+    /// - Throws: `WalletError.invalidKeyType` if this is an HD wallet `DecryptError.invalidPassword` if the
+    ///           password is incorrect.
+    public func getAccount(password: String) throws -> Account {
+        guard key.type == .encryptedKey else {
+            throw WalletError.invalidKeyType
+        }
+
+        if let account = accounts.first {
+            return account
+        }
+
+        guard let address = PrivateKey(data: try key.decrypt(password: password))?.publicKey(for: .ethereum).address else {
+            throw DecryptError.invalidPassword
+        }
+
+        let account = Account(wallet: self, address: address, derivationPath: Blockchain.ethereum.defaultDerivationPath)
+        accounts.append(account)
+        return account
+    }
+
+    /// Returns an account for a specific derivation path, creating it if necessary.
+    ///
+    /// - Parameters:
+    ///   - blockchain: blockchain this account is for
+    ///   - derivationPath: HD derivation path
+    ///   - password: wallet encryption password
+    /// - Returns: the account
+    /// - Throws: `WalletError.invalidKeyType` if this is not an HD wallet `DecryptError.invalidPassword` if the
+    ///           password is incorrect.
+    public func getAccount(blockchain: Blockchain, derivationPath: DerivationPath, password: String) throws -> Account {
+        guard key.type == .hierarchicalDeterministicWallet else {
+            throw WalletError.invalidKeyType
+        }
+
+        guard var mnemonic = String(data: try key.decrypt(password: password), encoding: .ascii) else {
+            throw DecryptError.invalidPassword
+        }
+        defer {
+            mnemonic.clear()
+        }
+
+        let wallet = HDWallet(mnemonic: mnemonic, passphrase: key.passphrase)
+        let address = wallet.getKey(at: derivationPath).publicKey(for: blockchain).address
+
+        if let account = accounts.first(where: { $0.address.data == address.data }) {
+            return account
+        }
+
+        let account = Account(wallet: self, address: address, derivationPath: derivationPath)
+        accounts.append(account)
+        return account
+    }
+
+    public var hashValue: Int {
+        return identifier.hashValue
+    }
+
+    public static func == (lhs: Wallet, rhs: Wallet) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+}
+
+/// Support account types.
+public enum WalletType {
+    case encryptedKey
+    case hierarchicalDeterministicWallet
+}
+
+public enum WalletError: LocalizedError {
+    case invalidKeyType
+}
