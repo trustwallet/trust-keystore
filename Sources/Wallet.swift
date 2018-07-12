@@ -24,7 +24,7 @@ public final class Wallet: Hashable {
     }
 
     /// Wallet accounts.
-    public var accounts = [Account]()
+    public internal(set) var accounts = [Account]()
 
     /// Creates a `Wallet` from an encrypted key.
     public init(keyURL: URL, key: KeystoreKey) {

@@ -30,6 +30,10 @@ public final class KeyStore {
             do {
                 let key = try KeystoreKey(contentsOf: url)
                 let wallet = Wallet(keyURL: url, key: key)
+                for account in key.activeAccounts {
+                    account.wallet = wallet
+                    wallet.accounts.append(account)
+                }
                 wallets.append(wallet)
             } catch {
                 // Ignore invalid keys

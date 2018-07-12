@@ -26,8 +26,8 @@ public struct KeystoreKey {
     /// Key version, must be 3.
     public var version = 3
 
-    /// List of active derivation paths for HD wallets
-    public var activeDerivationPaths = [DerivationPath]()
+    /// List of active accounts.
+    public var activeAccounts = [Account]()
 
     /// Creates a new `Key` with a password.
     public init(password: String, type: WalletType) throws {
@@ -125,7 +125,7 @@ extension KeystoreKey: Codable {
         case type
         case id
         case crypto
-        case activeDerivationPaths
+        case activeAccounts
         case version
     }
 
@@ -158,7 +158,7 @@ extension KeystoreKey: Codable {
         }
         version = try values.decode(Int.self, forKey: .version)
 
-        activeDerivationPaths = try values.decodeIfPresent([DerivationPath].self, forKey: .activeDerivationPaths) ?? []
+        activeAccounts = try values.decodeIfPresent([Account].self, forKey: .activeAccounts) ?? []
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -172,7 +172,7 @@ extension KeystoreKey: Codable {
         try container.encode(id, forKey: .id)
         try container.encode(crypto, forKey: .crypto)
         try container.encode(version, forKey: .version)
-        try container.encode(activeDerivationPaths, forKey: .activeDerivationPaths)
+        try container.encode(activeAccounts, forKey: .activeAccounts)
     }
 }
 

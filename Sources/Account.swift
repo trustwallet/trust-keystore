@@ -8,7 +8,7 @@ import Foundation
 import TrustCore
 
 /// Account represents a specific address in a wallet.
-public final class Account: Hashable {
+public final class Account: Codable, Hashable {
     /// Wallet this account belongs to.
     weak var wallet: Wallet?
 
@@ -94,5 +94,66 @@ public final class Account: Hashable {
 
     public static func == (lhs: Account, rhs: Account) -> Bool {
         return lhs.address.data == rhs.address.data
+    }
+
+    // MARK: Codable
+
+    enum CodingKeys: String, CodingKey {
+        case blockchain
+        case addressData
+        case derivationPath
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let blockchain = try container.decode(Blockchain.self, forKey: .blockchain)
+        let addressData = try container.decode(Data.self, forKey: .addressData)
+
+        let maybeAddress: Address?
+        switch blockchain {
+        case .bitcoin:
+            maybeAddress = BitcoinAddress(data: addressData)
+        case .ethereum:
+            maybeAddress = EthereumAddress(data: addressData)
+        }
+
+        guard let address = maybeAddress else {
+            throw DecodingError.dataCorruptedError(forKey: .addressData, in: container, debugDescription: "Invalid address")
+        }
+
+        self.address = address
+        derivationPath = try container.decode(DerivationPath.self, forKey: .derivationPath)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(address.data, forKey: .addressData)
+        try container.encode(address.blockchain, forKey: .blockchain)
+        try container.encode(derivationPath, forKey: .derivationPath)
+    }
+}
+
+extension Blockchain: Codable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let string = try container.decode(String.self)
+        switch string {
+        case "bitcoin":
+            self = .bitcoin
+        case "ethereum":
+            self = .ethereum
+        default:
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid blockchain \(string)")
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .bitcoin:
+            try container.encode("bitcoin")
+        case .ethereum:
+            try container.encode("ethereum")
+        }
     }
 }
