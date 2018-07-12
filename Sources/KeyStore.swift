@@ -29,7 +29,7 @@ public final class KeyStore {
         for url in accountURLs {
             do {
                 let key = try KeystoreKey(contentsOf: url)
-                let wallet = Wallet(url: url, key: key)
+                let wallet = Wallet(keyURL: url, key: key)
                 wallets.append(wallet)
             } catch {
                 // Ignore invalid keys
@@ -41,10 +41,17 @@ public final class KeyStore {
     public func createWallet(password: String, type: WalletType) throws -> Wallet {
         let key = try KeystoreKey(password: password, type: type)
         let url = makeAccountURL()
-        let wallet = Wallet(url: url, key: key)
+        let wallet = Wallet(keyURL: url, key: key)
         try save(wallet: wallet, in: keyDirectory)
         wallets.append(wallet)
         return wallet
+    }
+
+    /// Adds accounts to a wallet.
+    public func addAccounts(wallet: Wallet, blockchain: Blockchain, derivationPaths: [DerivationPath], password: String) throws -> [Account] {
+        let accounts = try wallet.getAccounts(blockchain: blockchain, derivationPaths: derivationPaths, password: password)
+        try save(wallet: wallet, in: wallet.keyURL)
+        return accounts
     }
 
     /// Imports an encrypted JSON key.
@@ -67,7 +74,7 @@ public final class KeyStore {
 
         let newKey = try KeystoreKey(password: newPassword, key: privateKey)
         let url = makeAccountURL()
-        let wallet = Wallet(url: url, key: newKey)
+        let wallet = Wallet(keyURL: url, key: newKey)
         wallets.append(wallet)
 
         try save(wallet: wallet, in: keyDirectory)
@@ -89,7 +96,7 @@ public final class KeyStore {
 
         let newKey = try KeystoreKey(password: encryptPassword, mnemonic: mnemonic, passphrase: passphrase)
         let url = makeAccountURL()
-        let wallet = Wallet(url: url, key: newKey)
+        let wallet = Wallet(keyURL: url, key: newKey)
         wallets.append(wallet)
 
         try save(wallet: wallet, in: keyDirectory)
@@ -206,7 +213,7 @@ public final class KeyStore {
         }
         wallets.remove(at: index)
 
-        try FileManager.default.removeItem(at: wallet.url)
+        try FileManager.default.removeItem(at: wallet.keyURL)
     }
 
     // MARK: Helpers
@@ -221,7 +228,7 @@ public final class KeyStore {
 
     /// Saves the account to the given directory.
     private func save(wallet: Wallet, in directory: URL) throws {
-        try save(key: wallet.key, to: wallet.url)
+        try save(key: wallet.key, to: wallet.keyURL)
     }
 
     /// Generates a unique file name for an address.

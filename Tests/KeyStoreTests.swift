@@ -64,7 +64,7 @@ class KeyStoreTests: XCTestCase {
         let newWallet = try keyStore.createWallet(password: "password", type: .hierarchicalDeterministicWallet)
 
         XCTAssertEqual(keyStore.wallets.count, 3)
-        XCTAssertNoThrow(try newWallet.getAccount(blockchain: .ethereum, derivationPath: Blockchain.ethereum.defaultDerivationPath, password: "password"))
+        XCTAssertNoThrow(try newWallet.getAccounts(blockchain: .ethereum, derivationPaths: [Blockchain.ethereum.derivationPath(at: 0)], password: "password"))
     }
 
     func testUpdateKey() throws {
@@ -118,7 +118,7 @@ class KeyStoreTests: XCTestCase {
     func testImportWallet() throws {
         let keyStore = try KeyStore(keyDirectory: keyDirectory)
         let wallet = try keyStore.import(mnemonic: "often tobacco bread scare imitate song kind common bar forest yard wisdom", passphrase: "TREZOR", encryptPassword: "newPassword")
-        let account = try wallet.getAccount(blockchain: .ethereum, derivationPath: Blockchain.ethereum.defaultDerivationPath, password: "newPassword")
+        let account = try wallet.getAccounts(blockchain: .ethereum, derivationPaths: [Blockchain.ethereum.derivationPath(at: 0)], password: "newPassword").first!
 
         XCTAssertNotNil(keyStore.hdWallet)
         XCTAssertNoThrow(try account.sign(hash: Data(repeating: 0, count: 32), password: "newPassword"))

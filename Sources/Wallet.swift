@@ -13,7 +13,7 @@ public final class Wallet: Hashable {
     public let identifier: String
 
     /// URL for the key file on disk.
-    public var url: URL
+    public var keyURL: URL
 
     /// Encrypted wallet key
     public var key: KeystoreKey
@@ -27,9 +27,9 @@ public final class Wallet: Hashable {
     public var accounts = [Account]()
 
     /// Creates a `Wallet` from an encrypted key.
-    public init(url: URL, key: KeystoreKey) {
-        identifier = url.deletingPathExtension().lastPathComponent
-        self.url = url
+    public init(keyURL: URL, key: KeystoreKey) {
+        identifier = keyURL.deletingPathExtension().lastPathComponent
+        self.keyURL = keyURL
         self.key = key
     }
 
@@ -52,21 +52,21 @@ public final class Wallet: Hashable {
             throw DecryptError.invalidPassword
         }
 
-        let account = Account(wallet: self, address: address, derivationPath: Blockchain.ethereum.defaultDerivationPath)
+        let account = Account(wallet: self, address: address, derivationPath: Blockchain.ethereum.derivationPath(at: 0))
         accounts.append(account)
         return account
     }
 
-    /// Returns an account for a specific derivation path, creating it if necessary.
+    /// Returns accounts for specific derivation paths.
     ///
     /// - Parameters:
     ///   - blockchain: blockchain this account is for
-    ///   - derivationPath: HD derivation path
+    ///   - derivationPaths: array of HD derivation paths
     ///   - password: wallet encryption password
-    /// - Returns: the account
+    /// - Returns: the accounts
     /// - Throws: `WalletError.invalidKeyType` if this is not an HD wallet `DecryptError.invalidPassword` if the
     ///           password is incorrect.
-    public func getAccount(blockchain: Blockchain, derivationPath: DerivationPath, password: String) throws -> Account {
+    public func getAccounts(blockchain: Blockchain, derivationPaths: [DerivationPath], password: String) throws -> [Account] {
         guard key.type == .hierarchicalDeterministicWallet else {
             throw WalletError.invalidKeyType
         }
@@ -78,7 +78,17 @@ public final class Wallet: Hashable {
             mnemonic.clear()
         }
 
+        var accounts = [Account]()
         let wallet = HDWallet(mnemonic: mnemonic, passphrase: key.passphrase)
+        for derivationPath in derivationPaths {
+            let account = getAccount(wallet: wallet, blockchain: blockchain, derivationPath: derivationPath)
+            accounts.append(account)
+        }
+
+        return accounts
+    }
+
+    private func getAccount(wallet: HDWallet, blockchain: Blockchain, derivationPath: DerivationPath) -> Account {
         let address = wallet.getKey(at: derivationPath).publicKey(for: blockchain).address
 
         if let account = accounts.first(where: { $0.address.data == address.data }) {

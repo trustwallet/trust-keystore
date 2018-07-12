@@ -26,6 +26,9 @@ public struct KeystoreKey {
     /// Key version, must be 3.
     public var version = 3
 
+    /// List of active derivation paths for HD wallets
+    public var activeDerivationPaths = [DerivationPath]()
+
     /// Creates a new `Key` with a password.
     public init(password: String, type: WalletType) throws {
         switch type {
@@ -63,14 +66,6 @@ public struct KeystoreKey {
 
         type = .hierarchicalDeterministicWallet
         self.passphrase = passphrase
-    }
-
-    /// Decodes an Ethereum address from a public key.
-    static func decodeAddress(from publicKey: Data) -> EthereumAddress {
-        precondition(publicKey.count == 65, "Expect 64-byte public key")
-        precondition(publicKey[0] == 4, "Invalid public key")
-        let sha3 = publicKey[1...].sha3(.keccak256)
-        return EthereumAddress(data: sha3[12..<32])!
     }
 
     /// Decrypts the key and returns the private key.
@@ -130,7 +125,7 @@ extension KeystoreKey: Codable {
         case type
         case id
         case crypto
-        case derivationPath
+        case activeDerivationPaths
         case version
     }
 
@@ -162,6 +157,8 @@ extension KeystoreKey: Codable {
             self.crypto = try altValues.decode(KeystoreKeyHeader.self, forKey: .crypto)
         }
         version = try values.decode(Int.self, forKey: .version)
+
+        activeDerivationPaths = try values.decodeIfPresent([DerivationPath].self, forKey: .activeDerivationPaths) ?? []
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -175,6 +172,7 @@ extension KeystoreKey: Codable {
         try container.encode(id, forKey: .id)
         try container.encode(crypto, forKey: .crypto)
         try container.encode(version, forKey: .version)
+        try container.encode(activeDerivationPaths, forKey: .activeDerivationPaths)
     }
 }
 
