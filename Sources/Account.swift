@@ -113,7 +113,15 @@ public final class Account: Codable, Hashable {
         switch blockchain {
         case .bitcoin:
             maybeAddress = BitcoinAddress(data: addressData)
-        case .ethereum:
+        case .ethereum,
+             .poa,
+             .ethereumClassic,
+             .callisto,
+             .gochain,
+             .ethereumKovan,
+             .ethereumRinkeby,
+             .ethereumRopsten,
+             .ethereumSokol:
             maybeAddress = EthereumAddress(data: addressData)
         }
 
@@ -137,23 +145,14 @@ extension Blockchain: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let string = try container.decode(String.self)
-        switch string {
-        case "bitcoin":
-            self = .bitcoin
-        case "ethereum":
-            self = .ethereum
-        default:
+        guard let blockchain = Blockchain(rawValue: string) else {
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid blockchain \(string)")
         }
+        self = blockchain
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        switch self {
-        case .bitcoin:
-            try container.encode("bitcoin")
-        case .ethereum:
-            try container.encode("ethereum")
-        }
+        try container.encode(self.rawValue)
     }
 }
