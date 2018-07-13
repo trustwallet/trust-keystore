@@ -11,6 +11,7 @@ extension KeyStore {
         case accountAlreadyExists
         case accountNotFound
         case invalidMnemonic
+        case invalidKey
 
         public var errorDescription: String? {
             switch self {
@@ -20,6 +21,8 @@ extension KeyStore {
                 return NSLocalizedString("Account not found", comment: "Error message when trying to access an account that does not exist")
             case .invalidMnemonic:
                 return NSLocalizedString("Invalid mnemonic phrase", comment: "Error message when trying to import an invalid mnemonic phrase")
+            case .invalidKey:
+                return NSLocalizedString("Invalid private key", comment: "Error message when trying to import an invalid private key")
             }
         }
     }
