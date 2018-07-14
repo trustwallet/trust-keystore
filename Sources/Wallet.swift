@@ -55,6 +55,7 @@ public final class Wallet: Hashable {
         }
 
         let account = Account(wallet: self, address: address, derivationPath: blockchain.derivationPath(at: 0))
+        account.wallet = self
         accounts.append(account)
         return account
     }
@@ -99,6 +100,7 @@ public final class Wallet: Hashable {
         }
 
         let account = Account(wallet: self, address: address, derivationPath: derivationPath)
+        account.wallet = self
         accounts.append(account)
         return account
     }
