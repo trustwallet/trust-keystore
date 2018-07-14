@@ -10,7 +10,7 @@ import TrustCore
 /// Account represents a specific address in a wallet.
 public final class Account: Codable, Hashable {
     /// Wallet this account belongs to.
-    weak var wallet: Wallet?
+    public weak var wallet: Wallet?
 
     /// Account public address
     public var address: Address
