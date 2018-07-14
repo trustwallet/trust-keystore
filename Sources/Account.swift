@@ -29,7 +29,7 @@ public final class Account: Codable, Hashable {
     ///   - wallet: wallet that owns the account
     ///   - address: account's public address
     ///   - derivationPath: HD derivation path, only relevant for HD wallets
-    public init(wallet: Wallet, address: Address, derivationPath: DerivationPath) {
+    public init(wallet: Wallet?, address: Address, derivationPath: DerivationPath) {
         self.wallet = wallet
         self.address = address
         self.derivationPath = derivationPath

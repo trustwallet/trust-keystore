@@ -17,6 +17,8 @@ public struct KeystoreKey {
     /// Wallet UUID, optional.
     public var id: String?
 
+    public var address: String?
+
     /// Key header with encrypted private key and crypto parameters.
     public var crypto: KeystoreKeyHeader
 
@@ -163,9 +165,16 @@ extension KeystoreKey: Codable {
             self.crypto = try altValues.decode(KeystoreKeyHeader.self, forKey: .crypto)
         }
         version = try values.decode(Int.self, forKey: .version)
+        address = try values.decodeIfPresent(String.self, forKey: .address)
         blockchain = try values.decodeIfPresent(Blockchain.self, forKey: .blockchain)
-
         activeAccounts = try values.decodeIfPresent([Account].self, forKey: .activeAccounts) ?? []
+
+        if activeAccounts.isEmpty {
+            // Workaround for old keystores. Adding address as default account
+            guard let addressString = address, let address = EthereumAddress(string: addressString) else { return }
+            let account = Account(wallet: .none, address: address, derivationPath: Blockchain.ethereum.derivationPath(at: 0))
+            activeAccounts.append(account)
+        }
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -177,6 +186,7 @@ extension KeystoreKey: Codable {
             try container.encode(TypeString.mnemonic, forKey: .type)
         }
         try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(address, forKey: .address)
         try container.encode(crypto, forKey: .crypto)
         try container.encode(version, forKey: .version)
         try container.encode(activeAccounts, forKey: .activeAccounts)
