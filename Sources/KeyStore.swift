@@ -42,21 +42,27 @@ public final class KeyStore {
     }
 
     /// Creates a new wallet. HD default by default
-    public func createWallet(password: String) throws -> Wallet {
+    public func createWallet(password: String, derivationPaths: [DerivationPath]) throws -> Wallet {
         let key = try KeystoreKey(password: password)
-        return try saveCreatedWallet(for: key)
+        return try saveCreatedWallet(for: key, password: password, derivationPaths: derivationPaths)
     }
 
     /// Creates a new wallet. Private Key default by default
     public func createWallet(password: String, for blockchain: Blockchain) throws -> Wallet {
         let key = try KeystoreKey(password: password, for: blockchain)
-        return try saveCreatedWallet(for: key)
+        return try saveCreatedWallet(for: key, password: password, derivationPaths: [])
     }
 
-    private func saveCreatedWallet(for key: KeystoreKey) throws -> Wallet {
+    private func saveCreatedWallet(for key: KeystoreKey, password: String, derivationPaths: [DerivationPath]) throws -> Wallet {
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: key)
         try save(wallet: wallet, in: keyDirectory)
+        switch wallet.type {
+        case .encryptedKey:
+            let _ = try wallet.getAccount(password: password)
+        case .hierarchicalDeterministicWallet:
+            let _ = try wallet.getAccounts(derivationPaths: derivationPaths, password: password)
+        }
         wallets.append(wallet)
         return wallet
     }
@@ -98,6 +104,7 @@ public final class KeyStore {
         let newKey = try KeystoreKey(password: password, key: privateKey, blockchain: blockchain)
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: newKey)
+        let _ = try wallet.getAccount(password: password)
         wallets.append(wallet)
 
         try save(wallet: wallet, in: keyDirectory)
@@ -112,7 +119,7 @@ public final class KeyStore {
     ///   - passphrase: wallet's password
     ///   - encryptPassword: password to use for encrypting
     /// - Returns: new account
-    public func `import`(mnemonic: String, passphrase: String = "", encryptPassword: String) throws -> Wallet {
+    public func `import`(mnemonic: String, passphrase: String = "", encryptPassword: String, derivationPath: DerivationPath) throws -> Wallet {
         if !Crypto.isValid(mnemonic: mnemonic) {
             throw Error.invalidMnemonic
         }
@@ -120,6 +127,7 @@ public final class KeyStore {
         let newKey = try KeystoreKey(password: encryptPassword, mnemonic: mnemonic, passphrase: passphrase)
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: newKey)
+        let _ = try wallet.getAccounts(derivationPaths: [derivationPath], password: encryptPassword)
         wallets.append(wallet)
 
         try save(wallet: wallet, in: keyDirectory)

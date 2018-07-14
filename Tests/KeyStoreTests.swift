@@ -55,16 +55,19 @@ class KeyStoreTests: XCTestCase {
         let keyStore = try KeyStore(keyDirectory: keyDirectory)
         let newWallet = try keyStore.createWallet(password: "password", for: .ethereum)
 
+        XCTAssertEqual(newWallet.accounts.count, 1)
         XCTAssertEqual(keyStore.wallets.count, 3)
         XCTAssertNoThrow(try newWallet.getAccount(password: "password"))
     }
 
     func testCreateHDWallet() throws {
+        let derivationPaths = [Blockchain.ethereum.derivationPath(at: 0)]
         let keyStore = try KeyStore(keyDirectory: keyDirectory)
-        let newWallet = try keyStore.createWallet(password: "password")
+        let newWallet = try keyStore.createWallet(password: "password", derivationPaths: derivationPaths)
 
+        XCTAssertEqual(newWallet.accounts.count, 1)
         XCTAssertEqual(keyStore.wallets.count, 3)
-        XCTAssertNoThrow(try newWallet.getAccounts(derivationPaths: [Blockchain.ethereum.derivationPath(at: 0)], password: "password"))
+        XCTAssertNoThrow(try newWallet.getAccounts(derivationPaths: derivationPaths, password: "password"))
     }
 
     func testUpdateKey() throws {
@@ -120,15 +123,22 @@ class KeyStoreTests: XCTestCase {
         let privateKey = PrivateKey(data: Data(hexString: "9cdb5cab19aec3bd0fcd614c5f185e7a1d97634d4225730eba22497dc89a716c")!)!
 
         let wallet = try keyStore.import(privateKey: privateKey, password: "password", blockchain: .ethereum)
+
+        XCTAssertEqual(wallet.accounts.count, 1)
+
         let account = try wallet.getAccount(password: "password")
 
         XCTAssertNotNil(keyStore.keyWallet)
         XCTAssertNoThrow(try account.sign(hash: Data(repeating: 0, count: 32), password: "password"))
+
     }
 
     func testImportWallet() throws {
         let keyStore = try KeyStore(keyDirectory: keyDirectory)
-        let wallet = try keyStore.import(mnemonic: "often tobacco bread scare imitate song kind common bar forest yard wisdom", passphrase: "TREZOR", encryptPassword: "newPassword")
+        let wallet = try keyStore.import(mnemonic: "often tobacco bread scare imitate song kind common bar forest yard wisdom", passphrase: "TREZOR", encryptPassword: "newPassword", derivationPath: Blockchain.ethereum.derivationPath(at: 0))
+
+        XCTAssertEqual(wallet.accounts.count, 1)
+
         let account = try wallet.getAccounts(derivationPaths: [Blockchain.ethereum.derivationPath(at: 0)], password: "newPassword").first!
 
         XCTAssertNotNil(keyStore.hdWallet)
@@ -138,7 +148,7 @@ class KeyStoreTests: XCTestCase {
     func testExportMnemonic() throws {
         let mnemonic = "often tobacco bread scare imitate song kind common bar forest yard wisdom"
         let keyStore = try KeyStore(keyDirectory: keyDirectory)
-        let wallet = try keyStore.import(mnemonic: mnemonic, passphrase: "TREZOR", encryptPassword: "newPassword")
+        let wallet = try keyStore.import(mnemonic: mnemonic, passphrase: "TREZOR", encryptPassword: "newPassword", derivationPath: Blockchain.ethereum.derivationPath(at: 0))
         let exported = try keyStore.exportMnemonic(wallet: wallet, password: "newPassword")
 
         XCTAssertEqual(mnemonic.bytes, exported.bytes)
