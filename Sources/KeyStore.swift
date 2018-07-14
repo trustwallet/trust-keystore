@@ -41,9 +41,19 @@ public final class KeyStore {
         }
     }
 
-    /// Creates a new wallet.
-    public func createWallet(password: String, type: WalletType) throws -> Wallet {
-        let key = try KeystoreKey(password: password, type: type)
+    /// Creates a new wallet. HD default by default
+    public func createWallet(password: String) throws -> Wallet {
+        let key = try KeystoreKey(password: password)
+        return try saveCreatedWallet(for: key)
+    }
+
+    /// Creates a new wallet. Private Key default by default
+    public func createWallet(password: String, for blockchain: Blockchain) throws -> Wallet {
+        let key = try KeystoreKey(password: password, for: blockchain)
+        return try saveCreatedWallet(for: key)
+    }
+
+    private func saveCreatedWallet(for key: KeystoreKey) throws -> Wallet {
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: key)
         try save(wallet: wallet, in: keyDirectory)
@@ -52,8 +62,8 @@ public final class KeyStore {
     }
 
     /// Adds accounts to a wallet.
-    public func addAccounts(wallet: Wallet, blockchain: Blockchain, derivationPaths: [DerivationPath], password: String) throws -> [Account] {
-        let accounts = try wallet.getAccounts(blockchain: blockchain, derivationPaths: derivationPaths, password: password)
+    public func addAccounts(wallet: Wallet, derivationPaths: [DerivationPath], password: String) throws -> [Account] {
+        let accounts = try wallet.getAccounts(derivationPaths: derivationPaths, password: password)
         try save(wallet: wallet, in: wallet.keyURL)
         return accounts
     }
@@ -65,7 +75,7 @@ public final class KeyStore {
     ///   - password: key password
     ///   - newPassword: password to use for the imported key
     /// - Returns: new account
-    public func `import`(json: Data, password: String, newPassword: String) throws -> Wallet {
+    public func `import`(json: Data, password: String, newPassword: String, blockchain: Blockchain) throws -> Wallet {
         let key = try JSONDecoder().decode(KeystoreKey.self, from: json)
 
         var privateKeyData = try key.decrypt(password: password)
@@ -75,7 +85,7 @@ public final class KeyStore {
         guard let privateKey = PrivateKey(data: privateKeyData) else {
             throw Error.invalidKey
         }
-        return try self.import(privateKey: privateKey, password: newPassword)
+        return try self.import(privateKey: privateKey, password: newPassword, blockchain: blockchain)
     }
 
     /// Imports a private key.
@@ -84,8 +94,8 @@ public final class KeyStore {
     ///   - privateKey: private key to import
     ///   - password: password to use for the imported private key
     /// - Returns: new wallet
-    public func `import`(privateKey: PrivateKey, password: String) throws -> Wallet {
-        let newKey = try KeystoreKey(password: password, key: privateKey)
+    public func `import`(privateKey: PrivateKey, password: String, blockchain: Blockchain) throws -> Wallet {
+        let newKey = try KeystoreKey(password: password, key: privateKey, blockchain: blockchain)
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: newKey)
         wallets.append(wallet)
@@ -136,7 +146,10 @@ public final class KeyStore {
             guard let privateKey = PrivateKey(data: privateKeyData) else {
                 throw Error.invalidKey
             }
-            newKey = try KeystoreKey(password: newPassword, key: privateKey)
+            guard let blockchain = wallet.key.blockchain else {
+                throw Error.invalidBlockchain
+            }
+            newKey = try KeystoreKey(password: newPassword, key: privateKey, blockchain: blockchain)
         case .hierarchicalDeterministicWallet:
             guard let string = String(data: privateKeyData, encoding: .ascii) else {
                 throw EncryptError.invalidMnemonic
@@ -205,7 +218,10 @@ public final class KeyStore {
             guard let privateKey = PrivateKey(data: privateKeyData) else {
                 throw Error.invalidKey
             }
-            wallets[index].key = try KeystoreKey(password: newPassword, key: privateKey)
+            guard let blockchain = wallet.key.blockchain else {
+                throw Error.invalidBlockchain
+            }
+            wallets[index].key = try KeystoreKey(password: newPassword, key: privateKey, blockchain: blockchain)
         case .hierarchicalDeterministicWallet:
             guard let string = String(data: privateKeyData, encoding: .ascii) else {
                 throw EncryptError.invalidMnemonic

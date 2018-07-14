@@ -48,11 +48,13 @@ public final class Wallet: Hashable {
             return account
         }
 
-        guard let address = PrivateKey(data: try key.decrypt(password: password))?.publicKey(for: .ethereum).address else {
+        let blockchain = key.blockchain ?? Blockchain.ethereum // Default
+
+        guard let address = PrivateKey(data: try key.decrypt(password: password))?.publicKey(for: blockchain).address else {
             throw DecryptError.invalidPassword
         }
 
-        let account = Account(wallet: self, address: address, derivationPath: Blockchain.ethereum.derivationPath(at: 0))
+        let account = Account(wallet: self, address: address, derivationPath: blockchain.derivationPath(at: 0))
         accounts.append(account)
         return account
     }
@@ -66,7 +68,7 @@ public final class Wallet: Hashable {
     /// - Returns: the accounts
     /// - Throws: `WalletError.invalidKeyType` if this is not an HD wallet `DecryptError.invalidPassword` if the
     ///           password is incorrect.
-    public func getAccounts(blockchain: Blockchain, derivationPaths: [DerivationPath], password: String) throws -> [Account] {
+    public func getAccounts(derivationPaths: [DerivationPath], password: String) throws -> [Account] {
         guard key.type == .hierarchicalDeterministicWallet else {
             throw WalletError.invalidKeyType
         }
@@ -81,6 +83,7 @@ public final class Wallet: Hashable {
         var accounts = [Account]()
         let wallet = HDWallet(mnemonic: mnemonic, passphrase: key.passphrase)
         for derivationPath in derivationPaths {
+            guard let blockchain = Blockchain(rawValue: derivationPath.coinType) else { break }
             let account = getAccount(wallet: wallet, blockchain: blockchain, derivationPath: derivationPath)
             accounts.append(account)
         }

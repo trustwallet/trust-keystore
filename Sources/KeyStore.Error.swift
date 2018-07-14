@@ -12,6 +12,7 @@ extension KeyStore {
         case accountNotFound
         case invalidMnemonic
         case invalidKey
+        case invalidBlockchain
 
         public var errorDescription: String? {
             switch self {
@@ -23,6 +24,8 @@ extension KeyStore {
                 return NSLocalizedString("Invalid mnemonic phrase", comment: "Error message when trying to import an invalid mnemonic phrase")
             case .invalidKey:
                 return NSLocalizedString("Invalid private key", comment: "Error message when trying to import an invalid private key")
+            case .invalidBlockchain:
+                return NSLocalizedString("Invalid blockchain", comment: "Error message when trying to import an invalid blockchain")
             }
         }
     }

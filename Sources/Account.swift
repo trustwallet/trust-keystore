@@ -117,11 +117,7 @@ public final class Account: Codable, Hashable {
              .poa,
              .ethereumClassic,
              .callisto,
-             .gochain,
-             .ethereumKovan,
-             .ethereumRinkeby,
-             .ethereumRopsten,
-             .ethereumSokol:
+             .gochain:
             maybeAddress = EthereumAddress(data: addressData)
         }
 
@@ -144,9 +140,9 @@ public final class Account: Codable, Hashable {
 extension Blockchain: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let string = try container.decode(String.self)
-        guard let blockchain = Blockchain(rawValue: string) else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid blockchain \(string)")
+        let bblockchainID = try container.decode(Int.self)
+        guard let blockchain = Blockchain(rawValue: bblockchainID) else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid blockchain \(bblockchainID)")
         }
         self = blockchain
     }

@@ -26,19 +26,22 @@ public struct KeystoreKey {
     /// Key version, must be 3.
     public var version = 3
 
+    /// Blockchain
+    public var blockchain: Blockchain?
+
     /// List of active accounts.
     public var activeAccounts = [Account]()
 
     /// Creates a new `Key` with a password.
-    public init(password: String, type: WalletType) throws {
-        switch type {
-        case .encryptedKey:
-            let key = PrivateKey()
-            try self.init(password: password, key: key)
-        case .hierarchicalDeterministicWallet:
-            let mnemonic = Crypto.generateMnemonic(strength: 128)
-            try self.init(password: password, mnemonic: mnemonic, passphrase: "")
-        }
+    public init(password: String, for blockchain: Blockchain) throws {
+        let key = PrivateKey()
+        try self.init(password: password, key: key, blockchain: blockchain)
+    }
+
+    /// Creates a new `Key` with a password.
+    public init(password: String) throws {
+        let mnemonic = Crypto.generateMnemonic(strength: 128)
+        try self.init(password: password, mnemonic: mnemonic, passphrase: "")
     }
 
     /// Initializes a `Key` from a JSON wallet.
@@ -48,10 +51,11 @@ public struct KeystoreKey {
     }
 
     /// Initializes a `Key` by encrypting a private key with a password.
-    public init(password: String, key: PrivateKey) throws {
+    public init(password: String, key: PrivateKey, blockchain: Blockchain) throws {
         id = UUID().uuidString.lowercased()
         crypto = try KeystoreKeyHeader(password: password, data: key.data)
         type = .encryptedKey
+        self.blockchain = blockchain
     }
 
     /// Initializes a `Key` by encrypting a mnemonic phrase with a password.
@@ -66,6 +70,7 @@ public struct KeystoreKey {
 
         type = .hierarchicalDeterministicWallet
         self.passphrase = passphrase
+        self.blockchain = .none
     }
 
     /// Decrypts the key and returns the private key.
@@ -127,6 +132,7 @@ extension KeystoreKey: Codable {
         case crypto
         case activeAccounts
         case version
+        case blockchain
     }
 
     enum UppercaseCodingKeys: String, CodingKey {
@@ -157,6 +163,7 @@ extension KeystoreKey: Codable {
             self.crypto = try altValues.decode(KeystoreKeyHeader.self, forKey: .crypto)
         }
         version = try values.decode(Int.self, forKey: .version)
+        blockchain = try values.decodeIfPresent(Blockchain.self, forKey: .blockchain)
 
         activeAccounts = try values.decodeIfPresent([Account].self, forKey: .activeAccounts) ?? []
     }
@@ -173,6 +180,7 @@ extension KeystoreKey: Codable {
         try container.encode(crypto, forKey: .crypto)
         try container.encode(version, forKey: .version)
         try container.encode(activeAccounts, forKey: .activeAccounts)
+        try container.encodeIfPresent(blockchain, forKey: .blockchain)
     }
 }
 
