@@ -146,9 +146,8 @@ public final class KeyStore {
             guard let privateKey = PrivateKey(data: privateKeyData) else {
                 throw Error.invalidKey
             }
-            guard let blockchain = wallet.key.blockchain else {
-                throw Error.invalidBlockchain
-            }
+            let blockchain = wallet.key.blockchain ?? .ethereum //Default
+
             newKey = try KeystoreKey(password: newPassword, key: privateKey, blockchain: blockchain)
         case .hierarchicalDeterministicWallet:
             guard let string = String(data: privateKeyData, encoding: .ascii) else {
@@ -218,9 +217,7 @@ public final class KeyStore {
             guard let privateKey = PrivateKey(data: privateKeyData) else {
                 throw Error.invalidKey
             }
-            guard let blockchain = wallet.key.blockchain else {
-                throw Error.invalidBlockchain
-            }
+            let blockchain = wallet.key.blockchain ?? .ethereum //Default
             wallets[index].key = try KeystoreKey(password: newPassword, key: privateKey, blockchain: blockchain)
         case .hierarchicalDeterministicWallet:
             guard let string = String(data: privateKeyData, encoding: .ascii) else {
