@@ -115,6 +115,17 @@ class KeyStoreTests: XCTestCase {
         XCTAssertNoThrow(try account.sign(hash: Data(repeating: 0, count: 32), password: "newPassword"))
     }
 
+    func testImportPrivateKey() throws {
+        let keyStore = try KeyStore(keyDirectory: keyDirectory)
+        let privateKey = PrivateKey(data: Data(hexString: "9cdb5cab19aec3bd0fcd614c5f185e7a1d97634d4225730eba22497dc89a716c")!)!
+
+        let wallet = try keyStore.import(privateKey: privateKey, password: "password")
+        let account = try wallet.getAccount(password: "password")
+
+        XCTAssertNotNil(keyStore.keyWallet)
+        XCTAssertNoThrow(try account.sign(hash: Data(repeating: 0, count: 32), password: "password"))
+    }
+
     func testImportWallet() throws {
         let keyStore = try KeyStore(keyDirectory: keyDirectory)
         let wallet = try keyStore.import(mnemonic: "often tobacco bread scare imitate song kind common bar forest yard wisdom", passphrase: "TREZOR", encryptPassword: "newPassword")

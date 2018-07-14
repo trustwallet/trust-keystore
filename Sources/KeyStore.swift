@@ -75,8 +75,17 @@ public final class KeyStore {
         guard let privateKey = PrivateKey(data: privateKeyData) else {
             throw Error.invalidKey
         }
+        return try self.import(privateKey: privateKey, password: newPassword)
+    }
 
-        let newKey = try KeystoreKey(password: newPassword, key: privateKey)
+    /// Imports a private key.
+    ///
+    /// - Parameters:
+    ///   - privateKey: private key to import
+    ///   - password: password to use for the imported private key
+    /// - Returns: new wallet
+    public func `import`(privateKey: PrivateKey, password: String) throws -> Wallet {
+        let newKey = try KeystoreKey(password: password, key: privateKey)
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: newKey)
         wallets.append(wallet)
