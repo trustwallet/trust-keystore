@@ -48,13 +48,13 @@ public final class Wallet: Hashable {
             return account
         }
 
-        let blockchain = key.blockchain ?? Blockchain.ethereum // Default
+        let coin = key.coin ?? Blockchain.ethereum // Default
 
-        guard let address = PrivateKey(data: try key.decrypt(password: password))?.publicKey(for: blockchain).address else {
+        guard let address = PrivateKey(data: try key.decrypt(password: password))?.publicKey(for: coin).address else {
             throw DecryptError.invalidPassword
         }
 
-        let account = Account(wallet: self, address: address, derivationPath: blockchain.derivationPath(at: 0))
+        let account = Account(wallet: self, address: address, derivationPath: coin.derivationPath(at: 0))
         account.wallet = self
         accounts.append(account)
         return account

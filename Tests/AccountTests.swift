@@ -11,7 +11,7 @@ import XCTest
 class AccountTests: XCTestCase {
     func testSignHash() throws {
         let privateKey = PrivateKey(data: Data(hexString: "D30519BCAE8D180DBFCC94FE0B8383DC310185B0BE97B4365083EBCECCD75759")!)!
-        let key = try KeystoreKey(password: "password", key: privateKey, blockchain: .ethereum)
+        let key = try KeystoreKey(password: "password", key: privateKey, coin: .ethereum)
         let wallet = Wallet(keyURL: URL(fileURLWithPath: "/"), key: key)
         let account = try wallet.getAccount(password: "password")
 

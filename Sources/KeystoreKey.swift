@@ -29,15 +29,15 @@ public struct KeystoreKey {
     public var version = 3
 
     /// Blockchain
-    public var blockchain: Blockchain?
+    public var coin: Blockchain?
 
     /// List of active accounts.
     public var activeAccounts = [Account]()
 
     /// Creates a new `Key` with a password.
-    public init(password: String, for blockchain: Blockchain) throws {
+    public init(password: String, for coin: Blockchain) throws {
         let key = PrivateKey()
-        try self.init(password: password, key: key, blockchain: blockchain)
+        try self.init(password: password, key: key, coin: coin)
     }
 
     /// Creates a new `Key` with a password.
@@ -53,11 +53,11 @@ public struct KeystoreKey {
     }
 
     /// Initializes a `Key` by encrypting a private key with a password.
-    public init(password: String, key: PrivateKey, blockchain: Blockchain) throws {
+    public init(password: String, key: PrivateKey, coin: Blockchain) throws {
         id = UUID().uuidString.lowercased()
         crypto = try KeystoreKeyHeader(password: password, data: key.data)
         type = .encryptedKey
-        self.blockchain = blockchain
+        self.coin = coin
     }
 
     /// Initializes a `Key` by encrypting a mnemonic phrase with a password.
@@ -72,7 +72,7 @@ public struct KeystoreKey {
 
         type = .hierarchicalDeterministicWallet
         self.passphrase = passphrase
-        self.blockchain = .none
+        self.coin = .none
     }
 
     /// Decrypts the key and returns the private key.
@@ -134,7 +134,7 @@ extension KeystoreKey: Codable {
         case crypto
         case activeAccounts
         case version
-        case blockchain
+        case coin
     }
 
     enum UppercaseCodingKeys: String, CodingKey {
@@ -166,7 +166,7 @@ extension KeystoreKey: Codable {
         }
         version = try values.decode(Int.self, forKey: .version)
         address = try values.decodeIfPresent(String.self, forKey: .address)
-        blockchain = try values.decodeIfPresent(Blockchain.self, forKey: .blockchain)
+        coin = try values.decodeIfPresent(Blockchain.self, forKey: .coin)
         activeAccounts = try values.decodeIfPresent([Account].self, forKey: .activeAccounts) ?? []
 
         if activeAccounts.isEmpty {
@@ -190,7 +190,7 @@ extension KeystoreKey: Codable {
         try container.encode(crypto, forKey: .crypto)
         try container.encode(version, forKey: .version)
         try container.encode(activeAccounts, forKey: .activeAccounts)
-        try container.encodeIfPresent(blockchain, forKey: .blockchain)
+        try container.encodeIfPresent(coin, forKey: .coin)
     }
 }
 

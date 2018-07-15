@@ -108,10 +108,10 @@ class KeyStoreTests: XCTestCase {
     func testImportKey() throws {
         let keyStore = try KeyStore(keyDirectory: keyDirectory)
         let privateKey = PrivateKey(data: Data(hexString: "9cdb5cab19aec3bd0fcd614c5f185e7a1d97634d4225730eba22497dc89a716c")!)!
-        let key = try KeystoreKey(password: "password", key: privateKey, blockchain: .ethereum)
+        let key = try KeystoreKey(password: "password", key: privateKey, coin: .ethereum)
         let json = try JSONEncoder().encode(key)
 
-        let wallet = try keyStore.import(json: json, password: "password", newPassword: "newPassword", blockchain: .ethereum)
+        let wallet = try keyStore.import(json: json, password: "password", newPassword: "newPassword", coin: .ethereum)
         let account = try wallet.getAccount(password: "newPassword")
 
         XCTAssertNotNil(keyStore.keyWallet)
@@ -122,7 +122,7 @@ class KeyStoreTests: XCTestCase {
         let keyStore = try KeyStore(keyDirectory: keyDirectory)
         let privateKey = PrivateKey(data: Data(hexString: "9cdb5cab19aec3bd0fcd614c5f185e7a1d97634d4225730eba22497dc89a716c")!)!
 
-        let wallet = try keyStore.import(privateKey: privateKey, password: "password", blockchain: .ethereum)
+        let wallet = try keyStore.import(privateKey: privateKey, password: "password", coin: .ethereum)
 
         XCTAssertEqual(wallet.accounts.count, 1)
 

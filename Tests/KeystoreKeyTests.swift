@@ -15,7 +15,7 @@ class KeystoreKeyTests: XCTestCase {
 
         XCTAssertEqual(key.id, "e13b209c-3b2f-4327-bab0-3bef2e51630d")
         XCTAssertEqual(key.version, 3)
-        XCTAssertEqual(key.blockchain, Blockchain.ethereum)
+        XCTAssertEqual(key.coin, Blockchain.ethereum)
 
         let header = key.crypto
         XCTAssertEqual(header.cipher, "aes-128-ctr")
@@ -55,7 +55,7 @@ class KeystoreKeyTests: XCTestCase {
 
     func testCreateWallet() {
         let privateKey = PrivateKey(data: Data(hexString: "3a1076bf45ab87712ad64ccb3b10217737f7faacbf2872e88fdd9a537d8fe266")!)!
-        let key = try! KeystoreKey(password: "password", key: privateKey, blockchain: .ethereum)
+        let key = try! KeystoreKey(password: "password", key: privateKey, coin: .ethereum)
         let decrypted = try! key.decrypt(password: "password")
         XCTAssertEqual(decrypted.hexString, privateKey.data.hexString)
     }
