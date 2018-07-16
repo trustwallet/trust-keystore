@@ -7,7 +7,7 @@
 import Foundation
 import TrustCore
 
-/// Blockchain wallet.
+/// Coin wallet.
 public final class Wallet: Hashable {
     /// Unique wallet identifier.
     public let identifier: String
@@ -48,7 +48,7 @@ public final class Wallet: Hashable {
             return account
         }
 
-        let coin = key.coin ?? Blockchain.ethereum // Default
+        let coin = key.coin ?? Coin.ethereum // Default
 
         guard let address = PrivateKey(data: try key.decrypt(password: password))?.publicKey(for: coin).address else {
             throw DecryptError.invalidPassword
@@ -63,7 +63,7 @@ public final class Wallet: Hashable {
     /// Returns accounts for specific derivation paths.
     ///
     /// - Parameters:
-    ///   - blockchain: blockchain this account is for
+    ///   - coin: coin this account is for
     ///   - derivationPaths: array of HD derivation paths
     ///   - password: wallet encryption password
     /// - Returns: the accounts
@@ -84,16 +84,16 @@ public final class Wallet: Hashable {
         var accounts = [Account]()
         let wallet = HDWallet(mnemonic: mnemonic, passphrase: key.passphrase)
         for derivationPath in derivationPaths {
-            guard let blockchain = Blockchain(rawValue: derivationPath.coinType) else { break }
-            let account = getAccount(wallet: wallet, blockchain: blockchain, derivationPath: derivationPath)
+            guard let coin = Coin(rawValue: derivationPath.coinType) else { break }
+            let account = getAccount(wallet: wallet, coin: coin, derivationPath: derivationPath)
             accounts.append(account)
         }
 
         return accounts
     }
 
-    private func getAccount(wallet: HDWallet, blockchain: Blockchain, derivationPath: DerivationPath) -> Account {
-        let address = wallet.getKey(at: derivationPath).publicKey(for: blockchain).address
+    private func getAccount(wallet: HDWallet, coin: Coin, derivationPath: DerivationPath) -> Account {
+        let address = wallet.getKey(at: derivationPath).publicKey(for: coin).address
 
         if let account = accounts.first(where: { $0.address.data == address.data }) {
             return account

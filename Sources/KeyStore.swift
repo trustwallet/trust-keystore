@@ -48,7 +48,7 @@ public final class KeyStore {
     }
 
     /// Creates a new wallet. Private Key default by default
-    public func createWallet(password: String, for coin: Blockchain) throws -> Wallet {
+    public func createWallet(password: String, for coin: Coin) throws -> Wallet {
         let key = try KeystoreKey(password: password, for: coin)
         return try saveCreatedWallet(for: key, password: password, derivationPaths: [])
     }
@@ -84,7 +84,7 @@ public final class KeyStore {
     ///   - password: key password
     ///   - newPassword: password to use for the imported key
     /// - Returns: new account
-    public func `import`(json: Data, password: String, newPassword: String, coin: Blockchain) throws -> Wallet {
+    public func `import`(json: Data, password: String, newPassword: String, coin: Coin) throws -> Wallet {
         let key = try JSONDecoder().decode(KeystoreKey.self, from: json)
 
         var privateKeyData = try key.decrypt(password: password)
@@ -103,7 +103,7 @@ public final class KeyStore {
     ///   - privateKey: private key to import
     ///   - password: password to use for the imported private key
     /// - Returns: new wallet
-    public func `import`(privateKey: PrivateKey, password: String, coin: Blockchain) throws -> Wallet {
+    public func `import`(privateKey: PrivateKey, password: String, coin: Coin) throws -> Wallet {
         var newKey = try KeystoreKey(password: password, key: privateKey, coin: coin)
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: newKey)

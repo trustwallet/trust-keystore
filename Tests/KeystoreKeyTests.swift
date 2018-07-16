@@ -15,7 +15,7 @@ class KeystoreKeyTests: XCTestCase {
 
         XCTAssertEqual(key.id, "e13b209c-3b2f-4327-bab0-3bef2e51630d")
         XCTAssertEqual(key.version, 3)
-        XCTAssertEqual(key.coin, Blockchain.ethereum)
+        XCTAssertEqual(key.coin, Coin.ethereum)
 
         let header = key.crypto
         XCTAssertEqual(header.cipher, "aes-128-ctr")

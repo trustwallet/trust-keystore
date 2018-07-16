@@ -28,14 +28,14 @@ public struct KeystoreKey {
     /// Key version, must be 3.
     public var version = 3
 
-    /// Blockchain
-    public var coin: Blockchain?
+    /// Coin
+    public var coin: Coin?
 
     /// List of active accounts.
     public var activeAccounts = [Account]()
 
     /// Creates a new `Key` with a password.
-    public init(password: String, for coin: Blockchain) throws {
+    public init(password: String, for coin: Coin) throws {
         let key = PrivateKey()
         try self.init(password: password, key: key, coin: coin)
     }
@@ -53,7 +53,7 @@ public struct KeystoreKey {
     }
 
     /// Initializes a `Key` by encrypting a private key with a password.
-    public init(password: String, key: PrivateKey, coin: Blockchain) throws {
+    public init(password: String, key: PrivateKey, coin: Coin) throws {
         id = UUID().uuidString.lowercased()
         crypto = try KeystoreKeyHeader(password: password, data: key.data)
         type = .encryptedKey
@@ -166,13 +166,13 @@ extension KeystoreKey: Codable {
         }
         version = try values.decode(Int.self, forKey: .version)
         address = try values.decodeIfPresent(String.self, forKey: .address)
-        coin = try values.decodeIfPresent(Blockchain.self, forKey: .coin)
+        coin = try values.decodeIfPresent(Coin.self, forKey: .coin)
         activeAccounts = try values.decodeIfPresent([Account].self, forKey: .activeAccounts) ?? []
 
         if activeAccounts.isEmpty {
             // Workaround for old keystores. Adding address as default account
             guard let addressString = address, let address = EthereumAddress(string: "0x" + addressString) else { return }
-            let account = Account(wallet: .none, address: address, derivationPath: Blockchain.ethereum.derivationPath(at: 0))
+            let account = Account(wallet: .none, address: address, derivationPath: Coin.ethereum.derivationPath(at: 0))
             activeAccounts.append(account)
         }
     }

@@ -18,9 +18,9 @@ public final class Account: Codable, Hashable {
     /// Account derivation path, only relevant for HD wallets.
     public let derivationPath: DerivationPath
 
-    /// Blockchain this account is for.
-    public var blockchain: Blockchain {
-        return address.blockchain
+    /// Coin this account is for.
+    public var coin: Coin {
+        return address.coin
     }
 
     /// Creates a new `Account`.
@@ -99,18 +99,18 @@ public final class Account: Codable, Hashable {
     // MARK: Codable
 
     enum CodingKeys: String, CodingKey {
-        case blockchain
+        case coin
         case addressData
         case derivationPath
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let blockchain = try container.decode(Blockchain.self, forKey: .blockchain)
+        let coin = try container.decode(Coin.self, forKey: .coin)
         let addressData = try container.decode(Data.self, forKey: .addressData)
 
         let maybeAddress: Address?
-        switch blockchain {
+        switch coin {
         case .bitcoin:
             maybeAddress = BitcoinAddress(data: addressData)
         case .ethereum,
@@ -132,19 +132,19 @@ public final class Account: Codable, Hashable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(address.data, forKey: .addressData)
-        try container.encode(address.blockchain, forKey: .blockchain)
+        try container.encode(address.coin, forKey: .coin)
         try container.encode(derivationPath, forKey: .derivationPath)
     }
 }
 
-extension Blockchain: Codable {
+extension Coin: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let bblockchainID = try container.decode(Int.self)
-        guard let blockchain = Blockchain(rawValue: bblockchainID) else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid blockchain \(bblockchainID)")
+        let coinID = try container.decode(Int.self)
+        guard let coin = Coin(rawValue: coinID) else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid coin \(coinID)")
         }
-        self = blockchain
+        self = coin
     }
 
     public func encode(to encoder: Encoder) throws {
