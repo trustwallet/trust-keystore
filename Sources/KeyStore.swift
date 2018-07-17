@@ -54,19 +54,18 @@ public final class KeyStore {
     }
 
     private func saveCreatedWallet(for key: KeystoreKey, password: String, derivationPaths: [DerivationPath]) throws -> Wallet {
-        var newKey = key
         let url = makeAccountURL()
-        let wallet = Wallet(keyURL: url, key: newKey)
+        let wallet = Wallet(keyURL: url, key: key)
         switch wallet.type {
         case .encryptedKey:
             let _ = try wallet.getAccount(password: password)
         case .hierarchicalDeterministicWallet:
             let _ = try wallet.getAccounts(derivationPaths: derivationPaths, password: password)
         }
-        newKey.activeAccounts = wallet.accounts
-        wallet.key = newKey
         wallets.append(wallet)
+
         try save(wallet: wallet, in: keyDirectory)
+
         return wallet
     }
 
@@ -104,12 +103,10 @@ public final class KeyStore {
     ///   - password: password to use for the imported private key
     /// - Returns: new wallet
     public func `import`(privateKey: PrivateKey, password: String, coin: Coin) throws -> Wallet {
-        var newKey = try KeystoreKey(password: password, key: privateKey, coin: coin)
+        let newKey = try KeystoreKey(password: password, key: privateKey, coin: coin)
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: newKey)
         let _ = try wallet.getAccount(password: password)
-        newKey.activeAccounts = wallet.accounts
-        wallet.key = newKey
         wallets.append(wallet)
 
         try save(wallet: wallet, in: keyDirectory)
@@ -129,12 +126,11 @@ public final class KeyStore {
             throw Error.invalidMnemonic
         }
 
-        var newKey = try KeystoreKey(password: encryptPassword, mnemonic: mnemonic, passphrase: passphrase)
+        let key = try KeystoreKey(password: encryptPassword, mnemonic: mnemonic, passphrase: passphrase)
         let url = makeAccountURL()
-        let wallet = Wallet(keyURL: url, key: newKey)
+        let wallet = Wallet(keyURL: url, key: key)
         let _ = try wallet.getAccounts(derivationPaths: [derivationPath], password: encryptPassword)
-        newKey.activeAccounts = wallet.accounts
-        wallet.key = newKey
+
         wallets.append(wallet)
 
         try save(wallet: wallet, in: keyDirectory)
@@ -269,7 +265,10 @@ public final class KeyStore {
 
     /// Saves the account to the given directory.
     private func save(wallet: Wallet, in directory: URL) throws {
-        try save(key: wallet.key, to: wallet.keyURL)
+        var newKey = wallet.key
+        newKey.activeAccounts = wallet.accounts
+
+        try save(key: newKey, to: wallet.keyURL)
     }
 
     /// Generates a unique file name for an address.
