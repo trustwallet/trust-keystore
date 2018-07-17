@@ -57,7 +57,6 @@ public final class KeyStore {
         var newKey = key
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: newKey)
-        try save(wallet: wallet, in: keyDirectory)
         switch wallet.type {
         case .encryptedKey:
             let _ = try wallet.getAccount(password: password)
@@ -67,6 +66,7 @@ public final class KeyStore {
         newKey.activeAccounts = wallet.accounts
         wallet.key = newKey
         wallets.append(wallet)
+        try save(wallet: wallet, in: keyDirectory)
         return wallet
     }
 
