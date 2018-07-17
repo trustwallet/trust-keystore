@@ -118,7 +118,7 @@ public final class Account: Codable, Hashable {
              .ethereumClassic,
              .callisto,
              .gochain:
-            maybeAddress = EthereumAddress(data: addressData)
+            maybeAddress = EthereumAddress(data: addressData, coin: coin)
         }
 
         guard let address = maybeAddress else {
