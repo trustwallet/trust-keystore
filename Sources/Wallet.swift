@@ -95,7 +95,7 @@ public final class Wallet: Hashable {
     private func getAccount(wallet: HDWallet, coin: Coin, derivationPath: DerivationPath) -> Account {
         let address = wallet.getKey(at: derivationPath).publicKey(for: coin).address
 
-        if let account = accounts.first(where: { $0.address.data == address.data }) {
+        if let account = accounts.first(where: { $0.derivationPath == derivationPath }) {
             return account
         }
 
