@@ -91,6 +91,20 @@ class KeyStoreTests: XCTestCase {
         XCTAssertNoThrow(try account.signHashes(multipleMessages, password: "testpassword"))
     }
 
+    func testAddAccounts() throws {
+        let keyStore = try KeyStore(keyDirectory: keyDirectory)
+        let wallet = keyStore.hdWallet!
+        _ = try keyStore.addAccounts(wallet: wallet, derivationPaths: [
+            Coin.ethereum.derivationPath(at: 0),
+            Coin.callisto.derivationPath(at: 0),
+            Coin.poa.derivationPath(at: 0),
+        ], password: "password")
+
+        let savedKeyStore = try KeyStore(keyDirectory: keyDirectory)
+        let savedWallet = savedKeyStore.hdWallet!
+        XCTAssertEqual(savedWallet.accounts.count, 3)
+    }
+
     func testDeleteKey() throws {
         let keyStore = try KeyStore(keyDirectory: keyDirectory)
         let wallet = keyStore.keyWallet!

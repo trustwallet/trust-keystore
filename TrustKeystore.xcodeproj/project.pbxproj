@@ -22,6 +22,7 @@
 		61C568FB1FE599D900FC2F75 /* TrustKeystore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 61FC58211FE2490E00FFC765 /* TrustKeystore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		61C569001FE5AB8000FC2F75 /* wallet.json in Resources */ = {isa = PBXBuildFile; fileRef = 61C568FF1FE5AB7F00FC2F75 /* wallet.json */; };
 		61C569021FE5B8D800FC2F75 /* KeystoreKeyHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61C569011FE5B8D800FC2F75 /* KeystoreKeyHeader.swift */; };
+		61DC26AB20FEDF8000BE9ED7 /* WalletTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DC26AA20FEDF8000BE9ED7 /* WalletTests.swift */; };
 		61DCE1661FFF14B70053939F /* KeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DCE1651FFF14B70053939F /* KeyStore.swift */; };
 		61DCE173200197A30053939F /* KeyStore.Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DCE172200197A30053939F /* KeyStore.Error.swift */; };
 		61ED9D832012D1D600E1C4D1 /* myetherwallet.uu in Resources */ = {isa = PBXBuildFile; fileRef = 61ED9D822012D1D600E1C4D1 /* myetherwallet.uu */; };
@@ -86,6 +87,7 @@
 		61C568F61FE599CF00FC2F75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61C568FF1FE5AB7F00FC2F75 /* wallet.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wallet.json; sourceTree = "<group>"; };
 		61C569011FE5B8D800FC2F75 /* KeystoreKeyHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeystoreKeyHeader.swift; sourceTree = "<group>"; };
+		61DC26AA20FEDF8000BE9ED7 /* WalletTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTests.swift; sourceTree = "<group>"; };
 		61DCE1651FFF14B70053939F /* KeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyStore.swift; sourceTree = "<group>"; };
 		61DCE172200197A30053939F /* KeyStore.Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyStore.Error.swift; sourceTree = "<group>"; };
 		61ED9D822012D1D600E1C4D1 /* myetherwallet.uu */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 4; path = myetherwallet.uu; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 				61FC58451FE2495E00FFC765 /* KeystoreKeyTests.swift */,
 				61882E142002B62800038860 /* KeyStoreTests.swift */,
 				61FC585C1FE3904600FFC765 /* ScryptTests.swift */,
+				61DC26AA20FEDF8000BE9ED7 /* WalletTests.swift */,
 				610B9B9F202EE20E00C4B10C /* Data */,
 			);
 			path = Tests;
@@ -551,6 +554,7 @@
 				611EFEC320F5BCC700A00E53 /* AccountTests.swift in Sources */,
 				61882E152002B62800038860 /* KeyStoreTests.swift in Sources */,
 				61FC585D1FE3904600FFC765 /* ScryptTests.swift in Sources */,
+				61DC26AB20FEDF8000BE9ED7 /* WalletTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
