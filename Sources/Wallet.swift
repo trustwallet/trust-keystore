@@ -28,7 +28,7 @@ public final class Wallet: Hashable {
 
     /// Creates a `Wallet` from an encrypted key.
     public init(keyURL: URL, key: KeystoreKey) {
-        identifier = keyURL.deletingPathExtension().lastPathComponent
+        identifier = keyURL.lastPathComponent
         self.keyURL = keyURL
         self.key = key
     }
