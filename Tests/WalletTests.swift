@@ -21,4 +21,11 @@ class WalletTests: XCTestCase {
 
         XCTAssertEqual(accounts.count, 3)
     }
+
+    func testIdentifier() throws {
+        let url = URL(string: "UTC--2018-07-23T15-42-07.380692005-42000--6E199F01-FA96-4ADF-9A4B-36EE4B1E08C7")!
+        let key = try! KeystoreKey(password: "password")
+        let wallet = Wallet(keyURL: url, key: key)
+        XCTAssertEqual(wallet.identifier, "UTC--2018-07-23T15-42-07.380692005-42000--6E199F01-FA96-4ADF-9A4B-36EE4B1E08C7")
+    }
 }
