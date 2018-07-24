@@ -171,7 +171,11 @@ extension KeystoreKey: Codable {
 
         if activeAccounts.isEmpty {
             // Workaround for old keystores. Adding address as default account
-            guard let addressString = address, let address = EthereumAddress(string: "0x" + addressString) else { return }
+            let ethereumAddress: EthereumAddress? = {
+                guard let addressString = address else { return .none}
+                return EthereumAddress(string: "0x" + addressString) ?? EthereumAddress(string: addressString) ?? .none
+            }()
+            guard let address = ethereumAddress else { return }
             let account = Account(wallet: .none, address: address, derivationPath: Coin.ethereum.derivationPath(at: 0))
             activeAccounts.append(account)
         }
