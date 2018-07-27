@@ -28,17 +28,8 @@ public struct KeystoreKey {
     /// Key version, must be 3.
     public var version = 3
 
-    /// Coin
-    public var coin: Coin?
-
     /// List of active accounts.
     public var activeAccounts = [Account]()
-
-    /// Creates a new `Key` with a password.
-    public init(password: String, for coin: Coin) throws {
-        let key = PrivateKey()
-        try self.init(password: password, key: key, coin: coin)
-    }
 
     /// Creates a new `Key` with a password.
     public init(password: String) throws {
@@ -53,11 +44,10 @@ public struct KeystoreKey {
     }
 
     /// Initializes a `Key` by encrypting a private key with a password.
-    public init(password: String, key: PrivateKey, coin: Coin) throws {
+    public init(password: String, key: PrivateKey) throws {
         id = UUID().uuidString.lowercased()
         crypto = try KeystoreKeyHeader(password: password, data: key.data)
-        type = .encryptedKey
-        self.coin = coin
+        self.type = .encryptedKey
     }
 
     /// Initializes a `Key` by encrypting a mnemonic phrase with a password.
@@ -72,7 +62,6 @@ public struct KeystoreKey {
 
         type = .hierarchicalDeterministicWallet
         self.passphrase = passphrase
-        self.coin = .none
     }
 
     /// Decrypts the key and returns the private key.
@@ -134,7 +123,6 @@ extension KeystoreKey: Codable {
         case crypto
         case activeAccounts
         case version
-        case coin
     }
 
     enum UppercaseCodingKeys: String, CodingKey {
@@ -166,7 +154,6 @@ extension KeystoreKey: Codable {
         }
         version = try values.decode(Int.self, forKey: .version)
         address = try values.decodeIfPresent(String.self, forKey: .address)
-        coin = try values.decodeIfPresent(Coin.self, forKey: .coin)
         activeAccounts = try values.decodeIfPresent([Account].self, forKey: .activeAccounts) ?? []
 
         if activeAccounts.isEmpty {
@@ -194,7 +181,6 @@ extension KeystoreKey: Codable {
         try container.encode(crypto, forKey: .crypto)
         try container.encode(version, forKey: .version)
         try container.encode(activeAccounts, forKey: .activeAccounts)
-        try container.encodeIfPresent(coin, forKey: .coin)
     }
 }
 
