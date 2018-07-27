@@ -35,11 +35,13 @@ public final class Wallet: Hashable {
 
     /// Returns the only account for non HD-wallets.
     ///
-    /// - Parameter password: wallet encryption password
+    /// - Parameters:
+    ///   - password: wallet encryption password
+    ///   - type: blockchain type
     /// - Returns: the account
     /// - Throws: `WalletError.invalidKeyType` if this is an HD wallet `DecryptError.invalidPassword` if the
     ///           password is incorrect.
-    public func getAccount(password: String) throws -> Account {
+    public func getAccount(password: String, coin: Coin) throws -> Account {
         guard key.type == .encryptedKey else {
             throw WalletError.invalidKeyType
         }
@@ -48,9 +50,7 @@ public final class Wallet: Hashable {
             return account
         }
 
-        let coin = key.coin ?? Coin.ethereum // Default
-
-        guard let address = PrivateKey(data: try key.decrypt(password: password))?.publicKey(for: coin).address else {
+        guard let address = PrivateKey(data: try key.decrypt(password: password))?.publicKey(for: coin.blockchain.type).address else {
             throw DecryptError.invalidPassword
         }
 
@@ -84,7 +84,7 @@ public final class Wallet: Hashable {
         var accounts = [Account]()
         let wallet = HDWallet(mnemonic: mnemonic, passphrase: key.passphrase)
         for derivationPath in derivationPaths {
-            guard let coin = Coin(rawValue: derivationPath.coinType) else { break }
+            let coin = Coin(coinType: derivationPath.coinType)
             let account = getAccount(wallet: wallet, coin: coin, derivationPath: derivationPath)
             accounts.append(account)
         }
@@ -93,7 +93,7 @@ public final class Wallet: Hashable {
     }
 
     private func getAccount(wallet: HDWallet, coin: Coin, derivationPath: DerivationPath) -> Account {
-        let address = wallet.getKey(at: derivationPath).publicKey(for: coin).address
+        let address = wallet.getKey(at: derivationPath).publicKey(for: coin.blockchain.type).address
 
         if let account = accounts.first(where: { $0.derivationPath == derivationPath }) {
             return account
