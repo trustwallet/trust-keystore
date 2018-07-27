@@ -23,6 +23,9 @@ public final class Account: Codable, Hashable {
         return address.coin
     }
 
+    /// Ethereum chain identifier
+    public var chainID = 1
+
     /// Creates a new `Account`.
     ///
     /// - Parameters:
