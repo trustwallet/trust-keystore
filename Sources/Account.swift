@@ -105,6 +105,7 @@ public final class Account: Codable, Hashable {
         case coin
         case addressData
         case derivationPath
+        case chainID
     }
 
     public init(from decoder: Decoder) throws {
@@ -130,6 +131,7 @@ public final class Account: Codable, Hashable {
 
         self.address = address
         derivationPath = try container.decode(DerivationPath.self, forKey: .derivationPath)
+        chainID = try container.decodeIfPresent(Int.self, forKey: .chainID) ?? 1
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -137,6 +139,7 @@ public final class Account: Codable, Hashable {
         try container.encode(address.data, forKey: .addressData)
         try container.encode(address.coin, forKey: .coin)
         try container.encode(derivationPath, forKey: .derivationPath)
+        try container.encode(chainID, forKey: .chainID)
     }
 }
 
