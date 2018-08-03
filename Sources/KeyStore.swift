@@ -87,7 +87,7 @@ public final class KeyStore {
         guard let privateKey = PrivateKey(data: privateKeyData) else {
             throw Error.invalidKey
         }
-        return try self.import(privateKey: privateKey, password: newPassword)
+        return try self.import(privateKey: privateKey, password: newPassword, coin: key.coin ?? .ethereum)
     }
 
     /// Imports a private key.
@@ -95,12 +95,13 @@ public final class KeyStore {
     /// - Parameters:
     ///   - privateKey: private key to import
     ///   - password: password to use for the imported private key
+    ///   - coin: coin to use for this wallet
     /// - Returns: new wallet
-    public func `import`(privateKey: PrivateKey, password: String) throws -> Wallet {
-        let newKey = try KeystoreKey(password: password, key: privateKey)
+    public func `import`(privateKey: PrivateKey, password: String, coin: Coin) throws -> Wallet {
+        let newKey = try KeystoreKey(password: password, key: privateKey, coin: coin)
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: newKey)
-        let _ = try wallet.getAccount(password: password, coin: .ethereum)
+        let _ = try wallet.getAccount(password: password, coin: coin)
         wallets.append(wallet)
 
         try save(wallet: wallet, in: keyDirectory)
@@ -152,7 +153,7 @@ public final class KeyStore {
                 throw Error.invalidKey
             }
 
-            newKey = try KeystoreKey(password: newPassword, key: privateKey)
+            newKey = try KeystoreKey(password: newPassword, key: privateKey, coin: nil)
         case .hierarchicalDeterministicWallet:
             guard let string = String(data: privateKeyData, encoding: .ascii) else {
                 throw EncryptError.invalidMnemonic
@@ -221,7 +222,7 @@ public final class KeyStore {
             guard let privateKey = PrivateKey(data: privateKeyData) else {
                 throw Error.invalidKey
             }
-            wallets[index].key = try KeystoreKey(password: newPassword, key: privateKey)
+            wallets[index].key = try KeystoreKey(password: newPassword, key: privateKey, coin: wallet.key.coin)
         case .hierarchicalDeterministicWallet:
             guard let string = String(data: privateKeyData, encoding: .ascii) else {
                 throw EncryptError.invalidMnemonic
