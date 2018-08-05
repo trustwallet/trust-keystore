@@ -116,7 +116,7 @@ class KeyStoreTests: XCTestCase {
         let key = try KeystoreKey(password: "password", key: privateKey, coin: .ethereum)
         let json = try JSONEncoder().encode(key)
 
-        let wallet = try keyStore.import(json: json, password: "password", newPassword: "newPassword")
+        let wallet = try keyStore.import(json: json, password: "password", newPassword: "newPassword", coin: .ethereum)
         let account = try wallet.getAccount(password: "newPassword", coin: .ethereum)
 
         XCTAssertNotNil(keyStore.keyWallet)

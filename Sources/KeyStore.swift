@@ -77,7 +77,7 @@ public final class KeyStore {
     ///   - password: key password
     ///   - newPassword: password to use for the imported key
     /// - Returns: new account
-    public func `import`(json: Data, password: String, newPassword: String) throws -> Wallet {
+    public func `import`(json: Data, password: String, newPassword: String, coin: Coin) throws -> Wallet {
         let key = try JSONDecoder().decode(KeystoreKey.self, from: json)
 
         var privateKeyData = try key.decrypt(password: password)
@@ -87,7 +87,7 @@ public final class KeyStore {
         guard let privateKey = PrivateKey(data: privateKeyData) else {
             throw Error.invalidKey
         }
-        return try self.import(privateKey: privateKey, password: newPassword, coin: key.coin ?? .ethereum)
+        return try self.import(privateKey: privateKey, password: newPassword, coin: key.coin ?? coin)
     }
 
     /// Imports a private key.
