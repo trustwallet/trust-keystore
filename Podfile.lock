@@ -5,7 +5,7 @@ PODS:
   - SipHash (1.2.0)
   - SwiftLint (0.25.0)
   - TrezorCrypto (0.0.6)
-  - TrustCore (0.2.0):
+  - TrustCore (0.2.1):
     - BigInt
     - TrezorCrypto (~> 0.0.6)
 
@@ -31,7 +31,7 @@ SPEC CHECKSUMS:
   SipHash: c6e9e43e9c531b5bc6602545130c26194a6d31ce
   SwiftLint: e14651157288e9e01d6e1a71db7014fb5744a8ea
   TrezorCrypto: bea2dab002f9a5fe885df004694b9ece52dc088b
-  TrustCore: ac935a97d2d9d28298156469574b263821885690
+  TrustCore: f59b162addba5b86c513802f6f8faddd3a90af3d
 
 PODFILE CHECKSUM: 9a8e9ca892afaaad6ba4de7c3d72315b84c1a873
 
