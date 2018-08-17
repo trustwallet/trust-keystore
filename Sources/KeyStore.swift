@@ -80,7 +80,7 @@ public final class KeyStore {
     /// - Returns: new account
     public func `import`(json: Data, password: String, newPassword: String, coin: Coin) throws -> Wallet {
         let key = try JSONDecoder().decode(KeystoreKey.self, from: json)
-        if let address = key.address, self.account(for: address) != nil {
+        if let address = key.address, self.account(for: address, type: key.type) != nil {
             throw Error.accountAlreadyExists
         }
 
@@ -95,7 +95,7 @@ public final class KeyStore {
             }
             return try self.import(privateKey: privateKey, password: newPassword, coin: key.coin ?? coin)
         case .hierarchicalDeterministicWallet:
-            let mnemonicData = try key.decrypt(password: password)
+            var mnemonicData = try key.decrypt(password: password)
             defer {
                 mnemonicData.clear()
             }
@@ -106,8 +106,15 @@ public final class KeyStore {
         }
     }
 
-    private func account(for address: Address) -> Account? {
-        return wallets.compactMap({ $0.accounts.first(where: { $0.address.data == address.data }) }).first
+    private func account(for address: Address, type: WalletType) -> Account? {
+        return wallets.compactMap({ wallet in
+            if wallet.type != type {
+                return nil
+            }
+            return wallet.accounts.first(where: { account in
+                account.address.data == address.data
+            })
+        }).first
     }
 
     /// Imports a private key.
