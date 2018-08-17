@@ -96,6 +96,9 @@ public final class KeyStore {
             return try self.import(privateKey: privateKey, password: newPassword, coin: key.coin ?? coin)
         case .hierarchicalDeterministicWallet:
             let mnemonicData = try key.decrypt(password: password)
+            defer {
+                mnemonicData.clear()
+            }
             guard let mnemonic = String(data: mnemonicData, encoding: .ascii) else {
                 throw EncryptError.invalidMnemonic
             }
