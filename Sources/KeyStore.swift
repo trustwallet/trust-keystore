@@ -73,21 +73,48 @@ public final class KeyStore {
     /// Imports an encrypted JSON key.
     ///
     /// - Parameters:
-    ///   - key: key to import
-    ///   - password: key password
-    ///   - newPassword: password to use for the imported key
+    /// - json: json wallet
+    /// - password: key password
+    /// - newPassword: password to use for the imported key
+    /// - coin: coin to use for this wallet
     /// - Returns: new account
     public func `import`(json: Data, password: String, newPassword: String, coin: Coin) throws -> Wallet {
         let key = try JSONDecoder().decode(KeystoreKey.self, from: json)
+        if let address = key.address, self.account(for: address, type: key.type) != nil {
+            throw Error.accountAlreadyExists
+        }
 
-        var privateKeyData = try key.decrypt(password: password)
-        defer {
-            privateKeyData.clear()
+        switch key.type {
+        case .encryptedKey:
+            var privateKeyData = try key.decrypt(password: password)
+            defer {
+                privateKeyData.clear()
+            }
+            guard let privateKey = PrivateKey(data: privateKeyData) else {
+                throw Error.invalidKey
+            }
+            return try self.import(privateKey: privateKey, password: newPassword, coin: key.coin ?? coin)
+        case .hierarchicalDeterministicWallet:
+            var mnemonicData = try key.decrypt(password: password)
+            defer {
+                mnemonicData.clear()
+            }
+            guard let mnemonic = String(data: mnemonicData, encoding: .ascii) else {
+                throw EncryptError.invalidMnemonic
+            }
+            return try self.import(mnemonic: mnemonic, encryptPassword: newPassword, derivationPath: coin.derivationPath(at: 0))
         }
-        guard let privateKey = PrivateKey(data: privateKeyData) else {
-            throw Error.invalidKey
-        }
-        return try self.import(privateKey: privateKey, password: newPassword, coin: key.coin ?? coin)
+    }
+
+    private func account(for address: Address, type: WalletType) -> Account? {
+        return wallets.compactMap({ wallet in
+            if wallet.type != type {
+                return nil
+            }
+            return wallet.accounts.first(where: { account in
+                account.address.data == address.data
+            })
+        }).first
     }
 
     /// Imports a private key.

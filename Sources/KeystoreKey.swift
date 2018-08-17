@@ -17,7 +17,8 @@ public struct KeystoreKey {
     /// Wallet UUID, optional.
     public var id: String?
 
-    public var address: String?
+    /// Key's address
+    public var address: Address?
 
     /// Key header with encrypted private key and crypto parameters.
     public var crypto: KeystoreKeyHeader
@@ -158,17 +159,11 @@ extension KeystoreKey: Codable {
             self.crypto = try altValues.decode(KeystoreKeyHeader.self, forKey: .crypto)
         }
         version = try values.decode(Int.self, forKey: .version)
-        address = try values.decodeIfPresent(String.self, forKey: .address)
+        address = try values.decodeIfPresent(String.self, forKey: .address).flatMap({ EthereumAddress(data: Data(hex: $0)) })
         coin = try values.decodeIfPresent(Coin.self, forKey: .coin)
         activeAccounts = try values.decodeIfPresent([Account].self, forKey: .activeAccounts) ?? []
 
-        if activeAccounts.isEmpty {
-            // Workaround for old keystores. Adding address as default account
-            let ethereumAddress: EthereumAddress? = {
-                guard let addressString = address else { return .none}
-                return EthereumAddress(string: "0x" + addressString) ?? EthereumAddress(string: addressString) ?? .none
-            }()
-            guard let address = ethereumAddress else { return }
+        if let address = address, activeAccounts.isEmpty {
             let account = Account(wallet: .none, address: address, derivationPath: Coin.ethereum.derivationPath(at: 0))
             activeAccounts.append(account)
         }
@@ -183,7 +178,7 @@ extension KeystoreKey: Codable {
             try container.encode(TypeString.mnemonic, forKey: .type)
         }
         try container.encode(id, forKey: .id)
-        try container.encodeIfPresent(address, forKey: .address)
+        try container.encodeIfPresent(address?.description, forKey: .address)
         try container.encode(crypto, forKey: .crypto)
         try container.encode(version, forKey: .version)
         try container.encode(activeAccounts, forKey: .activeAccounts)
