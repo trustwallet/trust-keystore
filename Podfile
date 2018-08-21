@@ -6,7 +6,7 @@ target 'TrustKeystore' do
   pod 'BigInt', inhibit_warnings: true
   pod 'CryptoSwift', '~> 0.10.0'
   pod 'TrezorCrypto', inhibit_warnings: true
-  pod 'TrustCore', '~> 0.2.0', inhibit_warnings: true
+  pod 'TrustCore', '~> 0.2.2', inhibit_warnings: true
   pod 'SwiftLint'
 
   target 'KeystoreBenchmark'
