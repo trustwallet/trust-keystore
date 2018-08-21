@@ -84,22 +84,19 @@ public final class KeyStore {
             throw Error.accountAlreadyExists
         }
 
+        var data = try key.decrypt(password: password)
+        defer {
+            data.clear()
+        }
+
         switch key.type {
         case .encryptedKey:
-            var privateKeyData = try key.decrypt(password: password)
-            defer {
-                privateKeyData.clear()
-            }
-            guard let privateKey = PrivateKey(data: privateKeyData) else {
+            guard let privateKey = PrivateKey(data: data) else {
                 throw Error.invalidKey
             }
             return try self.import(privateKey: privateKey, password: newPassword, coin: key.coin ?? coin)
         case .hierarchicalDeterministicWallet:
-            var mnemonicData = try key.decrypt(password: password)
-            defer {
-                mnemonicData.clear()
-            }
-            guard let mnemonic = String(data: mnemonicData, encoding: .ascii) else {
+            guard let mnemonic = String(data: data, encoding: .ascii) else {
                 throw EncryptError.invalidMnemonic
             }
             return try self.import(mnemonic: mnemonic, encryptPassword: newPassword, derivationPath: coin.derivationPath(at: 0))
