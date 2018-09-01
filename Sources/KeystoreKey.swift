@@ -159,8 +159,10 @@ extension KeystoreKey: Codable {
             self.crypto = try altValues.decode(KeystoreKeyHeader.self, forKey: .crypto)
         }
         version = try values.decode(Int.self, forKey: .version)
-        address = try values.decodeIfPresent(String.self, forKey: .address).flatMap({ EthereumAddress(data: Data(hex: $0)) })
         coin = try values.decodeIfPresent(Coin.self, forKey: .coin)
+        address = try values.decodeIfPresent(String.self, forKey: .address).flatMap({
+            return KeystoreKey.address(for: coin, addressString: $0)
+        })
         activeAccounts = try values.decodeIfPresent([Account].self, forKey: .activeAccounts) ?? []
 
         if let address = address, activeAccounts.isEmpty {
@@ -183,6 +185,18 @@ extension KeystoreKey: Codable {
         try container.encode(version, forKey: .version)
         try container.encode(activeAccounts, forKey: .activeAccounts)
         try container.encodeIfPresent(coin, forKey: .coin)
+    }
+
+    static func address(for coin: Coin?, addressString: String) -> Address? {
+        guard let coin = coin else { return EthereumAddress(data: Data(hex: addressString)) }
+        switch coin.blockchain.type {
+        case .ethereum, .wanchain, .vechain:
+            return EthereumAddress(data: Data(hex: addressString))
+        case .bitcoin:
+            return BitcoinAddress(string: addressString)
+        case .tron:
+            return TronAddress(string: addressString)
+        }
     }
 }
 
