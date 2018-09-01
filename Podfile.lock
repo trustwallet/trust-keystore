@@ -14,7 +14,7 @@ DEPENDENCIES:
   - CryptoSwift (~> 0.10.0)
   - SwiftLint
   - TrezorCrypto
-  - TrustCore (~> 0.2.2)
+  - TrustCore (from `https://github.com/TrustWallet/trust-core`, branch `master`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -23,7 +23,16 @@ SPEC REPOS:
     - SipHash
     - SwiftLint
     - TrezorCrypto
-    - TrustCore
+
+EXTERNAL SOURCES:
+  TrustCore:
+    :branch: master
+    :git: https://github.com/TrustWallet/trust-core
+
+CHECKOUT OPTIONS:
+  TrustCore:
+    :commit: 4485ee9b1d691621eb700e89d918037cf23693fb
+    :git: https://github.com/TrustWallet/trust-core
 
 SPEC CHECKSUMS:
   BigInt: 76b5dfdfa3e2e478d4ffdf161aeede5502e2742f
@@ -33,6 +42,6 @@ SPEC CHECKSUMS:
   TrezorCrypto: 938c4b715fff7824a9c891a105e65ee0e4e81662
   TrustCore: fe2a3b842c50fd73af69f1ec4c040b7eefced188
 
-PODFILE CHECKSUM: 9bfbe5e6e7cfea9103cee4f1e77c32ce35b905d4
+PODFILE CHECKSUM: 0208b058b497bed3f568cc2143bfac2062d885fe
 
 COCOAPODS: 1.5.3

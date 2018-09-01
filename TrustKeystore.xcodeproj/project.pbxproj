@@ -33,6 +33,7 @@
 		61FC58551FE2C39700FFC765 /* Scrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC58541FE2C39700FFC765 /* Scrypt.swift */; };
 		61FC585D1FE3904600FFC765 /* ScryptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61FC585C1FE3904600FFC765 /* ScryptTests.swift */; };
 		742A3CD8CA3E56C74A3D84EF /* Pods_TrustKeystore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49CDD76074CC2CFEF09CAA54 /* Pods_TrustKeystore.framework */; };
+		771A471F213A2AA90002A0AA /* key_bitcoin.json in Resources */ = {isa = PBXBuildFile; fileRef = 771A471D213A29310002A0AA /* key_bitcoin.json */; };
 		F45B9EE7006B204F676FC2AA /* Pods_TrustKeystore_KeystoreBenchmark.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9A8CDAD6453D4708739B547 /* Pods_TrustKeystore_KeystoreBenchmark.framework */; };
 		F6A9F28E31D4DB81E7CA7F3F /* Pods_TrustKeystore_TrustKeystoreTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B87188CBD5FFF8EC1968F404 /* Pods_TrustKeystore_TrustKeystoreTests.framework */; };
 /* End PBXBuildFile section */
@@ -101,6 +102,7 @@
 		61FC584B1FE24A8C00FFC765 /* KeystoreKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeystoreKey.swift; sourceTree = "<group>"; };
 		61FC58541FE2C39700FFC765 /* Scrypt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scrypt.swift; sourceTree = "<group>"; };
 		61FC585C1FE3904600FFC765 /* ScryptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryptTests.swift; sourceTree = "<group>"; };
+		771A471D213A29310002A0AA /* key_bitcoin.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = key_bitcoin.json; sourceTree = "<group>"; };
 		8D3D60D6FA5E0FDA441C2464 /* Pods-TrustKeystore-KeystoreBenchmark.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrustKeystore-KeystoreBenchmark.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TrustKeystore-KeystoreBenchmark/Pods-TrustKeystore-KeystoreBenchmark.debug.xcconfig"; sourceTree = "<group>"; };
 		B87188CBD5FFF8EC1968F404 /* Pods_TrustKeystore_TrustKeystoreTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TrustKeystore_TrustKeystoreTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2AEC91B9F14D8140DBDCC2C /* Pods-TrustKeystore-TrustKeystoreTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TrustKeystore-TrustKeystoreTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TrustKeystore-TrustKeystoreTests/Pods-TrustKeystore-TrustKeystoreTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				61BBC0D42038DEE500371E4A /* key.json */,
+				771A471D213A29310002A0AA /* key_bitcoin.json */,
 				61C568FF1FE5AB7F00FC2F75 /* wallet.json */,
 				61ED9D822012D1D600E1C4D1 /* myetherwallet.uu */,
 			);
@@ -390,6 +393,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				771A471F213A2AA90002A0AA /* key_bitcoin.json in Resources */,
 				61C569001FE5AB8000FC2F75 /* wallet.json in Resources */,
 				61ED9D832012D1D600E1C4D1 /* myetherwallet.uu in Resources */,
 				61BBC0D52038DEE500371E4A /* key.json in Resources */,

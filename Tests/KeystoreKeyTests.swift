@@ -58,4 +58,46 @@ class KeystoreKeyTests: XCTestCase {
         let decrypted = try! key.decrypt(password: "password")
         XCTAssertEqual(decrypted.hexString, privateKey.data.hexString)
     }
+
+    func testDecodingEthereumAddress() {
+        let url = Bundle(for: type(of: self)).url(forResource: "key", withExtension: "json")!
+        let key = try! KeystoreKey(contentsOf: url)
+        XCTAssertTrue(key.address is EthereumAddress)
+        XCTAssertEqual(key.address?.description, "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")
+    }
+
+    func testDecodingBitcoinAddress() {
+        let url = Bundle(for: type(of: self)).url(forResource: "key_bitcoin", withExtension: "json")!
+        let key = try! KeystoreKey(contentsOf: url)
+        XCTAssertTrue(key.address is BitcoinAddress)
+        XCTAssertEqual(key.address?.description, "3PWazDi9n1Hfyq9gXFxDxzADNL8RNYyK2y")
+    }
+
+    func testEthereumAddress() {
+        let address = KeystoreKey.address(for: Coin.bitcoin, addressString: "3PWazDi9n1Hfyq9gXFxDxzADNL8RNYyK2y")
+
+        XCTAssertTrue(address is BitcoinAddress)
+        XCTAssertEqual(address?.description, "3PWazDi9n1Hfyq9gXFxDxzADNL8RNYyK2y")
+    }
+
+    func testFormatEthereumAddress() {
+        let address = KeystoreKey.address(for: Coin.ethereum, addressString: "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")
+
+        XCTAssertTrue(address is EthereumAddress)
+        XCTAssertEqual(address?.description, "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")
+    }
+
+    func testFormatVechainAddress() {
+        let address = KeystoreKey.address(for: Coin.vechain, addressString: "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")
+
+        XCTAssertTrue(address is EthereumAddress)
+        XCTAssertEqual(address?.description, "0x008AeEda4D805471dF9b2A5B0f38A0C3bCBA786b")
+    }
+
+    func testFormatTronAddress() {
+        let address = KeystoreKey.address(for: Coin.tron, addressString: "TJCnKsPa7y5okkXvQAidZBzqx3QyQ6sxMW")
+
+        XCTAssertTrue(address is TronAddress)
+        XCTAssertEqual(address?.description, "TJCnKsPa7y5okkXvQAidZBzqx3QyQ6sxMW")
+    }
 }
