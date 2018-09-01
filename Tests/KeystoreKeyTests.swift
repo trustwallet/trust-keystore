@@ -80,7 +80,7 @@ class KeystoreKeyTests: XCTestCase {
         XCTAssertEqual(key.address?.description, "3PWazDi9n1Hfyq9gXFxDxzADNL8RNYyK2y")
     }
 
-    func testEthereumAddress() {
+    func testBitcoinAddress() {
         let address = KeystoreKey.address(for: Coin.bitcoin, addressString: "3PWazDi9n1Hfyq9gXFxDxzADNL8RNYyK2y")
 
         XCTAssertTrue(address is BitcoinAddress)
