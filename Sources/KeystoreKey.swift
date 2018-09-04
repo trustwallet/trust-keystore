@@ -187,7 +187,7 @@ extension KeystoreKey: Codable {
         try container.encodeIfPresent(coin, forKey: .coin)
     }
 
-    static func address(for coin: Coin?, addressString: String) -> Address? {
+    public static func address(for coin: Coin?, addressString: String) -> Address? {
         guard let coin = coin else { return EthereumAddress(data: Data(hex: addressString)) }
         switch coin.blockchain.type {
         case .ethereum, .wanchain, .vechain:
