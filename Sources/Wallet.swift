@@ -41,7 +41,7 @@ public final class Wallet: Hashable {
     /// - Returns: the account
     /// - Throws: `WalletError.invalidKeyType` if this is an HD wallet `DecryptError.invalidPassword` if the
     ///           password is incorrect.
-    public func getAccount(password: String, coin: Coin) throws -> Account {
+    public func getAccount(password: String, coin: Slip) throws -> Account {
         guard key.type == .encryptedKey else {
             throw WalletError.invalidKeyType
         }
@@ -50,11 +50,14 @@ public final class Wallet: Hashable {
             return account
         }
 
-        guard let address = PrivateKey(data: try key.decrypt(password: password))?.publicKey(for: coin.blockchain.type).address else {
+        let bc = blockchain(coin: coin)
+        guard let privateKey = PrivateKey(data: try key.decrypt(password: password)) else {
             throw DecryptError.invalidPassword
         }
+        let publicKey = privateKey.publicKey()
+        let address = bc.address(for: publicKey)
 
-        let account = Account(wallet: self, address: address, derivationPath: coin.derivationPath(at: 0))
+        let account = Account(wallet: self, address: address, derivationPath: bc.derivationPath(at: 0))
         account.wallet = self
         accounts.append(account)
         return account
@@ -84,16 +87,18 @@ public final class Wallet: Hashable {
         var accounts = [Account]()
         let wallet = HDWallet(mnemonic: mnemonic, passphrase: key.passphrase)
         for derivationPath in derivationPaths {
-            let coin = Coin(coinType: derivationPath.coinType)
-            let account = getAccount(wallet: wallet, coin: coin, derivationPath: derivationPath)
+            guard let slip = Slip(rawValue: derivationPath.coinType) else { break }
+            let account = getAccount(wallet: wallet, coin: slip, derivationPath: derivationPath)
             accounts.append(account)
         }
 
         return accounts
     }
 
-    private func getAccount(wallet: HDWallet, coin: Coin, derivationPath: DerivationPath) -> Account {
-        let address = wallet.getKey(at: derivationPath).publicKey(for: coin.blockchain.type).address
+    private func getAccount(wallet: HDWallet, coin: Slip, derivationPath: DerivationPath) -> Account {
+        let bc = blockchain(coin: coin)
+        let publicKey = wallet.getKey(at: derivationPath).publicKey()
+        let address = bc.address(for: publicKey)
 
         if let account = accounts.first(where: { $0.derivationPath == derivationPath }) {
             return account
