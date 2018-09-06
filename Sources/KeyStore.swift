@@ -78,7 +78,7 @@ public final class KeyStore {
     /// - newPassword: password to use for the imported key
     /// - coin: coin to use for this wallet
     /// - Returns: new account
-    public func `import`(json: Data, password: String, newPassword: String, coin: Int) throws -> Wallet {
+    public func `import`(json: Data, password: String, newPassword: String, coin: Slip) throws -> Wallet {
         let key = try JSONDecoder().decode(KeystoreKey.self, from: json)
         if let address = key.address, self.account(for: address, type: key.type) != nil {
             throw Error.accountAlreadyExists
@@ -99,7 +99,7 @@ public final class KeyStore {
             guard let mnemonic = String(data: data, encoding: .ascii) else {
                 throw EncryptError.invalidMnemonic
             }
-            let bc = blockchain(coin: coin) ?? Ethereum()
+            let bc = blockchain(coin: coin)
             return try self.import(mnemonic: mnemonic, encryptPassword: newPassword, derivationPath: bc.derivationPath(at: 0))
         }
     }
@@ -122,7 +122,7 @@ public final class KeyStore {
     ///   - password: password to use for the imported private key
     ///   - coin: coin to use for this wallet
     /// - Returns: new wallet
-    public func `import`(privateKey: PrivateKey, password: String, coin: Int) throws -> Wallet {
+    public func `import`(privateKey: PrivateKey, password: String, coin: Slip) throws -> Wallet {
         let newKey = try KeystoreKey(password: password, key: privateKey, coin: coin)
         let url = makeAccountURL()
         let wallet = Wallet(keyURL: url, key: newKey)

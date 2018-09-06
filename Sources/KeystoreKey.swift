@@ -30,7 +30,7 @@ public struct KeystoreKey {
     public var version = 3
 
     /// Default coin for this key.
-    public var coin: Int?
+    public var coin: Slip?
 
     /// List of active accounts.
     public var activeAccounts = [Account]()
@@ -48,7 +48,7 @@ public struct KeystoreKey {
     }
 
     /// Initializes a `Key` by encrypting a private key with a password.
-    public init(password: String, key: PrivateKey, coin: Int?) throws {
+    public init(password: String, key: PrivateKey, coin: Slip?) throws {
         id = UUID().uuidString.lowercased()
         crypto = try KeystoreKeyHeader(password: password, data: key.data)
         self.type = .encryptedKey
@@ -160,7 +160,7 @@ extension KeystoreKey: Codable {
             self.crypto = try altValues.decode(KeystoreKeyHeader.self, forKey: .crypto)
         }
         version = try values.decode(Int.self, forKey: .version)
-        coin = try values.decodeIfPresent(Int.self, forKey: .coin)
+        coin = try values.decodeIfPresent(Slip.self, forKey: .coin)
         address = try values.decodeIfPresent(String.self, forKey: .address).flatMap({
             return KeystoreKey.address(for: coin, addressString: $0)
         })
@@ -188,12 +188,11 @@ extension KeystoreKey: Codable {
         try container.encodeIfPresent(coin, forKey: .coin)
     }
 
-    public static func address(for coin: Int?, addressString: String) -> Address? {
+    public static func address(for coin: Slip?, addressString: String) -> Address? {
         guard let coin = coin else {
             return EthereumAddress(data: Data(hex: addressString))
         }
-        let bc = blockchain(coin: coin)
-        return bc?.address(string: addressString)
+        return blockchain(coin: coin).address(string: addressString)
     }
 }
 
@@ -203,5 +202,20 @@ private extension String {
             return String(dropFirst(2))
         }
         return self
+    }
+}
+
+extension Slip: Codable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let coinID = try container.decode(Int.self)
+        guard let slip = Slip(rawValue: coinID) else {
+            throw DecryptError.unsupportedCoin
+        }
+        self = slip
+    }
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.rawValue)
     }
 }
