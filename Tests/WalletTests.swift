@@ -14,9 +14,9 @@ class WalletTests: XCTestCase {
         let key = try! KeystoreKey(contentsOf: url)
         let wallet = Wallet(keyURL: url, key: key)
         let accounts = try wallet.getAccounts(derivationPaths: [
-            Coin.ethereum.derivationPath(at: 0),
-            Coin.callisto.derivationPath(at: 0),
-            Coin.poa.derivationPath(at: 0),
+            Ethereum().derivationPath(at: 0),
+            Callisto().derivationPath(at: 0),
+            POA().derivationPath(at: 0),
         ], password: "password")
 
         XCTAssertEqual(accounts.count, 3)

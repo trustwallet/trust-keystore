@@ -19,13 +19,16 @@ public final class Account: Codable, Hashable {
     public let derivationPath: DerivationPath
 
     /// Coin this account is for.
-    public var coin: Coin {
-        return Coin(coinType: derivationPath.coinType)
+    public var coin: Int {
+        return derivationPath.coinType
     }
 
     /// Chain identifier
     public var chainID: Int {
-        return coin.blockchain.chainID
+        guard let eth = blockchain(coin: coin) as? Ethereum else {
+            return 0
+        }
+        return eth.chainID
     }
 
     /// Creates a new `Account`.
@@ -114,14 +117,8 @@ public final class Account: Codable, Hashable {
 
         let addressData = try container.decode(Data.self, forKey: .addressData)
         let maybeAddress: Address?
-        switch derivationPath.coinType {
-        case Coin.bitcoin.coinType:
-            maybeAddress = BitcoinAddress(data: addressData)
-        default:
-            maybeAddress = EthereumAddress(data: addressData)
-        }
-
-        guard let address = maybeAddress else {
+        let bc = blockchain(coin: derivationPath.coinType)
+        guard let address = bc?.address(data: addressData) else {
             throw DecodingError.dataCorruptedError(forKey: .addressData, in: container, debugDescription: "Invalid address")
         }
 
