@@ -30,7 +30,7 @@ public struct KeystoreKey {
     public var version = 3
 
     /// Default coin for this key.
-    public var coin: Slip?
+    public var coin: SLIP.CoinType?
 
     /// List of active accounts.
     public var activeAccounts = [Account]()
@@ -48,7 +48,7 @@ public struct KeystoreKey {
     }
 
     /// Initializes a `Key` by encrypting a private key with a password.
-    public init(password: String, key: PrivateKey, coin: Slip?) throws {
+    public init(password: String, key: PrivateKey, coin: SLIP.CoinType?) throws {
         id = UUID().uuidString.lowercased()
         crypto = try KeystoreKeyHeader(password: password, data: key.data)
         self.type = .encryptedKey
@@ -160,7 +160,7 @@ extension KeystoreKey: Codable {
             self.crypto = try altValues.decode(KeystoreKeyHeader.self, forKey: .crypto)
         }
         version = try values.decode(Int.self, forKey: .version)
-        coin = try values.decodeIfPresent(Slip.self, forKey: .coin)
+        coin = try values.decodeIfPresent(SLIP.CoinType.self, forKey: .coin)
         address = try values.decodeIfPresent(String.self, forKey: .address).flatMap({
             return KeystoreKey.address(for: coin, addressString: $0)
         })
@@ -188,7 +188,7 @@ extension KeystoreKey: Codable {
         try container.encodeIfPresent(coin, forKey: .coin)
     }
 
-    public static func address(for coin: Slip?, addressString: String) -> Address? {
+    public static func address(for coin: SLIP.CoinType?, addressString: String) -> Address? {
         guard let coin = coin else {
             return EthereumAddress(data: Data(hex: addressString))
         }
@@ -205,11 +205,11 @@ private extension String {
     }
 }
 
-extension Slip: Codable {
+extension SLIP.CoinType: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let coinID = try container.decode(Int.self)
-        guard let slip = Slip(rawValue: coinID) else {
+        guard let slip = SLIP.CoinType(rawValue: coinID) else {
             throw DecryptError.unsupportedCoin
         }
         self = slip

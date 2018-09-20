@@ -109,7 +109,7 @@ public final class Account: Codable, Hashable {
 
         let addressData = try container.decode(Data.self, forKey: .addressData)
 
-        guard let slip = Slip(rawValue: derivationPath.coinType) else {
+        guard let slip = SLIP.CoinType(rawValue: derivationPath.coinType) else {
             throw DecryptError.unsupportedCoin
         }
         let bc = blockchain(coin: slip)
