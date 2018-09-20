@@ -41,7 +41,7 @@ public final class Wallet: Hashable {
     /// - Returns: the account
     /// - Throws: `WalletError.invalidKeyType` if this is an HD wallet `DecryptError.invalidPassword` if the
     ///           password is incorrect.
-    public func getAccount(password: String, coin: Slip) throws -> Account {
+    public func getAccount(password: String, coin: SLIP.CoinType) throws -> Account {
         guard key.type == .encryptedKey else {
             throw WalletError.invalidKeyType
         }
@@ -87,7 +87,7 @@ public final class Wallet: Hashable {
         var accounts = [Account]()
         let wallet = HDWallet(mnemonic: mnemonic, passphrase: key.passphrase)
         for derivationPath in derivationPaths {
-            guard let slip = Slip(rawValue: derivationPath.coinType) else { break }
+            guard let slip = SLIP.CoinType(rawValue: derivationPath.coinType) else { break }
             let account = getAccount(wallet: wallet, coin: slip, derivationPath: derivationPath)
             accounts.append(account)
         }
@@ -95,7 +95,7 @@ public final class Wallet: Hashable {
         return accounts
     }
 
-    private func getAccount(wallet: HDWallet, coin: Slip, derivationPath: DerivationPath) -> Account {
+    private func getAccount(wallet: HDWallet, coin: SLIP.CoinType, derivationPath: DerivationPath) -> Account {
         let bc = blockchain(coin: coin)
         let publicKey = wallet.getKey(at: derivationPath).publicKey()
         let address = bc.address(for: publicKey)
