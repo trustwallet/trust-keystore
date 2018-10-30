@@ -80,9 +80,6 @@ public final class KeyStore {
     /// - Returns: new account
     public func `import`(json: Data, password: String, newPassword: String, coin: SLIP.CoinType) throws -> Wallet {
         let key = try JSONDecoder().decode(KeystoreKey.self, from: json)
-        if let address = key.address, self.account(for: address, type: key.type) != nil {
-            throw Error.accountAlreadyExists
-        }
 
         var data = try key.decrypt(password: password)
         defer {
@@ -102,17 +99,6 @@ public final class KeyStore {
             let bc = blockchain(coin: coin)
             return try self.import(mnemonic: mnemonic, encryptPassword: newPassword, derivationPath: bc.derivationPath(at: 0))
         }
-    }
-
-    private func account(for address: Address, type: WalletType) -> Account? {
-        return wallets.compactMap({ wallet in
-            if wallet.type != type {
-                return nil
-            }
-            return wallet.accounts.first(where: { account in
-                account.address.data == address.data
-            })
-        }).first
     }
 
     /// Imports a private key.
