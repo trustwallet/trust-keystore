@@ -18,6 +18,9 @@ public final class Account: Codable, Hashable {
     /// Account derivation path, only relevant for HD wallets.
     public let derivationPath: DerivationPath
 
+    /// Account Extended Public Key
+    public var extendedPublicKey: String?
+
     /// Coin this account is for.
     public var coin: Int {
         return derivationPath.coinType
@@ -101,13 +104,14 @@ public final class Account: Codable, Hashable {
     enum CodingKeys: String, CodingKey {
         case addressData
         case derivationPath
+        case extendedPublicKey
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         derivationPath = try container.decode(DerivationPath.self, forKey: .derivationPath)
-
         let addressData = try container.decode(Data.self, forKey: .addressData)
+        self.extendedPublicKey = try container.decodeIfPresent(String.self, forKey: .extendedPublicKey)
 
         guard let slip = SLIP.CoinType(rawValue: derivationPath.coinType) else {
             throw DecryptError.unsupportedCoin
@@ -125,5 +129,6 @@ public final class Account: Codable, Hashable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(address.data, forKey: .addressData)
         try container.encode(derivationPath, forKey: .derivationPath)
+        try container.encode(extendedPublicKey, forKey: .extendedPublicKey)
     }
 }
