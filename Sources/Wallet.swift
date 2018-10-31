@@ -106,8 +106,9 @@ public final class Wallet: Hashable {
 
         let account = Account(wallet: self, address: address, derivationPath: derivationPath)
         account.wallet = self
-        if account.extendedPublicKey == nil {
-            account.extendedPublicKey = wallet.getExtendedPubKey(for: bc.coinPurpose)
+        if let version = bc.xpubVersion,
+            account.extendedPublicKey == nil {
+            account.extendedPublicKey = wallet.getExtendedPubKey(for: bc.coinPurpose, version: version)
         }
         accounts.append(account)
         return account
