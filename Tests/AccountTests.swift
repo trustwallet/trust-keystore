@@ -9,6 +9,10 @@ import TrustKeystore
 import XCTest
 
 class AccountTests: XCTestCase {
+
+    let words = "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal"
+    let passphrase = "TREZOR"
+
     func testSignHash() throws {
         let privateKey = PrivateKey(data: Data(hexString: "D30519BCAE8D180DBFCC94FE0B8383DC310185B0BE97B4365083EBCECCD75759")!)!
         let key = try KeystoreKey(password: "password", key: privateKey, coin: .ethereum)
@@ -24,9 +28,6 @@ class AccountTests: XCTestCase {
     }
 
     func testSignHashHD() throws {
-        let words = "ripple scissors kick mammal hire column oak again sun offer wealth tomorrow wagon turn fatal"
-        let passphrase = "TREZOR"
-
         let key = try KeystoreKey(password: "password", mnemonic: words, passphrase: passphrase)
         let wallet = Wallet(keyURL: URL(fileURLWithPath: "/"), key: key)
         let account = try wallet.getAccounts(derivationPaths: [Ethereum().derivationPath(at: 0)], password: "password").first!
@@ -37,5 +38,13 @@ class AccountTests: XCTestCase {
         let publicKey = try account.privateKey(password: "password").publicKey()
         XCTAssertEqual(result.count, 65)
         XCTAssertTrue(Crypto.verify(signature: result, message: hash, publicKey: publicKey.data))
+    }
+
+    func testExtendedPubkey() throws {
+        let key = try KeystoreKey(password: "password", mnemonic: words, passphrase: passphrase)
+        let wallet = Wallet(keyURL: URL(fileURLWithPath: "/"), key: key)
+        let account = try wallet.getAccounts(derivationPaths: [Bitcoin().derivationPath(at: 0)], password: "password").first!
+
+        XCTAssertEqual(account.extendedPublicKey, "zpub6s2aob62srpiGYm3pjS5qNYDA3ipDAvFVifHgndVF8m7qRnKaLut7aKBrd88aeqPeVhRxZwjgfDjePkPZ5AMpz3fA6eiBkBgkuFgkkMNb3i")
     }
 }
