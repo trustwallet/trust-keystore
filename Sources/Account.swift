@@ -62,11 +62,12 @@ public final class Account: Codable, Hashable {
         return hashes.map({ Crypto.sign(hash: $0, privateKey: key.data) })
     }
 
+    // MARK: PrivateKey
+
     public func privateKey(password: String) throws -> PrivateKey {
         guard let wallet = wallet else {
             fatalError("Wallet no longer exists")
         }
-
         let key = wallet.key
         switch key.type {
         case .encryptedKey:
@@ -77,16 +78,32 @@ public final class Account: Codable, Hashable {
             }
             return PrivateKey(data: key)!
         case .hierarchicalDeterministicWallet:
-            guard var mnemonic = String(data: try key.decrypt(password: password), encoding: .ascii) else {
-                throw DecryptError.invalidPassword
-            }
-            defer {
-                // Clear memory after signing
-                mnemonic.clear()
-            }
-            let wallet = HDWallet(mnemonic: mnemonic, passphrase: key.passphrase)
+            let wallet = try getHDWallet(key: key, password: password)
             return wallet.getKey(at: derivationPath)
         }
+    }
+
+    public func privateKey(at path: DerivationPath, password: String) throws -> PrivateKey {
+        guard let wallet = wallet else {
+            fatalError("Wallet no longer exists")
+        }
+        guard case .hierarchicalDeterministicWallet = wallet.key.type else {
+            fatalError("Not HD wallet")
+        }
+        let hdWallet = try getHDWallet(key: wallet.key, password: password)
+        return hdWallet.getKey(at: path)
+    }
+
+    private func getHDWallet(key: KeystoreKey, password: String) throws -> HDWallet {
+        guard var mnemonic = String(data: try key.decrypt(password: password), encoding: .ascii) else {
+            throw DecryptError.invalidPassword
+        }
+        defer {
+            // Clear memory after signing
+            mnemonic.clear()
+        }
+        let wallet = HDWallet(mnemonic: mnemonic, passphrase: key.passphrase)
+        return wallet
     }
 
     // MARK: Hashable
