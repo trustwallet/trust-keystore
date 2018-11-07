@@ -55,14 +55,11 @@ class AccountTests: XCTestCase {
         let wallet = Wallet(keyURL: URL(fileURLWithPath: "/"), key: key)
         let account = try wallet.getAccounts(derivationPaths: [bitcoin.derivationPath(at: 0)], password: "password").first!
 
-        let privateKey0 = try account.privateKey(at: bitcoin.derivationPath(at: 0), password: password)
-        XCTAssertEqual(privateKey0, try account.privateKey(password: password))
-        XCTAssertEqual(privateKey0, PrivateKey(wif: "Kx4KYjQdy67za4Eu8YPQiXdUAAuX6F613TeKexiSnmm7HFLFFAHs")!)
-
-        let privateKey4 = try account.privateKey(at: bitcoin.derivationPath(at: 4), password: password)
-        XCTAssertEqual(privateKey4, PrivateKey(wif: "L5TR7ugNy3MgwN9GjsFYgAi4mE1aZqr7JhH1EhfRZxAeLtgxppNi")!)
-
-        let privateKeyChange2 = try account.privateKey(at: bitcoin.derivationPath(account: 0, change: 1, at: 2), password: password)
-        XCTAssertEqual(privateKeyChange2, PrivateKey(wif: "Kya3aLWeRoKc8mK3LmsuwmysVi5kW1SddnAN5PnP5caLbEergikB")!)
+        let paths = [bitcoin.derivationPath(at: 0), bitcoin.derivationPath(at: 4), bitcoin.derivationPath(account: 0, change: 1, at: 2)]
+        let privateKeys = try account.privateKey(at: paths, password: password)
+        XCTAssertEqual(privateKeys[0], try account.privateKey(password: password))
+        XCTAssertEqual(privateKeys[0], PrivateKey(wif: "Kx4KYjQdy67za4Eu8YPQiXdUAAuX6F613TeKexiSnmm7HFLFFAHs")!)
+        XCTAssertEqual(privateKeys[1], PrivateKey(wif: "L5TR7ugNy3MgwN9GjsFYgAi4mE1aZqr7JhH1EhfRZxAeLtgxppNi")!)
+        XCTAssertEqual(privateKeys[2], PrivateKey(wif: "Kya3aLWeRoKc8mK3LmsuwmysVi5kW1SddnAN5PnP5caLbEergikB")!)
     }
 }
