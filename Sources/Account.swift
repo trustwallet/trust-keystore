@@ -78,8 +78,7 @@ public final class Account: Codable, Hashable {
             }
             return PrivateKey(data: key)!
         case .hierarchicalDeterministicWallet:
-            let wallet = try getHDWallet(key: key, password: password)
-            return wallet.getKey(at: derivationPath)
+            return try privateKey(at: derivationPath, password: password)
         }
     }
 
