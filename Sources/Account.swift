@@ -83,10 +83,10 @@ public final class Account: Codable, Hashable {
     }
 
     public func privateKey(at path: DerivationPath, password: String) throws -> PrivateKey {
-        return try privateKey(at: [derivationPath], password: password).first!
+        return try privateKeys(at: [derivationPath], password: password).first!
     }
 
-    public func privateKey(at paths: [DerivationPath], password: String) throws -> [PrivateKey] {
+    public func privateKeys(at paths: [DerivationPath], password: String) throws -> [PrivateKey] {
         guard let wallet = wallet else {
             fatalError("Wallet no longer exists")
         }
