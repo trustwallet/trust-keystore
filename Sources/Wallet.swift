@@ -108,7 +108,7 @@ public final class Wallet: Hashable {
         account.wallet = self
         if let version = bc.xpubVersion,
             account.extendedPublicKey == nil {
-            account.extendedPublicKey = wallet.getExtendedPubKey(for: bc.coinPurpose, version: version)
+            account.extendedPublicKey = wallet.getExtendedPubKey(for: bc.coinPurpose, coin: coin, version: version)
         }
         accounts.append(account)
         return account

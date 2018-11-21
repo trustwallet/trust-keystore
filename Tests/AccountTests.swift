@@ -44,9 +44,13 @@ class AccountTests: XCTestCase {
     func testExtendedPubkey() throws {
         let key = try KeystoreKey(password: password, mnemonic: words, passphrase: passphrase)
         let wallet = Wallet(keyURL: URL(fileURLWithPath: "/"), key: key)
-        let account = try wallet.getAccounts(derivationPaths: [Bitcoin().derivationPath(at: 0)], password: password).first!
+        let accounts = try wallet.getAccounts(derivationPaths: [
+            Bitcoin().derivationPath(at: 0),
+            BitcoinCash().derivationPath(at: 0),
+            ], password: password)
 
-        XCTAssertEqual(account.extendedPublicKey, "zpub6s2aob62srpiGYm3pjS5qNYDA3ipDAvFVifHgndVF8m7qRnKaLut7aKBrd88aeqPeVhRxZwjgfDjePkPZ5AMpz3fA6eiBkBgkuFgkkMNb3i")
+        XCTAssertEqual(accounts[0].extendedPublicKey, "zpub6s2aob62srpiGYm3pjS5qNYDA3ipDAvFVifHgndVF8m7qRnKaLut7aKBrd88aeqPeVhRxZwjgfDjePkPZ5AMpz3fA6eiBkBgkuFgkkMNb3i")
+        XCTAssertEqual(accounts[1].extendedPublicKey, "xpub6CEHLxCHR9sNtpcxtaTPLNxvnY9SQtbcFdov22riJ7jmhxmLFvXAoLbjHSzwXwNNuxC1jUP6tsHzFV9rhW9YKELfmR9pJaKFaM8C3zMPgjw")
     }
 
     func testPrivateKeyWithPaths() throws {
