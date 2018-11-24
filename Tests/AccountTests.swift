@@ -53,17 +53,31 @@ class AccountTests: XCTestCase {
         XCTAssertEqual(accounts[1].extendedPublicKey, "xpub6CEHLxCHR9sNtpcxtaTPLNxvnY9SQtbcFdov22riJ7jmhxmLFvXAoLbjHSzwXwNNuxC1jUP6tsHzFV9rhW9YKELfmR9pJaKFaM8C3zMPgjw")
     }
 
-    func testPrivateKeyWithPaths() throws {
-        let bitcoin = Bitcoin()
+    func testBTCPrivateKeyWithPaths() throws {
+        let blockchain = Bitcoin()
         let key = try KeystoreKey(password: password, mnemonic: words, passphrase: passphrase)
         let wallet = Wallet(keyURL: URL(fileURLWithPath: "/"), key: key)
-        let account = try wallet.getAccounts(derivationPaths: [bitcoin.derivationPath(at: 0)], password: password).first!
+        let account = try wallet.getAccounts(derivationPaths: [blockchain.derivationPath(at: 0)], password: password).first!
 
-        let paths = [bitcoin.derivationPath(at: 0), bitcoin.derivationPath(at: 4), bitcoin.derivationPath(account: 0, change: 1, at: 2)]
+        let paths = [blockchain.derivationPath(at: 0), blockchain.derivationPath(at: 4), blockchain.derivationPath(account: 0, change: 1, at: 2)]
         let privateKeys = try account.privateKeys(at: paths, password: password)
         XCTAssertEqual(privateKeys[0], try account.privateKey(password: password))
         XCTAssertEqual(privateKeys[0], PrivateKey(wif: "Kx4KYjQdy67za4Eu8YPQiXdUAAuX6F613TeKexiSnmm7HFLFFAHs")!)
         XCTAssertEqual(privateKeys[1], PrivateKey(wif: "L5TR7ugNy3MgwN9GjsFYgAi4mE1aZqr7JhH1EhfRZxAeLtgxppNi")!)
         XCTAssertEqual(privateKeys[2], PrivateKey(wif: "Kya3aLWeRoKc8mK3LmsuwmysVi5kW1SddnAN5PnP5caLbEergikB")!)
+    }
+
+    func testBCHPrivateKeyWithPaths() throws {
+        let blockchain = BitcoinCash(purpose: .bip44)
+        let key = try KeystoreKey(password: password, mnemonic: words, passphrase: passphrase)
+        let wallet = Wallet(keyURL: URL(fileURLWithPath: "/"), key: key)
+        let account = try wallet.getAccounts(derivationPaths: [blockchain.derivationPath(at: 0)], password: password).first!
+
+        let paths = [blockchain.derivationPath(at: 0), blockchain.derivationPath(at: 4), blockchain.derivationPath(account: 0, change: 1, at: 2)]
+        let privateKeys = try account.privateKeys(at: paths, password: password)
+        XCTAssertEqual(privateKeys[0], try account.privateKey(password: password))
+        XCTAssertEqual(privateKeys[0], PrivateKey(wif: "L2MprqcQNgmgZyeHb8jUb7LnPr13U5htchLavaL4W8VZN43ajhkc")!)
+        XCTAssertEqual(privateKeys[1], PrivateKey(wif: "L4bptjCKEpjcjSFrhDefATUNTojYuNC6wztAARE93VRZrkbm3cFa")!)
+        XCTAssertEqual(privateKeys[2], PrivateKey(wif: "KzhtjQiUzcQhAKjAEDbXHa6Skg7cyUr1ZnfpcZZTzY1yL49GSDBB")!)
     }
 }
