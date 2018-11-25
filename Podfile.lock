@@ -34,7 +34,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   TrustCore:
-    :commit: 85ea4bcd50042ec0a3a9982e7d2bc314023ba09f
+    :commit: ee309246f891fea7e7b0e7147c335508e2ad3b73
     :git: https://github.com/TrustWallet/trust-core
 
 SPEC CHECKSUMS:
@@ -44,7 +44,7 @@ SPEC CHECKSUMS:
   SwiftLint: 3207c1faa2240bf8973b191820a116113cd11073
   SwiftProtobuf: 91a9856079044ef4ec762b2344c763cd9e5a73c1
   TrezorCrypto: bfeea47a052dca2c77d4a39e1e183865e52de14d
-  TrustCore: a09efa0d46e598f349df39710b35ba12fcd2d166
+  TrustCore: c43a43f2bb69446ad9d919e684ba77b879d5d9bd
 
 PODFILE CHECKSUM: 807040ab51d57f3b98810158911bb6ba3527b77e
 
